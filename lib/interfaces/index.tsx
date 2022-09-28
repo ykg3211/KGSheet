@@ -7,7 +7,9 @@ export enum CellTypeEnum {
 }
 
 export interface cellStyle {
-  align: align;
+  align?: align;
+  backgroundColor?: string;
+  fontColor?: string
 }
 export interface cell {
   style: cellStyle,

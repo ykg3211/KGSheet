@@ -1,6 +1,6 @@
-import { cell, excelConfig } from "../../../interfaces";
-import BaseEvent from "../../plugins/event";
-import createBaseConfig from "../baseConfig";
+import { cell, CellTypeEnum, excelConfig } from '../../../interfaces';
+import BaseEvent from '../../plugins/event';
+import createBaseConfig from '../baseConfig';
 
 
 
@@ -104,6 +104,9 @@ export default class Render extends BaseEvent {
     const startY = this.paddingTop - this.scrollTop;
     let point = [startX, startY];
 
+    let startRIndex: null | number = null;
+    let startCIndex: null | number = null;
+    let renderBarArr: any[] = [];
     this.data.cells.forEach((rows, rIndex) => {
       point[0] = startX;
       // 计算内容实际高度
@@ -117,24 +120,35 @@ export default class Render extends BaseEvent {
             this.contentWidth += this.data.w[cIndex];
           }
           if (renderThisRow && point[0] + this.data.w[cIndex] > 0 && point[0] < this.width) {
+            startRIndex = startRIndex === null ? rIndex : startRIndex;
+            startCIndex = startCIndex === null ? cIndex : startCIndex;
+
             this._renderCell({
               point: point,
               cell: column,
               w: this.data.w[cIndex],
               h: this.data.h[rIndex]
             });
-            this._renderTopBar({
-              r: rIndex,
-              c: cIndex,
-              point: point,
-              w: this.data.w[cIndex],
-              h: this.data.h[rIndex]
-            });
+            if (startRIndex === rIndex || startCIndex === cIndex) {
+              renderBarArr.unshift({
+                r: rIndex,
+                c: cIndex,
+                point: point.slice(),
+                w: this.data.w[cIndex],
+                h: this.data.h[rIndex],
+                startRIndex,
+                startCIndex,
+              })
+            }
           }
           point[0] += this.data.w[cIndex];
         })
       }
       point[1] += this.data.h[rIndex];
+    })
+
+    renderBarArr.forEach(item => {
+      this._renderTopBar(item);
     })
   }
 
@@ -143,13 +157,17 @@ export default class Render extends BaseEvent {
     w,
     h,
     r,
-    c
+    startRIndex,
+    c,
+    startCIndex,
   }: {
     point: number[],
     w: number,
     h: number,
     r: number, // 行号
-    c: number  // 列号
+    startRIndex: number,
+    c: number,  // 列号
+    startCIndex: number,
   }) {
     if (!this.ctx) {
       return;
@@ -157,27 +175,72 @@ export default class Render extends BaseEvent {
     let content = '';
     let x = point[0];
     let y = point[1];
-    if (r === 0 && c === 0) {
-
-    } else if (r === 0) {
+    if (r === startRIndex && c === startCIndex) {
+      // 渲染第一格上面的
+      this._renderCell({
+        point: [x, 0],
+        cell: {
+          style: {
+            backgroundColor: '#DDDDDD',
+            fontColor: '#000000'
+          },
+          content: c + 1 + '',
+          type: CellTypeEnum.string
+        },
+        w,
+        h: this.paddingTop
+      })
+      // 渲染第一格左边的
+      this._renderCell({
+        point: [0, y],
+        cell: {
+          style: {
+            backgroundColor: '#DDDDDD',
+            fontColor: '#000000'
+          },
+          content: r + 1 + '',
+          type: CellTypeEnum.string
+        },
+        w: this.paddingLeft,
+        h
+      })
+      // 渲染最左上角的
+      this._renderCell({
+        point: [0, 0],
+        cell: {
+          style: {
+            backgroundColor: '#DDDDDD',
+            fontColor: '#000000'
+          },
+          content: '',
+          type: CellTypeEnum.string
+        },
+        w: this.paddingLeft,
+        h: this.paddingTop
+      })
+      return;
+    } else if (r === startRIndex) {
       y = 0;
       h = this.paddingTop;
-      content = c + '';
-    } else if (c === 0) {
+      content = c + 1 + '';
+    } else if (c === startCIndex) {
       x = 0;
       w = this.paddingLeft;
-      content = r + '';
+      content = r + 1 + '';
     }
-    console.log(x, y, w, h)
-    this.ctx.strokeStyle = '#b5b5b5'
-    this.ctx.lineWidth = 1;
-    this.ctx.fillStyle = '#DDDDDD'
-    this.ctx.fillRect(x, y, w, h);
-    this.ctx.strokeRect(x, y, w, h);
-
-    this.ctx.font = "12px Arial";
-    this.ctx.fillStyle = "#000000"
-    this.ctx.fillText(content, x, y + h - 4);
+    this._renderCell({
+      point: [x, y],
+      cell: {
+        style: {
+          backgroundColor: '#DDDDDD',
+          fontColor: '#000000'
+        },
+        content,
+        type: CellTypeEnum.string
+      },
+      w,
+      h
+    })
   }
 
   _renderCell({
@@ -196,36 +259,12 @@ export default class Render extends BaseEvent {
     }
     this.ctx.strokeStyle = '#b5b5b5'
     this.ctx.lineWidth = 1;
-    this.ctx.fillStyle = '#FFFFFF'
+    this.ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF'
     this.ctx.fillRect(point[0], point[1], w, h);
     this.ctx.strokeRect(point[0], point[1], w, h);
 
-    this.ctx.font = "12px Arial";
-    this.ctx.fillStyle = "#000000"
+    this.ctx.font = '12px Arial';
+    this.ctx.fillStyle = cell.style.fontColor || '#000000'
     this.ctx.fillText(cell.content, point[0], point[1] + h - 4);
-  }
-
-  _renderRect({
-    point,
-    content,
-    w,
-    h
-  }: {
-    point: number[],
-    content: string,
-    w: number,
-    h: number
-  }) {
-    if (!this.ctx) {
-      return;
-    }
-    this.ctx.strokeStyle = '#b5b5b5'
-    this.ctx.lineWidth = 1;
-    this.ctx.fillStyle = '#b5b5b5'
-    this.ctx.fillRect(point[0], point[1], w, h);
-
-    this.ctx.font = "12px Arial";
-    this.ctx.fillStyle = "#000000"
-    this.ctx.fillText(content, point[0], point[1] + h - 4);
   }
 }
