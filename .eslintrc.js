@@ -1,12 +1,15 @@
 module.exports = {
   root: true,
-  extends: ["@byted-clm"],
   parserOptions: {
     tsconfigRootDir: __dirname,
+    ecmaVersion: 7,
+    sourceType: "module"
   },
-  rules: {},
+  rules: {
+    semi: "error",
+    quotes: 'single'
+  },
   ignorePatterns: [
     "node_modules/",
-    "*.js"
   ]
-}
+};
