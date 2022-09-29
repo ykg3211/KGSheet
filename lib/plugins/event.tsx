@@ -1,6 +1,10 @@
 export enum EventConstant {
   DESTROY = 'destroy',
-  MOUSEHOVEREVENT = 'mousehoverevent',
+  CLICK = 'click',
+  MOUSE_DOWN = 'mouse_down',
+  MOUSE_UP = 'mouse_up',
+  MOUSE_MOVE = 'mouse_move',
+  MOUSE_HOVER_EVENT = 'mouse_hover_event',
 }
 
 export default class BaseEvent {

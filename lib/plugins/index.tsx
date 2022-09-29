@@ -1,10 +1,11 @@
 import BaseMap from "../core/base/baseMap";
-import MousePlugin from "./MousePlugin";
+import ClickPlugin from "./ClickPlugin";
+import MousePlugin from "./MouseMovePlugin";
 import ScrollPlugin from "./ScrollPlugin";
 
 export interface PluginType {
   _this: BaseMap;
-  remove: () => void;
+  remove?: () => void;
 }
 
 export default class Plugins {
@@ -16,13 +17,14 @@ export default class Plugins {
     this.pluginsArr = {};
 
     this.register('MousePlugin', MousePlugin);
+    this.register('ClickPlugin', ClickPlugin);
 
     this.register('ScrollPlugin', ScrollPlugin);
   }
 
   public register(name: string, Plugin: any) {
     if (this.pluginsArr[name]) {
-      this.pluginsArr[name].remove();
+      this.pluginsArr[name].remove?.();
     }
 
     this.pluginsArr[name] = new Plugin(this._this);

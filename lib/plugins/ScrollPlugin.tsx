@@ -63,7 +63,7 @@ export default class ScrollPlugin implements PluginType {
         this.YMouseDownOriginY = this._this.mouseY;
       }
     }
-    document.body.addEventListener('mousedown', this.scrollMouseDownCB);
+    this._this.on(EventConstant.MOUSE_DOWN, this.scrollMouseDownCB);
 
     this.scrollMouseMoveCB = () => {
       if (this.XMouseDownOriginX !== null) {
@@ -77,7 +77,7 @@ export default class ScrollPlugin implements PluginType {
         this.YMouseDownOriginY = this._this.mouseY;
       }
     }
-    document.body.addEventListener('mousemove', this.scrollMouseMoveCB);
+    this._this.on(EventConstant.MOUSE_MOVE, this.scrollMouseMoveCB);
 
     this.scrollMouseUpCB = () => {
       if (this.XMouseDownOriginX !== null) {
@@ -87,7 +87,7 @@ export default class ScrollPlugin implements PluginType {
         this.YMouseDownOriginY = null;
       }
     }
-    document.body.addEventListener('mouseup', this.scrollMouseUpCB);
+    this._this.on(EventConstant.MOUSE_UP, this.scrollMouseUpCB);
   }
 
   private handleScrollBar(ctx: CanvasRenderingContext2D) {
@@ -107,7 +107,7 @@ export default class ScrollPlugin implements PluginType {
 
 
       this.Xxywh = [(this._this.width - this.scrollBarXW - (this._this.height < this._this.contentHeight ? this.scrollBarWidth : 0)) * percentX, this._this.height - this.scrollBarWidth, this.scrollBarXW, this.scrollBarWidth]
-      this._this.emit(EventConstant.MOUSEHOVEREVENT, {
+      this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
         id: 'Xxywh',
         scope: this.Xxywh,
         innerFunc: () => {
@@ -136,7 +136,7 @@ export default class ScrollPlugin implements PluginType {
 
 
       this.Yxywh = [this._this.width - this.scrollBarWidth, (this._this.height - this.scrollBarYW) * percentY, this.scrollBarWidth, this.scrollBarYW]
-      this._this.emit(EventConstant.MOUSEHOVEREVENT, {
+      this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
         id: 'Yxywh',
         scope: this.Yxywh,
         innerFunc: () => {

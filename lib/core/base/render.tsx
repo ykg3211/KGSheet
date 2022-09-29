@@ -15,6 +15,8 @@ export default class Render extends DrawLayer {
   protected _scale: number;
   protected maxScale: number;
 
+  protected mouseX: number;// 鼠标x坐标
+  protected mouseY: number;// 鼠标y坐标
 
   protected _data: excelConfig;
   protected _scrollTop: number;
@@ -28,6 +30,8 @@ export default class Render extends DrawLayer {
     this._scrollLeft = 0;
     this.width = 0;
     this.height = 0;
+    this.mouseX = 0;
+    this.mouseY = 0;
     this.contentWidth = 0;
     this.contentHeight = 0;
     this.paddingTop = 20;

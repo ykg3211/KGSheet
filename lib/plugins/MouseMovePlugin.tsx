@@ -6,7 +6,7 @@ import BaseMap from "../core/base/baseMap";
 import { EventConstant } from "./event";
 import EventStack, { eventStackType } from "./EventStack";
 
-export default class MousePlugin extends EventStack implements PluginType {
+export default class MouseMovePlugin extends EventStack {
   private _this: BaseMap;
   private _mouseX: number;
   private _mouseY: number;
@@ -17,7 +17,7 @@ export default class MousePlugin extends EventStack implements PluginType {
     this._mouseX = 0;
     this._mouseY = 0;
     this.handleMouseMove();
-    this._this.on(EventConstant.MOUSEHOVEREVENT, (data: eventStackType) => {
+    this._this.on(EventConstant.MOUSE_HOVER_EVENT, (data: eventStackType) => {
       this.addEvent(data);
     })
   }
@@ -37,20 +37,19 @@ export default class MousePlugin extends EventStack implements PluginType {
     this._mouseY = v;
   }
 
-  private remove() {
-    //
-  }
-
   private handleMouseMove() {
     const handler = (e: MouseEvent) => {
       this.mouseY = e.offsetY;
       this.mouseX = e.offsetX;
-      this.dispatchEvent([e.offsetX, e.offsetY])
+
+      this.dispatchEvent([e.offsetX, e.offsetY]);
+
+      this._this.emit(EventConstant.MOUSE_MOVE, [e.offsetX, e.offsetY]);
     }
-    this._this.canvasDom?.addEventListener('mousemove', handler);
+    document.body.addEventListener('mousemove', handler);
 
     this._this.once(EventConstant.DESTROY, () => {
-      this._this.canvasDom?.removeEventListener('mousemove', handler);
+      document.body.removeEventListener('mousemove', handler);
     });
   }
 }
