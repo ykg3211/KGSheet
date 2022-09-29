@@ -1,12 +1,11 @@
-import { cell, CellTypeEnum, excelConfig } from '../../../interfaces';
-import BaseEvent from '../../plugins/event';
-import createBaseConfig from '../baseConfig';
+import { cell, cellStyle, CellTypeEnum, excelConfig } from '../../interfaces';
+import { renderZIndex } from './constant';
+import createBaseConfig from '../../utils/defaultData';
+import DrawLayer from './drawLayer';
 
 
 
-export default class Render extends BaseEvent {
-  protected ctx: CanvasRenderingContext2D | null;
-  protected canvasDom: HTMLCanvasElement | null;
+export default class Render extends DrawLayer {
   protected width: number; /** dom width */
   protected height: number; /** dom height */
   protected paddingTop: number;
@@ -14,10 +13,14 @@ export default class Render extends BaseEvent {
   protected contentWidth: number;
   protected contentHeight: number;
   protected _scale: number;
+  protected maxScale: number;
 
-  private _data: excelConfig;
-  private _scrollTop: number;
-  private _scrollLeft: number;
+
+  protected _data: excelConfig;
+  protected _scrollTop: number;
+  protected _scrollLeft: number;
+
+  protected renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
 
   constructor() {
     super();
@@ -30,64 +33,53 @@ export default class Render extends BaseEvent {
     this.paddingTop = 20;
     this.paddingLeft = 40;
     this._scale = 1;
+    this.maxScale = 4;
+    this.renderFuncArr = [];
 
     this._data = createBaseConfig(0, 0);
-    this.ctx = null;
-    this.canvasDom = null;
   }
-  get data() {
+  protected get data() {
     return this._data;
   }
-  set data(v: excelConfig) {
+  protected set data(v: excelConfig) {
     this._data = v;
     this._render();
   }
 
-  get scale() {
+  protected get scale() {
     return this._scale;
   }
-  set scale(v: number) {
+  protected set scale(v: number) {
     this._scale = v;
     this._render();
   }
 
-  get scrollTop() {
+  protected get scrollTop() {
     return this._scrollTop;
   }
-  set scrollTop(v: number) {
+  protected set scrollTop(v: number) {
     this._scrollTop = v;
     this._render();
   }
 
-  get scrollLeft() {
+  protected get scrollLeft() {
     return this._scrollLeft;
   }
-  set scrollLeft(v: number) {
+  protected set scrollLeft(v: number) {
     this._scrollLeft = v;
     this._render();
   }
 
-  _getMaxWH() {
-    let max = [0, 0];
-    this.data.cells.forEach((rows, rIndex) => {
-      max[1] += this.data.h[rIndex];
-    })
-    this.data.cells[0].cells.forEach((column, cIndex) => {
-      max[0] += this.data.w[cIndex]
-    })
-    return max;
-  }
-
-  _preRenderFunc() {
+  protected _preRenderFunc() {
     if (!this.canvasDom) {
       return;
     }
     let dpr = window.devicePixelRatio;
     this.canvasDom.height = this.canvasDom?.height;
-    this.ctx?.scale(2 * this.scale, 2 * this.scale);
+    this.ctx?.scale(dpr * this.scale, dpr * this.scale);
   }
 
-  _render() {
+  protected _render() {
     if (!this.canvasDom) {
       return;
     }
@@ -99,7 +91,7 @@ export default class Render extends BaseEvent {
     this._renderContent();
   }
 
-  _renderContent() {
+  protected _renderContent() {
     const startX = this.paddingLeft - this.scrollLeft;
     const startY = this.paddingTop - this.scrollTop;
     let point = [startX, startY];
@@ -129,6 +121,7 @@ export default class Render extends BaseEvent {
               w: this.data.w[cIndex],
               h: this.data.h[rIndex]
             });
+
             if (startRIndex === rIndex || startCIndex === cIndex) {
               renderBarArr.unshift({
                 r: rIndex,
@@ -147,12 +140,32 @@ export default class Render extends BaseEvent {
       point[1] += this.data.h[rIndex];
     })
 
-    renderBarArr.forEach(item => {
+    this.renderFuncArr[renderZIndex.LEFT_TOP_BAR] = renderBarArr.map(item => () => {
       this._renderTopBar(item);
+    });
+
+    this._renderFunctions();
+  }
+
+  protected addRenderFunction(index: renderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
+    if (!this.renderFuncArr[index]) {
+      this.renderFuncArr[index] = [];
+    }
+    this.renderFuncArr[index] = this.renderFuncArr[index].concat(funcs);
+  }
+
+  protected _renderFunctions() {
+    if (!this.ctx) {
+      return;
+    }
+    this.renderFuncArr.forEach(funcs => {
+      funcs.forEach(func => {
+        func(this.ctx as CanvasRenderingContext2D);
+      })
     })
   }
 
-  _renderTopBar({
+  protected _renderTopBar({
     point,
     w,
     h,
@@ -175,15 +188,17 @@ export default class Render extends BaseEvent {
     let content = '';
     let x = point[0];
     let y = point[1];
+    const baseStyle: cellStyle = {
+      backgroundColor: '#DDDDDD',
+      fontColor: '#000000',
+      align: 'center'
+    }
     if (r === startRIndex && c === startCIndex) {
       // 渲染第一格上面的
       this._renderCell({
         point: [x, 0],
         cell: {
-          style: {
-            backgroundColor: '#DDDDDD',
-            fontColor: '#000000'
-          },
+          style: baseStyle,
           content: c + 1 + '',
           type: CellTypeEnum.string
         },
@@ -194,10 +209,7 @@ export default class Render extends BaseEvent {
       this._renderCell({
         point: [0, y],
         cell: {
-          style: {
-            backgroundColor: '#DDDDDD',
-            fontColor: '#000000'
-          },
+          style: baseStyle,
           content: r + 1 + '',
           type: CellTypeEnum.string
         },
@@ -208,10 +220,7 @@ export default class Render extends BaseEvent {
       this._renderCell({
         point: [0, 0],
         cell: {
-          style: {
-            backgroundColor: '#DDDDDD',
-            fontColor: '#000000'
-          },
+          style: baseStyle,
           content: '',
           type: CellTypeEnum.string
         },
@@ -231,40 +240,12 @@ export default class Render extends BaseEvent {
     this._renderCell({
       point: [x, y],
       cell: {
-        style: {
-          backgroundColor: '#DDDDDD',
-          fontColor: '#000000'
-        },
+        style: baseStyle,
         content,
         type: CellTypeEnum.string
       },
       w,
       h
     })
-  }
-
-  _renderCell({
-    point,
-    cell,
-    w,
-    h
-  }: {
-    point: number[],
-    cell: cell,
-    w: number,
-    h: number
-  }) {
-    if (!this.ctx) {
-      return;
-    }
-    this.ctx.strokeStyle = '#b5b5b5'
-    this.ctx.lineWidth = 1;
-    this.ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF'
-    this.ctx.fillRect(point[0], point[1], w, h);
-    this.ctx.strokeRect(point[0], point[1], w, h);
-
-    this.ctx.font = '12px Arial';
-    this.ctx.fillStyle = cell.style.fontColor || '#000000'
-    this.ctx.fillText(cell.content, point[0], point[1] + h - 4);
   }
 }

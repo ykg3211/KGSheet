@@ -1,21 +1,22 @@
-import { excelConfig, CellTypeEnum, cell, cellStyle } from "../../interfaces";
+import { excelConfig, CellTypeEnum, cell, cellStyle } from "../interfaces";
 const BASE_HEIGHT = 20;
-const BASE_WIDTH = 100;
+const BASE_WIDTH = 80;
 const createDefaultStyle = () => {
   return {
-    align: 'left'
+    align: 'center',
+    fontSize: 12
+
   } as cellStyle
 }
 const createDefaultCell = (_h: number, _w: number) => {
   return {
     style: createDefaultStyle(),
-    align: 'left',
     content: _h + '-' + _w,
     type: CellTypeEnum.string
   } as cell
 }
 
-const createBaseConfig = (w: number = 10, h: number = 100) => {
+const createDefaultData = (w: number = 10, h: number = 100) => {
   const result: excelConfig = {
     w: new Array(w).fill(BASE_WIDTH),
     h: new Array(h).fill(BASE_HEIGHT),
@@ -32,7 +33,8 @@ const createBaseConfig = (w: number = 10, h: number = 100) => {
     });
   }
 
+  console.log(result)
   return result;
 }
 
-export default createBaseConfig;
+export default createDefaultData;

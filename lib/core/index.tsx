@@ -1,7 +1,6 @@
-import { excelConfig } from "../../interfaces";
 import { EventConstant } from "../plugins/event";
 import BaseMap from "./base/baseMap";
-import createBaseConfig from "./baseConfig";
+import createDefaultData from "../utils/defaultData";
 
 class Excel extends BaseMap {
   constructor(dom: any) {
@@ -9,18 +8,13 @@ class Excel extends BaseMap {
     this.initDefault();
   }
 
-  initDefault() {
-    this.data = createBaseConfig(1000, 10000);
+  protected initDefault() {
+    this.data = createDefaultData(2000, 2000);
   }
 
-  destroy() {
-    console.log(":")
+  public destroy() {
     this.emit(EventConstant.DESTROY);
   }
-}
-
-const map: Record<string, Excel> = {
-
 }
 
 export default Excel;

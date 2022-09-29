@@ -1,7 +1,9 @@
 import { EventConstant } from "../../plugins/event";
 import Render from "./render";
+import Plugins from "../../plugins";
 
-export default class BaseMap extends Render {
+class BaseMap extends Render {
+  protected pluginsInstance: Plugins;
   constructor(dom: HTMLElement) {
     super();
 
@@ -10,12 +12,13 @@ export default class BaseMap extends Render {
 
     this.handleDPR(dom);
     this.initResize(dom);
-    this.handleScroll();
+
+    this.pluginsInstance = new Plugins(this);
 
     dom.appendChild(this.canvasDom);
   }
 
-  initResize(dom: HTMLElement) {
+  private initResize(dom: HTMLElement) {
     const func = () => {
       this.handleDPR(dom);
       this._render();
@@ -26,7 +29,7 @@ export default class BaseMap extends Render {
     });
   }
 
-  handleDPR(dom: HTMLElement) {
+  private handleDPR(dom: HTMLElement) {
     if (!this.canvasDom || !this.ctx) {
       return;
     }
@@ -42,8 +45,10 @@ export default class BaseMap extends Render {
     this.canvasDom.height = dpr * cssHeight;
   }
 
-  handleScroll() {
+  private handleScroll() {
     document.body.style.overscrollBehaviorX = 'none';
+    let isShift = false;
+
     const handler = (e: WheelEvent) => {
       const { deltaX, deltaY } = e;
 
@@ -66,9 +71,28 @@ export default class BaseMap extends Render {
         }
       }
     }
+
     this.canvasDom?.addEventListener('wheel', handler);
+
+    const keyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        isShift = true;
+      }
+    }
+    const keyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        isShift = false;
+      }
+    }
+    document.body.addEventListener('keydown', keyDown);
+    document.body.addEventListener('keyup', keyUp);
+
     this.once(EventConstant.DESTROY, () => {
       this.canvasDom?.removeEventListener('wheel', handler);
+      document.body.removeEventListener('keydown', keyDown);
+      document.body.removeEventListener('keyup', keyUp);
     });
   }
 }
+
+export default BaseMap

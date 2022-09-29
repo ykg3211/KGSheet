@@ -1,14 +1,15 @@
-export const EventConstant = {
-  'DESTROY': 'destroy'
+export enum EventConstant {
+  DESTROY = 'destroy',
+  MOUSEHOVEREVENT = 'mousehoverevent',
 }
 
 export default class BaseEvent {
-  protected deps: Record<string, (() => void)[]>;
+  protected deps: Record<string, ((data?: any) => void)[]>;
   constructor() {
     this.deps = {};
   }
 
-  on(name: string, func: () => void) {
+  on(name: string, func: (data?: any) => void) {
     if (this.deps[name]) {
       this.deps[name].push(func);
     } else {
@@ -16,9 +17,9 @@ export default class BaseEvent {
     }
   }
 
-  once(name: string, func: () => void) {
-    const _func = () => {
-      func();
+  once(name: string, func: (data?: any) => void) {
+    const _func = (data: any) => {
+      func(data);
       this.un(name, _func)
     }
     if (this.deps[name]) {
@@ -28,7 +29,7 @@ export default class BaseEvent {
     }
   }
 
-  un(name?: string, func?: () => void) {
+  un(name?: string, func?: (data?: any) => void) {
     if (!name) {
       this.deps = {};
       return;
@@ -40,9 +41,9 @@ export default class BaseEvent {
     }
   }
 
-  emit(name: string) {
+  emit(name: string, data?: any) {
     if (this.deps[name]) {
-      this.deps[name].forEach(fn => fn());
+      this.deps[name].forEach(fn => fn(data));
     }
   }
 }
