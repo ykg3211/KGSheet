@@ -2,7 +2,7 @@ import { cell, cellStyle, CellTypeEnum, excelConfig } from '../../interfaces';
 import { renderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-
+import _throttleByRequestAnimationFrame from '../../utils/throttle'
 
 
 export default class Render extends DrawLayer {
@@ -22,6 +22,8 @@ export default class Render extends DrawLayer {
   protected _scrollTop: number;
   protected _scrollLeft: number;
 
+  protected _render: () => void;
+
   protected renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
 
   constructor() {
@@ -40,6 +42,7 @@ export default class Render extends DrawLayer {
     this.maxScale = 4;
     this.renderFuncArr = [];
 
+    this._render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
     this._data = createBaseConfig(0, 0);
   }
   protected get data() {
@@ -83,7 +86,7 @@ export default class Render extends DrawLayer {
     this.ctx?.scale(dpr * this.scale, dpr * this.scale);
   }
 
-  protected _render() {
+  protected _renderFunc() {
     if (!this.canvasDom) {
       return;
     }

@@ -173,7 +173,6 @@ export default class ScrollPlugin implements PluginType {
         // todo @yukaige 缩放的时候中心是鼠标位置。
         const changeMultiple = this._this.scale / initScale;
 
-        console.log(originAbsoluteX, originAbsoluteY, changeMultiple)
         const changeX = (changeMultiple - 1) * originAbsoluteX || 0;
         const changeY = (changeMultiple - 1) * originAbsoluteY || 0;
         // this.scrollXY(changeX, changeY)
