@@ -9,7 +9,7 @@ class Excel extends BaseMap {
   }
 
   protected initDefault() {
-    this.data = createDefaultData(2000, 2000);
+    this.data = createDefaultData(20, 100);
   }
 
   public destroy() {

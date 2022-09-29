@@ -1,7 +1,15 @@
 import { cell, CellTypeEnum, renderCellProps } from '../../interfaces';
 import BaseEvent from '../../plugins/event';
+import { scope } from '../../plugins/EventStack';
 
-
+function clipCell(ctx: CanvasRenderingContext2D, position: scope, renderFunc: () => void) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(...position);
+  ctx.clip();
+  renderFunc();
+  ctx.restore();
+}
 
 export default class DrawLayer extends BaseEvent {
   protected ctx: CanvasRenderingContext2D | null;
@@ -28,10 +36,14 @@ export default class DrawLayer extends BaseEvent {
 
       ctx.strokeStyle = '#b5b5b5'
       ctx.lineWidth = 1;
-      ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF'
-      ctx.fillRect(point[0], point[1], w, h);
-      ctx.strokeRect(point[0], point[1], w, h);
+      ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF';
+      if (ctx.fillStyle !== '#FFFFFF') {
+        ctx.fillRect(point[0], point[1], w, h);
+      }
 
+      if (cell.content === '') {
+        return;
+      }
       const size = cell.style.fontSize || 12;
       ctx.font = `${size}px ${cell.style.font || 'Arial'}`;
       ctx.fillStyle = cell.style.fontColor || '#000000';
@@ -54,12 +66,30 @@ export default class DrawLayer extends BaseEvent {
           default: break;
         }
       }
-      ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2);
+
+      clipCell(
+        ctx,
+        [point[0], point[1], w, h],
+        () => {
+          ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2);
+        }
+      )
     }
   }
 
+  protected drawLine(point_1: [number, number], point_2: [number, number]) {
+    if (!this.ctx) {
+      return;
+    }
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#b5b5b5'
+    this.ctx.lineWidth = 1;
+    this.ctx.moveTo(...point_1);
+    this.ctx.lineTo(...point_2);
+    this.ctx.stroke();
+  }
 
-  protected _renderCell(props: renderCellProps) {
+  protected drawCell(props: renderCellProps) {
     if (!this.ctx) {
       return;
     }

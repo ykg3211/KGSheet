@@ -101,28 +101,45 @@ export default class Render extends DrawLayer {
   protected _renderContent() {
     const startX = this.paddingLeft - this.scrollLeft;
     const startY = this.paddingTop - this.scrollTop;
-    let point = [startX, startY];
+    let point = [startX, startY]; // 锚点
 
     let startRIndex: null | number = null;
     let startCIndex: null | number = null;
     let renderBarArr: any[] = [];
+    let renderLineArr: [[number, number], [number, number]][] = [];
+    this.contentWidth = this.data.w.reduce((a, b) => a + b, 0);
+    this.contentHeight = this.data.h.reduce((a, b) => a + b, 0);
+    // const drawMinLineX = Math.min(this.contentWidth + this.paddingLeft, this.width)
+    const drawMinLineX = Math.min(this.width, this.contentWidth + this.paddingLeft - this.scrollLeft);
+    const drawMinLineY = Math.min(this.height, this.contentHeight + this.paddingTop - this.scrollTop);
+
+    let hadDrawColums = false;
+
+    renderLineArr.push([[0, this.paddingTop], [drawMinLineX, this.paddingTop]])
+    renderLineArr.push([[this.paddingLeft, 0], [this.paddingLeft, drawMinLineY]])
+
+
     this.data.cells.forEach((rows, rIndex) => {
       point[0] = startX;
-      // 计算内容实际高度
-      this.contentHeight += this.data.h[rIndex];
-      const renderThisRow = point[1] + this.data.h[rIndex] > 0 && point[1] < this.height;
 
-      if (renderThisRow || rIndex === 0) {
+      // 这一行是否渲染， 因为要统计内容宽度  所以得有一个全量遍历。
+
+
+      const renderThisRow = point[1] + this.data.h[rIndex] > 0 && point[1] < this.height;
+      if (renderThisRow) {
         rows.cells.forEach((column, cIndex) => {
-          if (rIndex === 0) {
-            // 计算内容实际宽度
-            this.contentWidth += this.data.w[cIndex];
-          }
           if (renderThisRow && point[0] + this.data.w[cIndex] > 0 && point[0] < this.width) {
             startRIndex = startRIndex === null ? rIndex : startRIndex;
             startCIndex = startCIndex === null ? cIndex : startCIndex;
+            if (!hadDrawColums) {
+              // 画竖线的
+              const tempColumY = point[0] + this.data.w[cIndex];
+              if (tempColumY > this.paddingLeft) {
+                renderLineArr.push([[tempColumY, 0], [tempColumY, drawMinLineY]])
+              }
+            }
 
-            this._renderCell({
+            this.drawCell({
               point: point,
               cell: column,
               w: this.data.w[cIndex],
@@ -143,9 +160,20 @@ export default class Render extends DrawLayer {
           }
           point[0] += this.data.w[cIndex];
         })
+
+        const tempRowX = point[1] + this.data.h[rIndex];
+        // 画横线的
+        if (tempRowX > this.paddingTop) {
+          renderLineArr.push([[0, tempRowX], [drawMinLineX, tempRowX]])
+        }
+        hadDrawColums = true;
       }
       point[1] += this.data.h[rIndex];
     })
+
+    this.renderFuncArr[renderZIndex.TABLE_LINE] = renderLineArr.map(item => () => {
+      this.drawLine(...item);
+    });
 
     this.renderFuncArr[renderZIndex.LEFT_TOP_BAR] = renderBarArr.map(item => () => {
       this._renderTopBar(item);
@@ -202,7 +230,7 @@ export default class Render extends DrawLayer {
     }
     if (r === startRIndex && c === startCIndex) {
       // 渲染第一格上面的
-      this._renderCell({
+      this.drawCell({
         point: [x, 0],
         cell: {
           style: baseStyle,
@@ -213,7 +241,7 @@ export default class Render extends DrawLayer {
         h: this.paddingTop
       })
       // 渲染第一格左边的
-      this._renderCell({
+      this.drawCell({
         point: [0, y],
         cell: {
           style: baseStyle,
@@ -224,7 +252,7 @@ export default class Render extends DrawLayer {
         h
       })
       // 渲染最左上角的
-      this._renderCell({
+      this.drawCell({
         point: [0, 0],
         cell: {
           style: baseStyle,
@@ -244,7 +272,7 @@ export default class Render extends DrawLayer {
       w = this.paddingLeft;
       content = r + 1 + '';
     }
-    this._renderCell({
+    this.drawCell({
       point: [x, y],
       cell: {
         style: baseStyle,

@@ -99,6 +99,7 @@ export default class ScrollPlugin implements PluginType {
       ctx.fillStyle = '#ffffff';
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#e6e6e6';
+      ctx.beginPath();
       ctx.moveTo(0, this._this.height - this.scrollBarWidth);
       ctx.lineTo(this._this.width, this._this.height - this.scrollBarWidth);
       ctx.stroke();
@@ -128,6 +129,7 @@ export default class ScrollPlugin implements PluginType {
       ctx.fillStyle = '#ffffff';
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#e6e6e6';
+      ctx.beginPath();
       ctx.moveTo(this._this.width - this.scrollBarWidth, 0);
       ctx.lineTo(this._this.width - this.scrollBarWidth, this._this.height - this.scrollBarWidth);
       ctx.stroke();
