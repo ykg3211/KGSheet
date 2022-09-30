@@ -1,4 +1,4 @@
-import { cell, cellStyle, CellTypeEnum, excelConfig } from '../../interfaces';
+import { cell, cellStyle, CellTypeEnum, excelConfig, renderCellProps } from '../../interfaces';
 import { renderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
@@ -106,6 +106,7 @@ export default class Render extends DrawLayer {
     let startRIndex: null | number = null;
     let startCIndex: null | number = null;
     let renderBarArr: any[] = [];
+    let renderCellsArr: renderCellProps[] = [];
     let renderLineArr: [[number, number], [number, number]][] = [];
     this.contentWidth = this.data.w.reduce((a, b) => a + b, 0);
     this.contentHeight = this.data.h.reduce((a, b) => a + b, 0);
@@ -139,12 +140,12 @@ export default class Render extends DrawLayer {
               }
             }
 
-            this.drawCell({
-              point: point,
+            renderCellsArr.push({
+              point: point.slice(),
               cell: column,
               w: this.data.w[cIndex],
               h: this.data.h[rIndex]
-            });
+            })
 
             if (startRIndex === rIndex || startCIndex === cIndex) {
               renderBarArr.unshift({
@@ -173,6 +174,10 @@ export default class Render extends DrawLayer {
 
     this.renderFuncArr[renderZIndex.TABLE_LINE] = renderLineArr.map(item => () => {
       this.drawLine(...item);
+    });
+
+    this.renderFuncArr[renderZIndex.TABLE_CELLS] = renderCellsArr.map(item => () => {
+      this.drawCell(item);
     });
 
     this.renderFuncArr[renderZIndex.LEFT_TOP_BAR] = renderBarArr.map(item => () => {

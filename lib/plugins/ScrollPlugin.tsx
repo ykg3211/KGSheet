@@ -13,8 +13,8 @@ export default class ScrollPlugin implements PluginType {
   private scrollBarWidth: number;
   private scrollBarXW: number;
   private scrollBarYW: number;
-  private Xxywh: [number, number, number, number];
-  private Yxywh: [number, number, number, number];
+  private Xxywh: [number, number, number, number]; // X轴滚动块的坐标
+  private Yxywh: [number, number, number, number]; // Y轴滚动块的坐标
 
   private scrollMouseDownCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
   private scrollMouseMoveCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
@@ -93,6 +93,9 @@ export default class ScrollPlugin implements PluginType {
   private handleScrollBar(ctx: CanvasRenderingContext2D) {
     const that = this;
     const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
+    const YTop = (this._this.height - this.scrollBarWidth) / this._this.scale;
+    const XLeft = (this._this.width - this.scrollBarWidth) / this._this.scale;
+    // 画X轴滚动条
     if (this._this.width < this._this.contentWidth) {
       this.scrollBarXW = Math.max(this._this.width * this._this.width / this._this.contentWidth, 20)
       const percentX = this._this.scrollLeft / maxWidth;
@@ -100,14 +103,14 @@ export default class ScrollPlugin implements PluginType {
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#e6e6e6';
       ctx.beginPath();
-      ctx.moveTo(0, this._this.height - this.scrollBarWidth);
-      ctx.lineTo(this._this.width, this._this.height - this.scrollBarWidth);
+      ctx.moveTo(0, YTop);
+      ctx.lineTo(this._this.width, YTop);
       ctx.stroke();
-      ctx.fillRect(0, this._this.height - this.scrollBarWidth, this._this.width, this.scrollBarWidth);
+      ctx.fillRect(0, YTop, this._this.width, this.scrollBarWidth);
       ctx.fillStyle = '#dadada';
 
 
-      this.Xxywh = [(this._this.width - this.scrollBarXW - (this._this.height < this._this.contentHeight ? this.scrollBarWidth : 0)) * percentX, this._this.height - this.scrollBarWidth, this.scrollBarXW, this.scrollBarWidth]
+      this.Xxywh = [(this._this.width - this.scrollBarXW - (this._this.height < this._this.contentHeight ? this.scrollBarWidth : 0)) * percentX, YTop, this.scrollBarXW, this.scrollBarWidth]
       this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
         id: 'Xxywh',
         scope: this.Xxywh,
@@ -123,6 +126,8 @@ export default class ScrollPlugin implements PluginType {
 
       ctx.fillRect(...this.Xxywh);
     }
+
+    // 画Y轴滚动条
     if (this._this.height < this._this.contentHeight) {
       this.scrollBarYW = Math.max(this._this.height * this._this.height / this._this.contentHeight, 20)
       const percentY = this._this.scrollTop / maxHeight;
@@ -130,14 +135,14 @@ export default class ScrollPlugin implements PluginType {
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#e6e6e6';
       ctx.beginPath();
-      ctx.moveTo(this._this.width - this.scrollBarWidth, 0);
-      ctx.lineTo(this._this.width - this.scrollBarWidth, this._this.height - this.scrollBarWidth);
+      ctx.moveTo(XLeft, 0);
+      ctx.lineTo(XLeft, YTop);
       ctx.stroke();
-      ctx.fillRect(this._this.width - this.scrollBarWidth, 0, this.scrollBarWidth, this._this.height);
+      ctx.fillRect(XLeft, 0, this.scrollBarWidth, this._this.height);
       ctx.fillStyle = '#dadada';
 
 
-      this.Yxywh = [this._this.width - this.scrollBarWidth, (this._this.height - this.scrollBarYW) * percentY, this.scrollBarWidth, this.scrollBarYW]
+      this.Yxywh = [XLeft, (this._this.height - this.scrollBarYW) * percentY, this.scrollBarWidth, this.scrollBarYW]
       this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
         id: 'Yxywh',
         scope: this.Yxywh,
@@ -200,14 +205,14 @@ export default class ScrollPlugin implements PluginType {
     const keyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Shift': isShift = true; break;
-        // case 'Control': isControl = true; break;
+        case 'Control': isControl = true; break;
         default: break;
       }
     }
     const keyUp = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Shift': isShift = false; break;
-        // case 'Control': isControl = false; break;
+        case 'Control': isControl = false; break;
         default: break;
       }
     }

@@ -1,6 +1,6 @@
 import { excelConfig, CellTypeEnum, cell, cellStyle } from "../interfaces";
-const BASE_HEIGHT = 20;
-const BASE_WIDTH = 80;
+const BASE_WIDTH = 30;
+const BASE_HEIGHT = 15;
 const createDefaultStyle = () => {
   return {
     align: 'center',

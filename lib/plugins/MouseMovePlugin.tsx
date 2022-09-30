@@ -1,4 +1,4 @@
-// @ts-noc heck
+// @ts-nocheck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import { PluginType } from ".";
