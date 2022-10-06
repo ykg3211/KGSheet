@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-n ocheck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import Base from "../core/base/base";
@@ -67,27 +67,7 @@ export default class ScrollPlugin {
       innerFunc: this.scrollMouseDownCB.bind(this)
     })
 
-
-    // 处理鼠标悬浮改变样式的。
-    const handleOverCursor = (e: MouseEvent) => {
-      if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
-        if (judgeOver([e._mouseX, e._mouseY], this.Xxywh)) {
-          document.body.style.cursor = 'grab';
-          this.XIsHover = true;
-        } else {
-          this.XIsHover = false;
-        }
-        if (judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
-          document.body.style.cursor = 'grab';
-          this.YIsHover = true;
-        } else {
-          this.YIsHover = false;
-        }
-      }
-    }
-
     this.scrollMouseMoveCB = (e: MouseEvent) => {
-      handleOverCursor(e);
       if (XMouseDownOriginX !== null) {
         const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
         this.scrollXY(gap / this._this.width * this._this.contentWidth, 0);
@@ -102,7 +82,36 @@ export default class ScrollPlugin {
 
     this._this.setEvent(EventConstant.MOUSE_MOVE)({
       type: EventZIndex.SCROLL_BAR,
+      judgeFunc: () => {
+        return XMouseDownOriginX !== null || YMouseDownOriginY !== null
+      },
       innerFunc: this.scrollMouseMoveCB.bind(this),
+    })
+
+
+    // 处理鼠标悬浮改变样式的。
+    const handleOverCursor = (e: MouseEvent) => {
+      if (judgeOver([e._mouseX, e._mouseY], this.Xxywh)) {
+        document.body.style.cursor = 'grab';
+        this.XIsHover = true;
+      } else {
+        this.XIsHover = false;
+      }
+      if (judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
+        document.body.style.cursor = 'grab';
+        this.YIsHover = true;
+      } else {
+        this.YIsHover = false;
+      }
+    }
+
+    this._this.setEvent(EventConstant.MOUSE_MOVE)({
+      type: EventZIndex.SCROLL_BAR,
+      judgeFunc: (e) => {
+        console.log(1)
+        return !isNN(e._mouseY) && !isNN(e._mouseX);
+      },
+      innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
         document.body.style.cursor = 'default';
       }
@@ -114,6 +123,7 @@ export default class ScrollPlugin {
     }
     this._this.setEvent(EventConstant.MOUSE_UP)({
       type: EventZIndex.SCROLL_BAR,
+      judgeFunc: () => true,
       innerFunc: this.scrollMouseUpCB.bind(this)
     })
   }

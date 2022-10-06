@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-no check
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import Base from "../core/base/base";
@@ -7,6 +7,7 @@ import { EventConstant } from "./event";
 
 export interface EventStackType {
   type: EventZIndex;
+  judgeFunc: (e: MouseEvent) => boolean;
   innerFunc: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
   outerFunc?: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
 }
@@ -20,7 +21,13 @@ export type dispatchEventType = (type: EventConstant) => ((e: MouseEvent) => voi
 export default class EventStack {
   private _this: Base;
   private eventStack: Partial<Record<EventConstant, EventStackType[]>>;
+  // eventStack: {
+  //   mouse_move: [
+  //     {
 
+  //     }
+  //   ]
+  // }
   constructor(_this: Base) {
     this._this = _this;
     this.eventStack = {};
@@ -61,14 +68,17 @@ export default class EventStack {
 
   protected dispatchEvent(type: EventConstant) {
     return (e: MouseEvent) => {
-      const stashFunc: ((e: MouseEvent) => void)[] = [];
-      const stashOuterFunc: ((e: MouseEvent) => void)[] = [];
+      const innerFuncArr: ((e: MouseEvent) => void)[] = [];
+      const outerFuncArr: ((e: MouseEvent) => void)[] = [];
       this.eventStack[type]?.forEach(event => {
-        event.outerFunc && stashOuterFunc.push(event.outerFunc);
-        stashFunc.push(event.innerFunc);
+        if (event.judgeFunc?.()) {
+          innerFuncArr.push(event.innerFunc);
+        } else {
+          event.outerFunc && outerFuncArr.push(event.outerFunc);
+        }
       })
-      stashOuterFunc.flat().forEach(fn => fn(e))
-      stashFunc.flat().forEach(fn => fn(e))
+      outerFuncArr.flat().forEach(fn => fn(e))
+      innerFuncArr.flat().forEach(fn => fn(e))
     }
   }
 }
