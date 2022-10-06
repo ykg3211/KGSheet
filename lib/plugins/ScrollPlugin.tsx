@@ -1,16 +1,15 @@
 // @ts-nocheck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginType } from ".";
-import BaseMap from "../core/base/baseMap";
-import { renderZIndex } from "../core/base/constant";
+import Base from "../core/base/base";
+import { EventZIndex, RenderZIndex } from "../core/base/constant";
 import { EventConstant } from "./event";
-import judgeHover from "../utils/judgeHover";
-import { eventStackType } from "./EventStack";
+import { isNN } from "../utils";
+import judgeOver from "../utils/judgeHover";
 
-export default class ScrollPlugin implements PluginType {
-  private _this: BaseMap;
-  private scrollBarWidth: number;
+export default class ScrollPlugin {
+  private _this: Base;
+  private _scrollBarWidth: number;
   private scrollBarXW: number;
   private scrollBarYW: number;
   private Xxywh: [number, number, number, number]; // X轴滚动块的坐标
@@ -20,21 +19,17 @@ export default class ScrollPlugin implements PluginType {
   private scrollMouseMoveCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
   private scrollMouseUpCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
   // 用来计算拖拽滚动条的距离的参数
-  private XMouseDownOriginX: number | null;
   private XIsHover: boolean;
-  private YMouseDownOriginY: number | null;
   private YIsHover: boolean;
 
-  constructor(_this: BaseMap) {
+  constructor(_this: Base) {
     this._this = _this;
-    this.scrollBarWidth = 10;
+    this._scrollBarWidth = 10;
 
     this.scrollMouseDownCB = null;
     this.scrollMouseMoveCB = null;
     this.scrollMouseUpCB = null;
-    this.XMouseDownOriginX = null;
     this.XIsHover = false;
-    this.YMouseDownOriginY = null;
     this.YIsHover = false;
     this.initDragScroll();
 
@@ -44,57 +39,89 @@ export default class ScrollPlugin implements PluginType {
     this.scrollBarYW = this._this.height;
     this.handleScroll();
 
-    this._this.addRenderFunction(renderZIndex.SCROLL_BAR, [this.handleScrollBar.bind(this)])
+    this._this.addRenderFunction(RenderZIndex.SCROLL_BAR, [this.handleScrollBar.bind(this)])
   }
 
-  private remove() {
-    document.body.removeEventListener('mousedown', this.scrollMouseDownCB);
-    document.body.removeEventListener('mousemove', this.scrollMouseMoveCB);
-    document.body.removeEventListener('mouseup', this.scrollMouseUpCB);
+  private get scrollBarWidth() {
+    return this._scrollBarWidth / this._this._scale;
   }
+  private set scrollBarWidth(v: number) {
+    this._scrollBarWidth = v;
+  }
+
 
   // 初始化拖拽滚动条的逻辑；
   private initDragScroll() {
-    this.scrollMouseDownCB = () => {
+    let XMouseDownOriginX = null;
+    let YMouseDownOriginY = null;
+    this.scrollMouseDownCB = (e: MouseEvent) => {
       if (this.XIsHover) {
-        this.XMouseDownOriginX = this._this.mouseX;
+        XMouseDownOriginX = e.pageX;
       }
       if (this.YIsHover) {
-        this.YMouseDownOriginY = this._this.mouseY;
+        YMouseDownOriginY = e.pageY;
       }
     }
-    this._this.on(EventConstant.MOUSE_DOWN, this.scrollMouseDownCB);
+    this._this.setEvent(EventConstant.MOUSE_DOWN)({
+      type: EventZIndex.SCROLL_BAR,
+      innerFunc: this.scrollMouseDownCB.bind(this)
+    })
 
-    this.scrollMouseMoveCB = () => {
-      if (this.XMouseDownOriginX !== null) {
-        const gap = this._this.mouseX - this.XMouseDownOriginX;
-        this.scrollXY(gap / this._this.width * this._this.contentWidth, 0);
-        this.XMouseDownOriginX = this._this.mouseX;
-      }
-      if (this.YMouseDownOriginY !== null) {
-        const gap = this._this.mouseY - this.YMouseDownOriginY;
-        this.scrollXY(0, gap / this._this.height * this._this.contentHeight);
-        this.YMouseDownOriginY = this._this.mouseY;
+
+    // 处理鼠标悬浮改变样式的。
+    const handleOverCursor = (e: MouseEvent) => {
+      if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
+        if (judgeOver([e._mouseX, e._mouseY], this.Xxywh)) {
+          document.body.style.cursor = 'grab';
+          this.XIsHover = true;
+        } else {
+          this.XIsHover = false;
+        }
+        if (judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
+          document.body.style.cursor = 'grab';
+          this.YIsHover = true;
+        } else {
+          this.YIsHover = false;
+        }
       }
     }
-    this._this.on(EventConstant.MOUSE_MOVE, this.scrollMouseMoveCB);
+
+    this.scrollMouseMoveCB = (e: MouseEvent) => {
+      handleOverCursor(e);
+      if (XMouseDownOriginX !== null) {
+        const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
+        this.scrollXY(gap / this._this.width * this._this.contentWidth, 0);
+        XMouseDownOriginX = e.pageX;
+      }
+      if (YMouseDownOriginY !== null) {
+        const gap = (e.pageY - YMouseDownOriginY) / this._this.scale;
+        this.scrollXY(0, gap / this._this.height * this._this.contentHeight);
+        YMouseDownOriginY = e.pageY;
+      }
+    }
+
+    this._this.setEvent(EventConstant.MOUSE_MOVE)({
+      type: EventZIndex.SCROLL_BAR,
+      innerFunc: this.scrollMouseMoveCB.bind(this),
+      outerFunc: () => {
+        document.body.style.cursor = 'default';
+      }
+    })
 
     this.scrollMouseUpCB = () => {
-      if (this.XMouseDownOriginX !== null) {
-        this.XMouseDownOriginX = null;
-      }
-      if (this.YMouseDownOriginY !== null) {
-        this.YMouseDownOriginY = null;
-      }
+      XMouseDownOriginX = null;
+      YMouseDownOriginY = null;
     }
-    this._this.on(EventConstant.MOUSE_UP, this.scrollMouseUpCB);
+    this._this.setEvent(EventConstant.MOUSE_UP)({
+      type: EventZIndex.SCROLL_BAR,
+      innerFunc: this.scrollMouseUpCB.bind(this)
+    })
   }
 
   private handleScrollBar(ctx: CanvasRenderingContext2D) {
-    const that = this;
     const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
-    const YTop = (this._this.height - this.scrollBarWidth) / this._this.scale;
-    const XLeft = (this._this.width - this.scrollBarWidth) / this._this.scale;
+    const YTop = this._this.height - this.scrollBarWidth;
+    const XLeft = this._this.width - this.scrollBarWidth;
     // 画X轴滚动条
     if (this._this.width < this._this.contentWidth) {
       this.scrollBarXW = Math.max(this._this.width * this._this.width / this._this.contentWidth, 20)
@@ -111,18 +138,6 @@ export default class ScrollPlugin implements PluginType {
 
 
       this.Xxywh = [(this._this.width - this.scrollBarXW - (this._this.height < this._this.contentHeight ? this.scrollBarWidth : 0)) * percentX, YTop, this.scrollBarXW, this.scrollBarWidth]
-      this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
-        id: 'Xxywh',
-        scope: this.Xxywh,
-        innerFunc: () => {
-          document.body.style.cursor = 'grab';
-          that.XIsHover = true;
-        },
-        outerFunc() {
-          document.body.style.cursor = 'default';
-          that.XIsHover = false;
-        },
-      } as eventStackType)
 
       ctx.fillRect(...this.Xxywh);
     }
@@ -143,18 +158,6 @@ export default class ScrollPlugin implements PluginType {
 
 
       this.Yxywh = [XLeft, (this._this.height - this.scrollBarYW) * percentY, this.scrollBarWidth, this.scrollBarYW]
-      this._this.emit(EventConstant.MOUSE_HOVER_EVENT, {
-        id: 'Yxywh',
-        scope: this.Yxywh,
-        innerFunc: () => {
-          document.body.style.cursor = 'grab';
-          that.YIsHover = true;
-        },
-        outerFunc() {
-          document.body.style.cursor = 'default';
-          that.YIsHover = false;
-        },
-      } as eventStackType)
 
       ctx.fillRect(...this.Yxywh);
     }
@@ -172,8 +175,8 @@ export default class ScrollPlugin implements PluginType {
 
       if (isControl) {
         const initScale = this._this.scale;
-        const originAbsoluteX = this._this.scrollTop + this._this.mouseY;
-        const originAbsoluteY = this._this.scrollLeft + this._this.mouseX;
+        const originAbsoluteX = this._this.scrollTop + e.pageY;
+        const originAbsoluteY = this._this.scrollLeft + e.pageX;
         const temp = this._this.scale + (deltaY / 1000);
         this._this.scale = temp < 1 ? 1 : (temp > this._this.maxScale ? this._this.maxScale : temp);
 

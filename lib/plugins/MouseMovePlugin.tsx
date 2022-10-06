@@ -1,25 +1,22 @@
 // @ts-nocheck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginType } from ".";
-import BaseMap from "../core/base/baseMap";
+import Base from "../core/base/base";
 import { EventConstant } from "./event";
-import EventStack, { eventStackType } from "./EventStack";
 
-export default class MouseMovePlugin extends EventStack {
-  private _this: BaseMap;
+export enum MouseEventEnum {
+
+}
+export default class MouseMovePlugin {
+  private _this: Base;
   private _mouseX: number;
   private _mouseY: number;
 
-  constructor(_this: BaseMap) {
-    super();
+  constructor(_this: Base) {
     this._this = _this;
     this._mouseX = 0;
     this._mouseY = 0;
     this.handleMouseMove();
-    this._this.on(EventConstant.MOUSE_HOVER_EVENT, (data: eventStackType) => {
-      this.addEvent(data);
-    })
   }
 
   protected get mouseX() {
@@ -39,12 +36,16 @@ export default class MouseMovePlugin extends EventStack {
 
   private handleMouseMove() {
     const handler = (e: MouseEvent) => {
-      this.mouseY = e.offsetY;
-      this.mouseX = e.offsetX;
+      const result = this._this.transformXYInContainer(e);
+      if (result) {
+        this.mouseX = result[0];
+        this.mouseY = result[1];
+        e._mouseX = this.mouseX;
+        e._mouseY = this.mouseY;
+      }
 
-      this.dispatchEvent([e.offsetX, e.offsetY]);
-
-      this._this.emit(EventConstant.MOUSE_MOVE, [e.offsetX, e.offsetY]);
+      this._this.emit(EventConstant.MOUSE_MOVE, e);
+      this._this.dispatchEvent(EventConstant.MOUSE_MOVE)(e);
     }
     document.body.addEventListener('mousemove', handler);
 

@@ -1,18 +1,13 @@
 // @ts-noc heck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginType } from ".";
-import BaseMap from "../core/base/baseMap";
+import Base from "../core/base/base";
 import { EventConstant } from "./event";
-import EventStack, { eventStackType } from "./EventStack";
 
-export default class ClickPlugin extends EventStack {
-  private _this: BaseMap;
-  private _mouseX: number;
-  private _mouseY: number;
+export default class ClickPlugin {
+  private _this: Base;
 
-  constructor(_this: BaseMap) {
-    super();
+  constructor(_this: Base) {
     this._this = _this;
     this.handleMouseClick();
     this.handleMouseDown();
@@ -21,7 +16,8 @@ export default class ClickPlugin extends EventStack {
 
   private handleMouseDown() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_DOWN, [e.offsetX, e.offsetY])
+      this._this.emit(EventConstant.MOUSE_DOWN, e)
+      this._this.dispatchEvent(EventConstant.MOUSE_DOWN)(e);
     }
     document.body.addEventListener('mousedown', handler);
 
@@ -31,7 +27,8 @@ export default class ClickPlugin extends EventStack {
   }
   private handleMouseUp() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_UP, [e.offsetX, e.offsetY])
+      this._this.emit(EventConstant.MOUSE_UP, e)
+      this._this.dispatchEvent(EventConstant.MOUSE_UP)(e);
     }
     document.body.addEventListener('mouseup', handler);
 
@@ -41,7 +38,7 @@ export default class ClickPlugin extends EventStack {
   }
   private handleMouseClick() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.CLICK, [e.offsetX, e.offsetY])
+      this._this.emit(EventConstant.CLICK, e)
     }
     document.body.addEventListener('click', handler);
 

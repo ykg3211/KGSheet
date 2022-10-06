@@ -1,6 +1,7 @@
-import { cell, CellTypeEnum, renderCellProps } from '../../interfaces';
+import { CellTypeEnum, renderCellProps } from '../../interfaces';
 import BaseEvent from '../../plugins/event';
 import { scope } from '../../plugins/EventStack';
+import { isNN } from '../../utils';
 
 function clipCell(ctx: CanvasRenderingContext2D, position: scope, renderFunc: () => void) {
   ctx.save();
@@ -34,10 +35,9 @@ export default class DrawLayer extends BaseEvent {
         h
       } = data;
 
-      ctx.strokeStyle = '#b5b5b5'
-      ctx.lineWidth = 1;
+      this.initStrokeStyle(ctx);
       ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF';
-      if (ctx.fillStyle !== '#FFFFFF') {
+      if (!isNN(cell.style.backgroundColor)) {
         ctx.fillRect(point[0], point[1], w, h);
       }
 
@@ -48,7 +48,6 @@ export default class DrawLayer extends BaseEvent {
       ctx.font = `${size}px ${cell.style.font || 'Arial'}`;
       ctx.fillStyle = cell.style.fontColor || '#000000';
       ctx.textAlign = 'left';
-      cell.style.fontSize
       let left = point[0];
       if (cell.style.align) {
         switch (cell.style.align) {
@@ -77,23 +76,37 @@ export default class DrawLayer extends BaseEvent {
     }
   }
 
+  private initStrokeStyle(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = '#b5b5b5'
+    ctx.lineWidth = 1;
+  }
+
+  private drawBorder(props: renderCellProps) {
+    if (!this.ctx) {
+      return;
+    }
+    this.initStrokeStyle(this.ctx);
+    this.ctx.strokeRect(props.point[0], props.point[1], props.w, props.h);
+  }
+
   protected drawLine(point_1: [number, number], point_2: [number, number]) {
     if (!this.ctx) {
       return;
     }
     this.ctx.beginPath();
-    this.ctx.strokeStyle = '#b5b5b5'
-    this.ctx.lineWidth = 1;
+    this.initStrokeStyle(this.ctx);
     this.ctx.moveTo(...point_1);
     this.ctx.lineTo(...point_2);
     this.ctx.stroke();
   }
 
-  protected drawCell(props: renderCellProps) {
+  protected drawCell(props: renderCellProps, needBorder = false) {
     if (!this.ctx) {
       return;
     }
     const renderFunc = this.components[props.cell.type];
     renderFunc && renderFunc(this.ctx, props);
+
+    needBorder && this.drawBorder(props);
   }
 }

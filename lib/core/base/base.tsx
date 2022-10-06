@@ -1,9 +1,13 @@
 import { EventConstant } from "../../plugins/event";
 import Render from "./render";
 import Plugins from "../../plugins";
+import { dispatchEventType, setEventType } from "../../plugins/EventStack";
 
-class BaseMap extends Render {
+class Base extends Render {
   protected pluginsInstance: Plugins;
+  public setEvent: setEventType;
+  public dispatchEvent: dispatchEventType;
+
   constructor(dom: HTMLElement) {
     super();
 
@@ -18,6 +22,11 @@ class BaseMap extends Render {
     dom.appendChild(this.canvasDom);
   }
 
+
+
+  /**
+   * 初始化resize
+   */
   private initResize(dom: HTMLElement) {
     const func = () => {
       this.handleDPR(dom);
@@ -29,6 +38,10 @@ class BaseMap extends Render {
     });
   }
 
+
+  /**
+   * 处理高分屏的比例
+   */
   private handleDPR(dom: HTMLElement) {
     if (!this.canvasDom || !this.ctx) {
       return;
@@ -93,6 +106,22 @@ class BaseMap extends Render {
       document.body.removeEventListener('keyup', keyUp);
     });
   }
+
+  /**
+   * transformInContainer
+   * 将screen的xy坐标转化成在容器中的坐标
+   */
+  public transformXYInContainer(e: MouseEvent) {
+    if (!this.canvasDom) {
+      return false;
+    }
+    const result = [e.pageX - this.canvasDom.offsetLeft, e.pageY - this.canvasDom.offsetTop];
+    if (result[0] > 0 && result[1] > 0 && result[0] < this._width && result[1] < this._height) {
+      return result.map(item => item / this._scale);
+    }
+
+    return false;
+  }
 }
 
-export default BaseMap
+export default Base

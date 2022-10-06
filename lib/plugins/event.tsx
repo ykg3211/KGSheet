@@ -1,6 +1,7 @@
 export enum EventConstant {
   DESTROY = 'destroy',
   CLICK = 'click',
+  SCALE_CHANGE = 'scale_change',
   MOUSE_DOWN = 'mouse_down',
   MOUSE_UP = 'mouse_up',
   MOUSE_MOVE = 'mouse_move',

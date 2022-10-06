@@ -14,22 +14,29 @@ export interface cellStyle {
   font?: string;
 }
 export interface cell {
-  style: cellStyle,
+  style: cellStyle;
   content: string;
-  type: CellTypeEnum
+  type: CellTypeEnum;
+  isSpan?: boolean;
 }
 export interface rows {
-  cells: cell[]
+  cells: cell[];
 }
+
+export interface spanCell extends cell {
+  span: [number, number]
+}
+
 export interface excelConfig {
   w: number[];
   h: number[];
   cells: rows[];
+  spanCells?: Record<string, spanCell>
 }
 
 export interface renderCellProps {
-  point: number[],
-  cell: cell,
-  w: number,
-  h: number
+  point: number[];
+  cell: cell;
+  w: number;
+  h: number;
 }

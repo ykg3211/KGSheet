@@ -1,15 +1,22 @@
 import { EventConstant } from "../plugins/event";
-import BaseMap from "./base/baseMap";
+import Base from "./base/base";
 import createDefaultData from "../utils/defaultData";
+import { excelConfig } from "../interfaces";
 
-class Excel extends BaseMap {
+class Excel extends Base {
   constructor(dom: any) {
     super(dom);
-    this.initDefault();
   }
 
-  protected initDefault() {
-    this.data = createDefaultData(200, 1000);
+  public getData() {
+
+  }
+
+  public setData(data: excelConfig) {
+    if (data) {
+      console.log(data);
+      this.data = data;
+    }
   }
 
   public destroy() {
