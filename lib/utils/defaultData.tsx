@@ -1,6 +1,6 @@
 import { excelConfig, CellTypeEnum, cell, cellStyle } from "../interfaces";
 const BASE_WIDTH = 120;
-const BASE_HEIGHT = 10;
+const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
 const createDefaultStyle = () => {
   const result: cellStyle = {

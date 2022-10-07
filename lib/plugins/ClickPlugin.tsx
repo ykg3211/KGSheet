@@ -39,6 +39,7 @@ export default class ClickPlugin {
   private handleMouseClick() {
     const handler = (e: MouseEvent) => {
       this._this.emit(EventConstant.CLICK, e)
+      this._this.dispatchEvent(EventConstant.CLICK)(e);
     }
     document.body.addEventListener('click', handler);
 

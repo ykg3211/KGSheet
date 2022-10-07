@@ -5,11 +5,18 @@ import Base from "../core/base/base";
 import { EventZIndex } from "../core/base/constant";
 import { EventConstant } from "./event";
 
+// preData 是为了服用judge得到的值
+type preData = any;
 export interface EventStackType {
   type: EventZIndex;
-  judgeFunc: (e: MouseEvent) => boolean;
-  innerFunc: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
-  outerFunc?: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
+  /**
+   * 一个用来判断是进入innerFunc的判断方法，
+   * 返回 false代表是outer，
+   * 返回true或者任何值，代表inner，并且把该值重新当成inner的入参
+   */
+  judgeFunc: (e: MouseEvent) => boolean | preData;
+  innerFunc: (e: MouseEvent, preData?: preData) => void | Array<(e: MouseEvent) => void>;
+  outerFunc?: (e: MouseEvent, preData?: preData) => void | Array<(e: MouseEvent) => void>;
 }
 export enum EventType {
 
@@ -20,12 +27,18 @@ export type dispatchEventType = (type: EventConstant) => ((e: MouseEvent) => voi
 
 export default class EventStack {
   private _this: Base;
-  private eventStack: Partial<Record<EventConstant, EventStackType[]>>;
+  private eventStack: Partial<Record<EventConstant, Array<EventStackType[]>>>;
+  // 结构
   // eventStack: {
   //   mouse_move: [
-  //     {
-
-  //     }
+  //     [
+  //       {
+  //         type: EventZIndex;
+  //         judgeFunc: (e: MouseEvent) => boolean;
+  //         innerFunc: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
+  //         outerFunc?: (e: MouseEvent) => void | Array<(e: MouseEvent) => void>;
+  //       }
+  //     ]
   //   ]
   // }
   constructor(_this: Base) {
@@ -43,25 +56,9 @@ export default class EventStack {
     return (props: EventStackType) => {
       const pointer = this.eventStack[type][props.type];
       if (pointer) {
-        if (pointer.innerFunc instanceof Array) {
-          pointer.innerFunc = [...pointer.innerFunc, props.innerFunc];
-        } else {
-          pointer.innerFunc = [pointer.innerFunc, props.innerFunc];
-        }
-        if (!props.outerFunc) {
-          return;
-        }
-        if (pointer.outerFunc) {
-          if (pointer.outerFunc instanceof Array) {
-            pointer.outerFunc = [...pointer.outerFunc, props.outerFunc];
-          } else {
-            pointer.outerFunc = [pointer.outerFunc, props.outerFunc];
-          }
-        } else {
-          pointer.outerFunc = props.outerFunc;
-        }
+        pointer.push(props);
       } else {
-        this.eventStack[type][props.type] = props;
+        this.eventStack[type][props.type] = [props];
       }
     }
   }
@@ -70,12 +67,25 @@ export default class EventStack {
     return (e: MouseEvent) => {
       const innerFuncArr: ((e: MouseEvent) => void)[] = [];
       const outerFuncArr: ((e: MouseEvent) => void)[] = [];
-      this.eventStack[type]?.forEach(event => {
-        if (event.judgeFunc?.()) {
-          innerFuncArr.push(event.innerFunc);
-        } else {
-          event.outerFunc && outerFuncArr.push(event.outerFunc);
+      let isFirst = true;
+      this.eventStack[type]?.forEach(events => {
+        if (!isFirst) {
+          return;
         }
+        events.forEach(eventStack => {
+          if (eventStack.judgeFunc) {
+            const preData = eventStack.judgeFunc(e);
+            if (preData !== false) {
+              isFirst = false;
+              innerFuncArr.push((e: MouseEvent) => {
+                eventStack.innerFunc(e, preData);
+              });
+            } else {
+              eventStack.outerFunc && outerFuncArr.push(eventStack.outerFunc);
+            }
+          }
+          return false;
+        })
       })
       outerFuncArr.flat().forEach(fn => fn(e))
       innerFuncArr.flat().forEach(fn => fn(e))

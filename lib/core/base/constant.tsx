@@ -7,9 +7,9 @@ export enum RenderZIndex {
   SCROLL_BAR, // 滚动条
 }
 
-// 事件的识别顺序
+// 事件的识别顺序, 越上面越大
 export enum EventZIndex {
-  TABLE_CELLS, // 单元格
-  SIDE_BAR, // 左上边框
   SCROLL_BAR, // 滚动条
+  SIDE_BAR, // 左上边框
+  TABLE_CELLS, // 单元格
 }

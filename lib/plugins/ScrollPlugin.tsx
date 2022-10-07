@@ -15,9 +15,6 @@ export default class ScrollPlugin {
   private Xxywh: [number, number, number, number]; // X轴滚动块的坐标
   private Yxywh: [number, number, number, number]; // Y轴滚动块的坐标
 
-  private scrollMouseDownCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
-  private scrollMouseMoveCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
-  private scrollMouseUpCB: any; // 重新定义是为了以后remove的时候清除，防止内存泄漏
   // 用来计算拖拽滚动条的距离的参数
   private XIsHover: boolean;
   private YIsHover: boolean;
@@ -26,9 +23,6 @@ export default class ScrollPlugin {
     this._this = _this;
     this._scrollBarWidth = 10;
 
-    this.scrollMouseDownCB = null;
-    this.scrollMouseMoveCB = null;
-    this.scrollMouseUpCB = null;
     this.XIsHover = false;
     this.YIsHover = false;
     this.initDragScroll();
@@ -52,22 +46,40 @@ export default class ScrollPlugin {
 
   // 初始化拖拽滚动条的逻辑；
   private initDragScroll() {
-    let XMouseDownOriginX = null;
-    let YMouseDownOriginY = null;
-    this.scrollMouseDownCB = (e: MouseEvent) => {
-      if (this.XIsHover) {
+    let XMouseDownOriginX: number | null = null;
+    let YMouseDownOriginY: number | null = null;
+    const scrollMouseDownCB = (e: MouseEvent, {
+      isX,
+      isY
+    }) => {
+      if (isX) {
         XMouseDownOriginX = e.pageX;
       }
-      if (this.YIsHover) {
+      if (isY) {
         YMouseDownOriginY = e.pageY;
       }
     }
     this._this.setEvent(EventConstant.MOUSE_DOWN)({
       type: EventZIndex.SCROLL_BAR,
-      innerFunc: this.scrollMouseDownCB.bind(this)
+      judgeFunc: (e) => {
+        const point = this._this.transformXYInContainer(e);
+        if (!point) {
+          return false;
+        }
+        const isX = judgeOver([point[0], point[1]], this.Xxywh);
+        const isY = judgeOver([point[0], point[1]], this.Yxywh);
+        if (isX || isY) {
+          return {
+            isX,
+            isY
+          };
+        }
+        return false;
+      },
+      innerFunc: scrollMouseDownCB.bind(this)
     })
 
-    this.scrollMouseMoveCB = (e: MouseEvent) => {
+    const scrollMouseMoveCB = (e: MouseEvent) => {
       if (XMouseDownOriginX !== null) {
         const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
         this.scrollXY(gap / this._this.width * this._this.contentWidth, 0);
@@ -85,7 +97,7 @@ export default class ScrollPlugin {
       judgeFunc: () => {
         return XMouseDownOriginX !== null || YMouseDownOriginY !== null
       },
-      innerFunc: this.scrollMouseMoveCB.bind(this),
+      innerFunc: scrollMouseMoveCB.bind(this),
     })
 
 
@@ -93,23 +105,24 @@ export default class ScrollPlugin {
     const handleOverCursor = (e: MouseEvent) => {
       if (judgeOver([e._mouseX, e._mouseY], this.Xxywh)) {
         document.body.style.cursor = 'grab';
-        this.XIsHover = true;
-      } else {
-        this.XIsHover = false;
       }
       if (judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
         document.body.style.cursor = 'grab';
-        this.YIsHover = true;
-      } else {
-        this.YIsHover = false;
       }
     }
 
     this._this.setEvent(EventConstant.MOUSE_MOVE)({
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
-        console.log(1)
-        return !isNN(e._mouseY) && !isNN(e._mouseX);
+        if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
+          if (judgeOver([e._mouseX, e._mouseY], this.Xxywh) || judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
+            return true;
+          } else {
+            return false
+          }
+        } else {
+          return false;
+        }
       },
       innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
@@ -117,14 +130,14 @@ export default class ScrollPlugin {
       }
     })
 
-    this.scrollMouseUpCB = () => {
+    const scrollMouseUpCB = () => {
       XMouseDownOriginX = null;
       YMouseDownOriginY = null;
     }
     this._this.setEvent(EventConstant.MOUSE_UP)({
       type: EventZIndex.SCROLL_BAR,
-      judgeFunc: () => true,
-      innerFunc: this.scrollMouseUpCB.bind(this)
+      judgeFunc: () => XMouseDownOriginX !== null || YMouseDownOriginY !== null,
+      innerFunc: scrollMouseUpCB.bind(this)
     })
   }
 
