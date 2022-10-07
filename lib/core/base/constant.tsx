@@ -3,6 +3,7 @@ export enum RenderZIndex {
   TABLE_CELLS, // 单元格
   TABLE_LINE, // 表格线
   TABLE_SPAN_CELLS, // 跨行单元格
+  SELECT_CELLS, // 选中的单元格
   SIDE_BAR, // 表格X轴Y轴
   SCROLL_BAR, // 滚动条
 }

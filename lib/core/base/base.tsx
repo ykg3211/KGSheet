@@ -1,11 +1,12 @@
 import { EventConstant } from "../../plugins/event";
 import Render from "./render";
 import Plugins from "../../plugins";
-import { dispatchEventType, setEventType } from "../../plugins/EventStack";
+import { dispatchEventType, setEventType, clearEventType } from "../../plugins/EventStack";
 
 class Base extends Render {
   protected pluginsInstance: Plugins;
   public setEvent: setEventType;
+  public clearEvent: clearEventType;
   public dispatchEvent: dispatchEventType;
 
   constructor(dom: HTMLElement) {
@@ -20,9 +21,24 @@ class Base extends Render {
     this.pluginsInstance = new Plugins(this);
 
     dom.appendChild(this.canvasDom);
+
+    this.initDarkMode();
   }
 
+  /**
+   * deregistration
+   */
+  public deregistration() {
+    this.pluginsInstance.deregistration();
+  }
 
+  private initDarkMode() {
+    this.on(EventConstant.DARKMODE_CHANGE, () => {
+      if (this.canvasDom) {
+        this.canvasDom.style.backgroundColor = this.color('white')
+      }
+    })
+  }
 
   /**
    * 初始化resize
@@ -56,55 +72,6 @@ class Base extends Render {
 
     this.canvasDom.width = dpr * cssWidth;
     this.canvasDom.height = dpr * cssHeight;
-  }
-
-  private handleScroll() {
-    document.body.style.overscrollBehaviorX = 'none';
-    let isShift = false;
-
-    const handler = (e: WheelEvent) => {
-      const { deltaX, deltaY } = e;
-
-      if (this.scrollLeft + deltaX < 0 || this.contentWidth - this.width < 0) {
-        this.scrollLeft = 0;
-      } else {
-        if (this.scrollLeft + deltaX > (this.contentWidth - (this.width / this.scale) + this.paddingLeft * 2)) {
-          this.scrollLeft = (this.contentWidth - (this.width / this.scale) + this.paddingLeft * 2);
-        } else {
-          this.scrollLeft = this.scrollLeft + deltaX;
-        }
-      }
-      if (this.scrollTop + deltaY < 0 || this.contentHeight - this.height < 0) {
-        this.scrollTop = 0;
-      } else {
-        if (this.scrollTop + deltaY > (this.contentHeight - (this.height / this.scale) + this.paddingTop * 2)) {
-          this.scrollTop = (this.contentHeight - (this.height / this.scale) + this.paddingTop * 2);
-        } else {
-          this.scrollTop = this.scrollTop + deltaY;
-        }
-      }
-    }
-
-    this.canvasDom?.addEventListener('wheel', handler);
-
-    const keyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        isShift = true;
-      }
-    }
-    const keyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        isShift = false;
-      }
-    }
-    document.body.addEventListener('keydown', keyDown);
-    document.body.addEventListener('keyup', keyUp);
-
-    this.once(EventConstant.DESTROY, () => {
-      this.canvasDom?.removeEventListener('wheel', handler);
-      document.body.removeEventListener('keydown', keyDown);
-      document.body.removeEventListener('keyup', keyUp);
-    });
   }
 
   /**

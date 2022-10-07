@@ -1,9 +1,8 @@
-import { CellTypeEnum, renderCellProps } from '../../interfaces';
-import BaseEvent from '../../plugins/event';
-import { scope } from '../../plugins/EventStack';
+import { CellTypeEnum, renderBarProps, renderCellProps } from '../../interfaces';
+import BaseEvent, { EventConstant } from '../../plugins/event';
 import { isNN } from '../../utils';
 
-function clipCell(ctx: CanvasRenderingContext2D, position: scope, renderFunc: () => void) {
+function clipCell(ctx: CanvasRenderingContext2D, position: [number, number, number, number], renderFunc: () => void) {
   ctx.save();
   ctx.beginPath();
   ctx.rect(...position);
@@ -12,18 +11,59 @@ function clipCell(ctx: CanvasRenderingContext2D, position: scope, renderFunc: ()
   ctx.restore();
 }
 
+export interface colorType {
+  white: string;
+  black: string;
+  sideBar: string;
+  scrollBar: string;
+  babfc3: string;
+  line: string;
+}
+
+export const darkColorSum: colorType = {
+  white: '#0a0c0b',
+  black: '#FFFFFF',
+  sideBar: '#202121',
+  scrollBar: '#4f5150',
+  babfc3: '#3a3c3b',
+  line: '#313232',
+}
+
+export const lightColorSum: colorType = {
+  white: '#FFFFFF',
+  black: '#0a0c0b',
+  sideBar: '#f4f5f6',
+  scrollBar: '#dadada',
+  babfc3: '#babfc3',
+  line: '#dee0e2',
+}
+
 export default class DrawLayer extends BaseEvent {
   protected ctx: CanvasRenderingContext2D | null;
   protected canvasDom: HTMLCanvasElement | null;
   protected components: Partial<Record<keyof CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellProps) => void>>
-
+  public darkMode: boolean;
   constructor() {
     super();
 
     this.ctx = null;
     this.canvasDom = null;
     this.components = {};
+    this.darkMode = false;
     this.handleDefaultComponents();
+  }
+
+  public reverseDarkMode(v?: boolean) {
+    this.darkMode = v === undefined ? !this.darkMode : v;
+    this.emit(EventConstant.DARKMODE_CHANGE)
+    this.emit(EventConstant.RENDER);
+  }
+
+  public color(name: keyof colorType, needReverse: boolean = false) {
+    if (this.darkMode && !needReverse) {
+      return darkColorSum[name] || '';
+    }
+    return lightColorSum[name] || '';
   }
 
   protected handleDefaultComponents() {
@@ -36,7 +76,7 @@ export default class DrawLayer extends BaseEvent {
       } = data;
 
       this.initStrokeStyle(ctx);
-      ctx.fillStyle = cell.style.backgroundColor || '#FFFFFF';
+      ctx.fillStyle = cell.style.backgroundColor || this.color('white');
       if (!isNN(cell.style.backgroundColor)) {
         ctx.fillRect(point[0], point[1], w, h);
       }
@@ -46,7 +86,7 @@ export default class DrawLayer extends BaseEvent {
       }
       const size = cell.style.fontSize || 12;
       ctx.font = `${size}px ${cell.style.font || 'Arial'}`;
-      ctx.fillStyle = cell.style.fontColor || '#000000';
+      ctx.fillStyle = cell.style.fontColor || this.color('black');
       ctx.textAlign = 'left';
       let left = point[0];
       if (cell.style.align) {
@@ -77,11 +117,11 @@ export default class DrawLayer extends BaseEvent {
   }
 
   private initStrokeStyle(ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = '#b5b5b5'
+    ctx.strokeStyle = this.color('line')
     ctx.lineWidth = 1;
   }
 
-  private drawBorder(props: renderCellProps) {
+  private drawBorder(props: renderCellProps | renderBarProps) {
     if (!this.ctx) {
       return;
     }
@@ -100,7 +140,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx.stroke();
   }
 
-  protected drawCell(props: renderCellProps, needBorder = false) {
+  protected drawCell(props: renderCellProps | renderBarProps, needBorder = false) {
     if (!this.ctx) {
       return;
     }
@@ -108,5 +148,25 @@ export default class DrawLayer extends BaseEvent {
     renderFunc && renderFunc(this.ctx, props);
 
     needBorder && this.drawBorder(props);
+  }
+
+  protected drawLeftTopCell(props: renderCellProps | renderBarProps) {
+    if (!this.ctx) {
+      return;
+    }
+    const renderFunc = this.components[props.cell.type];
+    renderFunc && renderFunc(this.ctx, props);
+
+    // 绘制左上角的小三角
+    this.ctx.fillStyle = this.color('babfc3')
+    this.ctx.beginPath();
+    const initPoint = [props.point[0] + props.w - 2, props.point[1] + props.h - 2];
+    this.ctx.moveTo(initPoint[0], initPoint[1]);
+    this.ctx.lineTo(initPoint[0], initPoint[1] - 10)
+    this.ctx.lineTo(initPoint[0] - 10, initPoint[1])
+    this.ctx.moveTo(initPoint[0], initPoint[1]);
+    this.ctx.fill();
+
+    this.drawBorder(props);
   }
 }

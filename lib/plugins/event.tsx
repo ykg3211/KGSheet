@@ -1,4 +1,6 @@
 export enum EventConstant {
+  RENDER = 'render',
+  DARKMODE_CHANGE = 'dark_mode_change',
   DESTROY = 'destroy',
   CLICK = 'click',
   SCALE_CHANGE = 'scale_change',

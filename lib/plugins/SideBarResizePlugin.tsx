@@ -1,6 +1,7 @@
 // @ts-noc heck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
+import { PluginTypeEnum } from ".";
 import Base from "../core/base/base";
 import { EventZIndex } from "../core/base/constant";
 import { isNN } from "../utils";
@@ -10,13 +11,21 @@ import { EventConstant } from "./event";
 export default class SideBarResizePlugin {
   private _this: Base;
   private gap: number;
+  public name: string;
 
 
   constructor(_this: Base) {
+    this.name = PluginTypeEnum.SideBarResizePlugin;
     this._this = _this;
     this.gap = 5;
     this.handleMouseHover();
     this.handleMouseDrag();
+  }
+
+  protected remove() {
+    this._this.clearEvent(EventConstant.MOUSE_DOWN)(EventZIndex.SIDE_BAR);
+    this._this.clearEvent(EventConstant.MOUSE_MOVE)(EventZIndex.SIDE_BAR);
+    this._this.clearEvent(EventConstant.MOUSE_UP)(EventZIndex.SIDE_BAR);
   }
 
   private handleMouseDrag() {
@@ -41,7 +50,7 @@ export default class SideBarResizePlugin {
         if (!point) {
           return false;
         }
-        const { isHoverBar, isLeft: _isLeft, index } = this.calPosition(point as [number, number]);
+        const { isHoverBar, isLeft: _isLeft, index } = this.calcPosition(point as [number, number]);
         if (!isHoverBar) {
           return false;
         }
@@ -82,9 +91,6 @@ export default class SideBarResizePlugin {
       isStart = false;
       XMouseDownOriginX = null;
       YMouseDownOriginY = null;
-      origin = null;
-      this._this.scrollTop = this._this.scrollTop;
-      this._this.scrollLeft = this._this.scrollLeft;
     }
     this._this.setEvent(EventConstant.MOUSE_UP)({
       type: EventZIndex.SIDE_BAR,
@@ -106,7 +112,7 @@ export default class SideBarResizePlugin {
       type: EventZIndex.SIDE_BAR,
       judgeFunc: (e) => {
         if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
-          const { isHoverBar, isLeft } = this.calPosition([e._mouseX, e._mouseY])
+          const { isHoverBar, isLeft } = this.calcPosition([e._mouseX, e._mouseY])
           if (isHoverBar) {
             return { isLeft };
           }
@@ -120,7 +126,7 @@ export default class SideBarResizePlugin {
     })
   }
 
-  private calPosition(point: [number, number]) {
+  private calcPosition(point: [number, number]) {
     const { _scrollTop, _scrollLeft, renderDataScope, _data, paddingLeft, paddingTop } = this._this as Base;
 
     // 排除在外的情况

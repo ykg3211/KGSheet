@@ -6,25 +6,21 @@ import { EventZIndex, RenderZIndex } from "../core/base/constant";
 import { EventConstant } from "./event";
 import { isNN } from "../utils";
 import judgeOver from "../utils/judgeHover";
-
+import { PluginTypeEnum } from ".";
 export default class ScrollPlugin {
   private _this: Base;
+  public name: string;
   private _scrollBarWidth: number;
   private scrollBarXW: number;
   private scrollBarYW: number;
   private Xxywh: [number, number, number, number]; // X轴滚动块的坐标
   private Yxywh: [number, number, number, number]; // Y轴滚动块的坐标
 
-  // 用来计算拖拽滚动条的距离的参数
-  private XIsHover: boolean;
-  private YIsHover: boolean;
-
   constructor(_this: Base) {
     this._this = _this;
+    this.name = PluginTypeEnum.ScrollPlugin;
     this._scrollBarWidth = 10;
 
-    this.XIsHover = false;
-    this.YIsHover = false;
     this.initDragScroll();
 
     this.Xxywh = [0, 0, 0, 0];
@@ -48,10 +44,10 @@ export default class ScrollPlugin {
   private initDragScroll() {
     let XMouseDownOriginX: number | null = null;
     let YMouseDownOriginY: number | null = null;
-    const scrollMouseDownCB = (e: MouseEvent, {
-      isX,
-      isY
-    }) => {
+    const scrollMouseDownCB = (e: MouseEvent, point) => {
+      const isX = judgeOver([point[0], point[1]], this.Xxywh);
+      const isY = judgeOver([point[0], point[1]], this.Yxywh);
+
       if (isX) {
         XMouseDownOriginX = e.pageX;
       }
@@ -66,14 +62,10 @@ export default class ScrollPlugin {
         if (!point) {
           return false;
         }
-        const isX = judgeOver([point[0], point[1]], this.Xxywh);
-        const isY = judgeOver([point[0], point[1]], this.Yxywh);
-        if (isX || isY) {
-          return {
-            isX,
-            isY
-          };
+        if (point[0] > this._this.width - this.scrollBarWidth || point[1] > this._this.height - this.scrollBarWidth) {
+          return point;
         }
+
         return false;
       },
       innerFunc: scrollMouseDownCB.bind(this)
@@ -149,15 +141,15 @@ export default class ScrollPlugin {
     if (this._this.width < this._this.contentWidth) {
       this.scrollBarXW = Math.max(this._this.width * this._this.width / this._this.contentWidth, 20)
       const percentX = this._this.scrollLeft / maxWidth;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
-      ctx.strokeStyle = '#e6e6e6';
+      ctx.strokeStyle = this._this.color('line');
       ctx.beginPath();
       ctx.moveTo(0, YTop);
       ctx.lineTo(this._this.width, YTop);
       ctx.stroke();
       ctx.fillRect(0, YTop, this._this.width, this.scrollBarWidth);
-      ctx.fillStyle = '#dadada';
+      ctx.fillStyle = this._this.color('scrollBar');
 
 
       this.Xxywh = [(this._this.width - this.scrollBarXW - (this._this.height < this._this.contentHeight ? this.scrollBarWidth : 0)) * percentX, YTop, this.scrollBarXW, this.scrollBarWidth]
@@ -169,15 +161,15 @@ export default class ScrollPlugin {
     if (this._this.height < this._this.contentHeight) {
       this.scrollBarYW = Math.max(this._this.height * this._this.height / this._this.contentHeight, 20)
       const percentY = this._this.scrollTop / maxHeight;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
-      ctx.strokeStyle = '#e6e6e6';
+      ctx.strokeStyle = this._this.color('line');
       ctx.beginPath();
       ctx.moveTo(XLeft, 0);
       ctx.lineTo(XLeft, YTop);
       ctx.stroke();
       ctx.fillRect(XLeft, 0, this.scrollBarWidth, this._this.height);
-      ctx.fillStyle = '#dadada';
+      ctx.fillStyle = this._this.color('scrollBar');
 
 
       this.Yxywh = [XLeft, (this._this.height - this.scrollBarYW) * percentY, this.scrollBarWidth, this.scrollBarYW]

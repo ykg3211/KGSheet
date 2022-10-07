@@ -1,4 +1,5 @@
-import { cellStyle, CellTypeEnum, excelConfig, renderCellProps } from '../../interfaces';
+// 这里的方法和值都是pretect ，为了方便插件开发，都先弄成public
+import { cell, cellStyle, CellTypeEnum, excelConfig, renderCellProps, spanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
@@ -7,26 +8,29 @@ import { EventConstant } from '../../plugins/event';
 
 
 export default class Render extends DrawLayer {
-  protected _width: number; /** dom 实际width */
-  protected _height: number; /** dom 实际height */
-  protected paddingTop: number; // 上方的宽度 // 实际为上方的常驻条高度
-  protected paddingLeft: number; // 左侧的宽度 // 实际为左侧的常驻条宽度
-  protected contentWidth: number; // 实际内容的宽度
-  protected contentHeight: number; // 实际内容的宽度
-  protected _scale: number; // 缩放比例
-  protected maxScale: number; // 最大缩放比例
+  public _width: number; /** dom 实际width */
+  public _height: number; /** dom 实际height */
+  public paddingTop: number; // 上方的宽度 // 实际为上方的常驻条高度
+  public paddingLeft: number; // 左侧的宽度 // 实际为左侧的常驻条宽度
+  public contentWidth: number; // 实际内容的宽度
+  public contentHeight: number; // 实际内容的宽度
+  public _scale: number; // 缩放比例
+  public maxScale: number; // 最大缩放比例
 
-  protected mouseX: number;// 鼠标x坐标
-  protected mouseY: number;// 鼠标y坐标
+  public mouseX: number;// 鼠标x坐标
+  public mouseY: number;// 鼠标y坐标
 
-  protected _data: excelConfig; // 当前excel的数据
-  protected renderDataScope: [[number, number], [number, number]]
-  protected _scrollTop: number; // 滚动的参数
-  protected _scrollLeft: number; // 滚动的参数
+  public _data: excelConfig; // 当前excel的数据
+  public _scrollTop: number; // 滚动的参数
+  public _scrollLeft: number; // 滚动的参数
 
-  protected _render: () => void;
+  public renderDataScope: [[number, number], [number, number]]
+  public renderCellsArr: renderCellProps[][];
+  public renderSpanCellsArr: renderCellProps[];
 
-  protected renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
+  public _render: () => void;
+
+  public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
 
   constructor() {
     super();
@@ -44,37 +48,42 @@ export default class Render extends DrawLayer {
     this.maxScale = 4;
     this.renderFuncArr = [];
     this.renderDataScope = [[0, 0], [0, 0]];
+    this.renderSpanCellsArr = [];
+    this.renderCellsArr = [];
 
     this._render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
+
+    this.on(EventConstant.RENDER, this._render);
+
     this._data = createBaseConfig(0, 0);
   }
-  protected get data() {
+  public get data() {
     return this._data;
   }
-  protected set data(v: excelConfig) {
+  public set data(v: excelConfig) {
     this._data = v;
     this._render();
   }
   // 经过缩放的宽度
-  protected get width() {
+  public get width() {
     return this._width / this.scale;
   }
-  protected set width(v: number) {
+  public set width(v: number) {
     this._width = v;
   }
 
   // 经过缩放的高度
-  protected get height() {
+  public get height() {
     return this._height / this.scale;
   }
-  protected set height(v: number) {
+  public set height(v: number) {
     this._height = v;
   }
 
-  protected get scale() {
+  public get scale() {
     return this._scale;
   }
-  protected set scale(v: number) {
+  public set scale(v: number) {
     this._scale = v;
     this.emit(EventConstant.SCALE_CHANGE, this._scale);
     setTimeout(() => {
@@ -82,10 +91,10 @@ export default class Render extends DrawLayer {
     }, 0);
   }
 
-  protected get scrollTop() {
+  public get scrollTop() {
     return this._scrollTop;
   }
-  protected set scrollTop(v: number) {
+  public set scrollTop(v: number) {
     this._scrollTop = v;
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
@@ -93,10 +102,10 @@ export default class Render extends DrawLayer {
     }, 0);
   }
 
-  protected get scrollLeft() {
+  public get scrollLeft() {
     return this._scrollLeft;
   }
-  protected set scrollLeft(v: number) {
+  public set scrollLeft(v: number) {
     this._scrollLeft = v;
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
@@ -104,7 +113,7 @@ export default class Render extends DrawLayer {
     }, 0);
   }
 
-  protected _preRenderFunc() {
+  public _preRenderFunc() {
     if (!this.canvasDom) {
       return;
     }
@@ -113,7 +122,7 @@ export default class Render extends DrawLayer {
     this.ctx?.scale(dpr * this.scale, dpr * this.scale);
   }
 
-  protected _renderFunc() {
+  public _renderFunc() {
     if (!this.canvasDom) {
       return;
     }
@@ -125,7 +134,7 @@ export default class Render extends DrawLayer {
     this._renderContent();
   }
 
-  protected _renderContent() {
+  public _renderContent() {
     const startX = this.paddingLeft - this.scrollLeft;
     const startY = this.paddingTop - this.scrollTop;
     let point = [startX, startY]; // 锚点
@@ -133,8 +142,9 @@ export default class Render extends DrawLayer {
     let startRIndex: null | number = null;
     let startCIndex: null | number = null;
     let renderBarArr: any[] = [];
-    let renderCellsArr: renderCellProps[] = [];
     let renderLineArr: [[number, number], [number, number]][] = [];
+
+    this.renderCellsArr = [];
     this.contentWidth = this.data.w.reduce((a, b) => a + b, 0);
     this.contentHeight = this.data.h.reduce((a, b) => a + b, 0);
     const drawMinLineX = Math.min(this.width, this.contentWidth + this.paddingLeft - this.scrollLeft);
@@ -146,12 +156,15 @@ export default class Render extends DrawLayer {
     renderLineArr.push([[0, this.paddingTop], [drawMinLineX, this.paddingTop]])
     renderLineArr.push([[this.paddingLeft, 0], [this.paddingLeft, drawMinLineY]])
 
-
+    let row = -1;
     this.data.cells.forEach((rows, rIndex) => {
       point[0] = startX;
-
       const renderThisRow = point[1] + this.data.h[rIndex] > 0 && point[1] < this.height;
       if (renderThisRow) {
+        row += 1;
+        if (!this.renderCellsArr[row]) {
+          this.renderCellsArr[row] = [];
+        }
         rows.cells.forEach((column, cIndex) => {
           if (renderThisRow && point[0] + this.data.w[cIndex] > 0 && point[0] < this.width) {
             startRIndex = startRIndex === null ? rIndex : startRIndex;
@@ -170,7 +183,12 @@ export default class Render extends DrawLayer {
               this.renderDataScope[0] = [rIndex, cIndex];
             }
             this.renderDataScope[1] = [rIndex, cIndex];
-            renderCellsArr.push({
+
+            this.renderCellsArr[row].push({
+              location: {
+                row: rIndex,
+                column: cIndex,
+              },
               point: point.slice(),
               cell: column,
               w: this.data.w[cIndex],
@@ -204,15 +222,15 @@ export default class Render extends DrawLayer {
     this.resetRenderFunction(RenderZIndex.TABLE_LINE, renderLineArr.map(item => () => {
       this.drawLine(...item);
     }))
-    this.resetRenderFunction(RenderZIndex.TABLE_CELLS, renderCellsArr.map(item => () => {
+    this.resetRenderFunction(RenderZIndex.TABLE_CELLS, this.renderCellsArr.flat().map(item => () => {
       this.drawCell(item);
     }))
 
     this.handleSpanCells();
 
-    this.renderFuncArr[RenderZIndex.SIDE_BAR] = renderBarArr.map(item => () => {
+    this.resetRenderFunction(RenderZIndex.SIDE_BAR, renderBarArr.map(item => () => {
       this.drawSideBar(item);
-    });
+    }));
 
     // 开始绘制
     this._renderFunctions();
@@ -222,8 +240,8 @@ export default class Render extends DrawLayer {
    * 处理跨行的单元格
    * 并且会只渲染在视图之内的单元格
    */
-  private handleSpanCells() {
-    const renderSpanCellsArr: renderCellProps[] = [];
+  public handleSpanCells() {
+    this.renderSpanCellsArr = [];
     if (!this.data.spanCells) {
       return;
     }
@@ -233,7 +251,7 @@ export default class Render extends DrawLayer {
       let point = [startX, startY]; // 锚点
 
       const cell = this.data.spanCells[key];
-      const [x, y] = key.split('_').map(i => +i - 1);
+      const [y, x] = key.split('_').map(i => +i);
       point[0] += this.data.w.slice(0, x).reduce((a, b) => a + b, 0);
       point[1] += this.data.h.slice(0, y).reduce((a, b) => a + b, 0);
       const _w = this.data.w.slice(x, x + cell.span[0]).reduce((a, b) => a + b, 0);
@@ -242,33 +260,39 @@ export default class Render extends DrawLayer {
       if (point[0] > this.width || (point[0] + _w) < 0 || point[1] > this.height || (point[1] + _h) < 0) {
         return;
       }
-
       if (!cell.style.backgroundColor) {
-        cell.style.backgroundColor = 'white'
+        cell.style.backgroundColor = this.color('white');
       }
-      renderSpanCellsArr.push({
+      if (cell.style.backgroundColor !== this.color('white')) {
+        cell.style.backgroundColor = this.color('white');
+      }
+      this.renderSpanCellsArr.push({
+        location: {
+          row: y,
+          column: x,
+        },
         point,
         cell: cell,
         w: _w,
         h: _h
       });
     })
-    this.resetRenderFunction(RenderZIndex.TABLE_SPAN_CELLS, renderSpanCellsArr.map(item => () => {
+    this.resetRenderFunction(RenderZIndex.TABLE_SPAN_CELLS, this.renderSpanCellsArr.map(item => () => {
       this.drawCell(item, true);
     }))
   }
 
-  protected resetRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
+  public resetRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
     this.renderFuncArr[index] = funcs;
   }
-  protected addRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
+  public addRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
     if (!this.renderFuncArr[index]) {
       this.renderFuncArr[index] = [];
     }
     this.renderFuncArr[index] = this.renderFuncArr[index].concat(funcs);
   }
 
-  protected _renderFunctions() {
+  public _renderFunctions() {
     if (!this.ctx) {
       return;
     }
@@ -279,7 +303,7 @@ export default class Render extends DrawLayer {
     })
   }
 
-  protected drawSideBar({
+  public drawSideBar({
     point,
     w,
     h,
@@ -303,8 +327,8 @@ export default class Render extends DrawLayer {
     let x = point[0];
     let y = point[1];
     const baseStyle: cellStyle = {
-      backgroundColor: '#DDDDDD',
-      fontColor: '#000000',
+      backgroundColor: this.color('sideBar'),
+      fontColor: this.color('black'),
       align: 'center'
     }
     if (r === startRIndex && c === startCIndex) {
@@ -331,7 +355,7 @@ export default class Render extends DrawLayer {
         h
       }, true)
       // 渲染最左上角的
-      this.drawCell({
+      this.drawLeftTopCell({
         point: [0, 0],
         cell: {
           style: baseStyle,
@@ -340,7 +364,7 @@ export default class Render extends DrawLayer {
         },
         w: this.paddingLeft,
         h: this.paddingTop
-      }, true)
+      })
       return;
     } else if (r === startRIndex) {
       y = 0;

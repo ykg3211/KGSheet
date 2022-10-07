@@ -35,6 +35,17 @@ export interface excelConfig {
 }
 
 export interface renderCellProps {
+  location: {
+    row: number,
+    column: number,
+  },
+  point: number[];
+  cell: cell;
+  w: number;
+  h: number;
+}
+
+export interface renderBarProps {
   point: number[];
   cell: cell;
   w: number;
