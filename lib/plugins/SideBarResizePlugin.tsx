@@ -94,7 +94,7 @@ export default class SideBarResizePlugin {
     }
     this._this.setEvent(EventConstant.MOUSE_UP)({
       type: EventZIndex.SIDE_BAR,
-      judgeFunc: () => true,
+      judgeFunc: () => isStart,
       innerFunc: scrollMouseUpCB.bind(this)
     })
   }

@@ -29,10 +29,10 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
         span: [1, 3],
         ...createDefaultCell(10, 10)
       },
-      '1_4': {
-        span: [4, 3],
-        ...createDefaultCell(10, 10)
-      },
+      // '1_4': {
+      //   span: [4, 3],
+      //   ...createDefaultCell(10, 10)
+      // },
     }
   }
 

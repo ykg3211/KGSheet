@@ -5,7 +5,7 @@ import Base from "../core/base/base";
 import { EventZIndex, RenderZIndex } from "../core/base/constant";
 import { EventConstant } from "./event";
 import { isNN } from "../utils";
-import judgeOver from "../utils/judgeHover";
+import { judgeOver } from "../utils";
 import { PluginTypeEnum } from ".";
 export default class ScrollPlugin {
   private _this: Base;

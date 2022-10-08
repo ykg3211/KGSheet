@@ -121,6 +121,15 @@ export default class DrawLayer extends BaseEvent {
     ctx.lineWidth = 1;
   }
 
+  public drawRect(v: [number, number, number, number]) {
+    if (!this.ctx) {
+      return;
+    }
+    this.ctx.strokeStyle = 'red'
+    this.ctx.lineWidth = 3;
+    this.ctx.strokeRect(...v);
+  }
+
   private drawBorder(props: renderCellProps | renderBarProps) {
     if (!this.ctx) {
       return;

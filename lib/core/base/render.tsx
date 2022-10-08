@@ -3,7 +3,7 @@ import { cell, cellStyle, CellTypeEnum, excelConfig, renderCellProps, spanCell }
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import _throttleByRequestAnimationFrame from '../../utils/throttle'
+import { _throttleByRequestAnimationFrame } from '../../utils'
 import { EventConstant } from '../../plugins/event';
 
 
