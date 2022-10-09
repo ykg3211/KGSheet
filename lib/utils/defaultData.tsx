@@ -19,7 +19,6 @@ const createDefaultCell = (_h: number, _w: number, content = '') => {
 }
 
 const createDefaultData = (w: number = 10, h: number = 100) => {
-  const _WW = new Array(w).fill(0).map(item => Math.floor(Math.random() * 50) + 50);
   const result: excelConfig = {
     w: new Array(w).fill(BASE_WIDTH),
     h: new Array(h).fill(BASE_HEIGHT),
