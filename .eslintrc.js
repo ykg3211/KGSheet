@@ -6,7 +6,7 @@ module.exports = {
     sourceType: "module"
   },
   rules: {
-    semi: "error",
+    semi: [2, 'always'],
     quotes: 'single'
   },
   ignorePatterns: [

@@ -4,7 +4,8 @@ import EventStack from "./EventStack";
 import MouseMovePlugin from "./MouseMovePlugin";
 import ScrollPlugin from "./ScrollPlugin";
 import SideBarResizePlugin from "./SideBarResizePlugin";
-import SelectPowerPlugin from "./SelectPowerPlugin";
+import SelectPowerPlugin from "./SelectAndInput/SelectPowerPlugin";
+import CommonInputPlugin from "./SelectAndInput/CommonInputPlugin";
 
 export enum PluginTypeEnum {
   EventStack = 'EventStack',
@@ -13,6 +14,7 @@ export enum PluginTypeEnum {
   ScrollPlugin = 'ScrollPlugin',
   SideBarResizePlugin = 'SideBarResizePlugin',
   SelectPowerPlugin = 'SelectPowerPlugin',
+  CommonInputPowerPlugin = 'CommonInputPowerPlugin',
 }
 
 export interface PluginType {
@@ -38,9 +40,11 @@ export default class Plugins {
     this.register(ScrollPlugin); // PluginTypeEnum.ScrollPlugin
     // 左上两个边框的改变宽度的插件
     this.register(SideBarResizePlugin); // PluginTypeEnum.SideBarResizePlugin
-
     // 选中单元格插件
     this.register(SelectPowerPlugin); // PluginTypeEnum.SelectPowerPlugin
+
+    // 选中之后输入单元格的插件
+    this.register(CommonInputPlugin); // PluginTypeEnum.SelectPowerPlugin
   }
 
   public deregistration(name?: string) {

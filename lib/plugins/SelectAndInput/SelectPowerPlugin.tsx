@@ -1,12 +1,11 @@
 // @ts-noche ck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginTypeEnum } from ".";
-import Base, { selectedCellType } from "../core/base/base";
-import { EventZIndex, RenderZIndex } from "../core/base/constant";
-import { renderCellProps } from "../interfaces";
-import { combineRect, judgeCross, judgeOver } from "../utils";
-import { EventConstant } from "./event";
+import { PluginTypeEnum } from "..";
+import Base, { selectedCellType } from "../../core/base/base";
+import { EventZIndex, RenderZIndex } from "../../core/base/constant";
+import { combineRect, judgeCross } from "../../utils";
+import { EventConstant } from "../event";
 
 export interface borderType {
   anchor: [number, number],
@@ -161,7 +160,22 @@ export default class SelectPowerPlugin {
       }
 
       if (isMouseDown_normalCell) {
-        this._endCell = cell;
+        if (cell.row !== -1 && cell.column !== -1) {
+          this._endCell = cell;
+        } else if (cell.row === -1 && cell.column === -1) {
+          this._endCell = {
+            row: this._this.renderDataScope[0][0],
+            column: this._this.renderDataScope[0][1],
+          }
+        } else if (cell.row === -1) {
+          if (this._endCell) {
+            this._endCell.column = cell.column;
+          }
+        } else if (cell.column === -1) {
+          if (this._endCell) {
+            this._endCell.row = cell.row;
+          }
+        }
       } else if (isMouseDown_top_Cell) {
         if (this._endCell) {
           this._endCell.column = cell.column
@@ -276,7 +290,10 @@ export default class SelectPowerPlugin {
     ctx.strokeStyle = '#4a89fe'
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.strokeRect(anchor[0], anchor[1], w, h)
+    ctx.strokeRect(anchor[0], anchor[1], w, h);
+
+    ctx.fillStyle = "rgba(74,137,254,0.05)";
+    ctx.fillRect(anchor[0], anchor[1], w, h);
 
     ctx.strokeStyle = 'white'
     ctx.lineWidth = 1;
