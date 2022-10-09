@@ -2,16 +2,12 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import { PluginTypeEnum } from ".";
-import Base from "../core/base/base";
+import Base, { selectedCellType } from "../core/base/base";
 import { EventZIndex, RenderZIndex } from "../core/base/constant";
 import { renderCellProps } from "../interfaces";
 import { combineRect, judgeCross, judgeOver } from "../utils";
 import { EventConstant } from "./event";
 
-export interface selectedCellType {
-  row: number,
-  column: number
-}
 export interface borderType {
   anchor: [number, number],
   w: number,
@@ -31,6 +27,7 @@ export default class SelectPowerPlugin {
 
   public selectedCells: null | selectedCellsType;
 
+  public selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
   public _startCell: cellPositionType | null; // 选择 一开始的格子
   public _endCell: cellPositionType | null; // 选择 结尾的格子
 
@@ -40,14 +37,8 @@ export default class SelectPowerPlugin {
   constructor(_this: Base) {
     this.name = PluginTypeEnum.SelectPowerPlugin;
     this._this = _this;
-    this._startCell = {
-      row: 3,
-      column: 0
-    };
-    this._endCell = {
-      row: 4,
-      column: 1
-    };;
+    this._startCell = null;
+    this._endCell = null;
 
     this.initCellClick();
     this.registerRenderFunc();
@@ -93,18 +84,55 @@ export default class SelectPowerPlugin {
   }
 
   private initCellClick() {
-    let isMouseDown = false;
+    let isMouseDown_normalCell = false;
+    let isMouseDown_top_Cell = false;
+    let isMouseDown_left_Cell = false;
     const mouseDownCB = (e, point) => {
-      const cell = this.calcPosition(point);
+      const cell = this._this.calcPosition(point);
       if (!cell) {
         return;
       }
-      this._startCell = cell;
-      this._endCell = cell;
+      this.selectCell = cell;
+      if (cell.row !== -1 && cell.column !== -1) { // 正常开局，点的是中间的单元格
+        this._startCell = cell;
+        this._endCell = cell;
 
-      isMouseDown = true;
+        isMouseDown_normalCell = true;
 
-      this._this._render();
+        this._this._render();
+      } else if (cell.row === -1 && cell.column === -1) {  //点击了最左上角 全选
+        this._startCell = {
+          row: 0,
+          column: 0
+        }
+        this._endCell = {
+          row: this._this.data.h.length - 1,
+          column: this._this.data.w.length - 1
+        }
+        this._this._render();
+      } else if (cell.row === -1) {  //点击了上边框， 则选中一列
+        this._startCell = {
+          row: 0,
+          column: cell.column
+        }
+        this._endCell = {
+          row: this._this.data.h.length - 1,
+          column: cell.column
+        }
+        isMouseDown_top_Cell = true;
+        this._this._render();
+      } else if (cell.column === -1) {  //点击了左边框， 则选中一行
+        this._startCell = {
+          row: cell.row,
+          column: 0
+        }
+        this._endCell = {
+          row: cell.row,
+          column: this._this.data.w.length - 1
+        }
+        isMouseDown_left_Cell = true;
+        this._this._render();
+      }
     }
 
     this._this.setEvent(EventConstant.MOUSE_DOWN)({
@@ -118,18 +146,32 @@ export default class SelectPowerPlugin {
         return point;
       },
       innerFunc: mouseDownCB.bind(this),
-      outerFunc: (e) => {
+      outerFunc: () => {
+        this.selectCell = null;
         this._startCell = null;
         this._endCell = null;
+        this._this._render();
       },
     })
 
     const moseMoveCB = (e, point) => {
-      const cell = this.calcPosition(point);
+      const cell = this._this.calcPosition(point);
       if (!cell) {
         return;
       }
-      this._endCell = cell;
+
+      if (isMouseDown_normalCell) {
+        this._endCell = cell;
+      } else if (isMouseDown_top_Cell) {
+        if (this._endCell) {
+          this._endCell.column = cell.column
+        }
+      } else if (isMouseDown_left_Cell) {
+        if (this._endCell) {
+          this._endCell.row = cell.row
+        }
+      }
+
 
       this._this._render();
     }
@@ -137,11 +179,11 @@ export default class SelectPowerPlugin {
     this._this.setEvent(EventConstant.MOUSE_MOVE)({
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
-        const point = this._this.transformXYInContainer(e);
+        const point = this._this.transformXYInContainer(e, true);
         if (!point) {
           return false;
         }
-        if (this._startCell && isMouseDown) {
+        if (this._startCell && (isMouseDown_normalCell || isMouseDown_top_Cell || isMouseDown_left_Cell)) {
           return point;
         }
         return false;
@@ -150,13 +192,15 @@ export default class SelectPowerPlugin {
     })
 
     const moseUpCB = () => {
-      isMouseDown = false;
+      isMouseDown_normalCell = false;
+      isMouseDown_top_Cell = false;
+      isMouseDown_left_Cell = false;
     }
 
     this._this.setEvent(EventConstant.MOUSE_UP)({
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: () => {
-        if (this._startCell && isMouseDown) {
+        if (this._startCell && (isMouseDown_normalCell || isMouseDown_top_Cell || isMouseDown_left_Cell)) {
           return true;
         }
         return false;
@@ -166,44 +210,6 @@ export default class SelectPowerPlugin {
 
 
   }
-
-  private calcPosition(point: [number, number]) {
-    const { renderCellsArr, renderSpanCellsArr } = this._this as Base;
-
-    let selectedCell: selectedCellType | null = null;
-    renderSpanCellsArr.forEach(item => {
-      if (judgeOver(point, [item.point[0], item.point[1], item.w, item.h])) {
-        selectedCell = {
-          row: item.location.row,
-          column: item.location.column,
-        };
-      }
-    })
-    if (selectedCell) {
-      return selectedCell;
-    }
-    renderCellsArr.some(row => {
-      if (row.length > 0) {
-        if (point[1] > row[0].point[1] && point[1] < (row[0].point[1] + row[0].h)) {
-          row.some(cell => {
-            if (judgeOver(point, [cell.point[0], cell.point[1], cell.w, cell.h])) {
-              selectedCell = {
-                row: cell.location.row,
-                column: cell.location.column,
-              };
-              cell.location
-              return true;
-            }
-            return false
-          })
-          return true;
-        }
-      }
-      return false;
-    })
-    return selectedCell as selectedCellType | null;
-  }
-
 
   private calcBorder() {
     if (!(this._startCell && this._endCell)) {
@@ -247,14 +253,22 @@ export default class SelectPowerPlugin {
     ctx.lineWidth = 3;
     // 画x轴
     ctx.beginPath();
-    ctx.moveTo(anchor[0], this._this.paddingTop);
-    ctx.lineTo(anchor[0] + w, this._this.paddingTop);
+    const x_1 = Math.max(anchor[0], this._this.paddingLeft);
+    const x_2 = anchor[0] + w;
+    if (x_2 > x_1) {
+      ctx.moveTo(x_1, this._this.paddingTop);
+      ctx.lineTo(x_2, this._this.paddingTop);
+    }
     ctx.stroke();
 
     // 画y轴
     ctx.beginPath();
-    ctx.moveTo(this._this.paddingLeft, anchor[1]);
-    ctx.lineTo(this._this.paddingLeft, anchor[1] + h)
+    const y_1 = Math.max(anchor[1], this._this.paddingTop);
+    const y_2 = anchor[1] + h;
+    if (y_2 > y_1) {
+      ctx.moveTo(this._this.paddingLeft, y_1);
+      ctx.lineTo(this._this.paddingLeft, y_2);
+    }
     ctx.stroke();
   }
 
