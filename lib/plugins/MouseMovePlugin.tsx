@@ -48,7 +48,7 @@ export default class MouseMovePlugin {
       }
 
       this._this.emit(EventConstant.MOUSE_MOVE, e);
-      this._this.dispatchEvent(EventConstant.MOUSE_MOVE)(e);
+      this._this.dispatchEvent(EventConstant.MOUSE_MOVE, e);
     }
     document.body.addEventListener('mousemove', handler);
 

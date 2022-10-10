@@ -39,8 +39,8 @@ export const lightColorSum: colorType = {
 }
 
 export default class DrawLayer extends BaseEvent {
-  protected ctx: CanvasRenderingContext2D | null;
-  protected canvasDom: HTMLCanvasElement | null;
+  public ctx: CanvasRenderingContext2D | null;
+  public canvasDom: HTMLCanvasElement | null;
   protected components: Partial<Record<keyof CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellProps) => void>>
   public darkMode: boolean;
   constructor() {

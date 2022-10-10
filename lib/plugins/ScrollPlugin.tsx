@@ -55,7 +55,7 @@ export default class ScrollPlugin {
         YMouseDownOriginY = e.pageY;
       }
     }
-    this._this.setEvent(EventConstant.MOUSE_DOWN)({
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
@@ -84,7 +84,7 @@ export default class ScrollPlugin {
       }
     }
 
-    this._this.setEvent(EventConstant.MOUSE_MOVE)({
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: () => {
         return XMouseDownOriginX !== null || YMouseDownOriginY !== null
@@ -103,7 +103,7 @@ export default class ScrollPlugin {
       }
     }
 
-    this._this.setEvent(EventConstant.MOUSE_MOVE)({
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
         if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
@@ -126,7 +126,7 @@ export default class ScrollPlugin {
       XMouseDownOriginX = null;
       YMouseDownOriginY = null;
     }
-    this._this.setEvent(EventConstant.MOUSE_UP)({
+    this._this.setEvent(EventConstant.MOUSE_UP, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: () => XMouseDownOriginX !== null || YMouseDownOriginY !== null,
       innerFunc: scrollMouseUpCB.bind(this)

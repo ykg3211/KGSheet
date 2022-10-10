@@ -105,10 +105,10 @@ class Base extends Render {
   }
 
   /**
-   * calcPosition
+   * getCellByPoint
    * 通过相对于视图的坐标获取当前点击的单元格
    */
-  public calcPosition(point: [number, number]) {
+  public getCellByPoint(point: [number, number]) {
     const { renderCellsArr, renderSpanCellsArr } = this;
 
     let selectedCell: selectedCellType | null = null;
@@ -174,6 +174,48 @@ class Base extends Render {
     }
 
     return selectedCell as selectedCellType | null;
+  }
+
+  /**
+   * getRectByCell
+   */
+  public getRectByCell(cell: {
+    row: number;
+    column: number
+  }) {
+    const { _data, paddingLeft, scrollTop, scrollLeft, paddingTop } = this;
+    // 手动深拷贝
+    const startCell = {
+      row: cell.row,
+      column: cell.column,
+    };
+    const endCell = {
+      row: cell.row,
+      column: cell.column,
+    };
+    if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
+      endCell.row += this._data.spanCells[cell.row + '_' + cell.column].span[1] - 1
+      endCell.column += this._data.spanCells[cell.row + '_' + cell.column].span[0] - 1;
+    }
+    return [
+      _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
+      _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
+      _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
+      _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
+    ] as [number, number, number, number]
+  }
+
+  /**
+   * getRealCell
+   */
+  public getRealCell(cell: {
+    row: number;
+    column: number
+  }) {
+    if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
+      return this._data.spanCells[cell.row + '_' + cell.column];
+    }
+    return this._data.cells[cell.row].cells[cell.column];
   }
 }
 

@@ -24,13 +24,14 @@ export interface rows {
 }
 
 export interface spanCell extends cell {
-  span: [number, number]
+  span: [number, number] // w, h
 }
 
 export interface excelConfig {
   w: number[];
   h: number[];
   cells: rows[];
+  //               'row_column'
   spanCells?: Record<string, spanCell>
 }
 

@@ -23,9 +23,9 @@ export enum EventType {
 
 }
 
-export type setEventType = (type: EventConstant) => ((props: EventStackType) => void);
-export type clearEventType = (type: EventConstant) => ((type: EventZIndex) => void);
-export type dispatchEventType = (type: EventConstant) => ((e: MouseEvent) => void);
+export type setEventType = (type: EventConstant, props: EventStackType) => void;
+export type clearEventType = (type: EventConstant, zIndex: EventZIndex) => void;
+export type dispatchEventType = (type: EventConstant, e: MouseEvent) => void;
 
 export default class EventStack {
   private _this: Base;
@@ -53,56 +53,49 @@ export default class EventStack {
     this._this.clearEvent = this.clearEvent.bind(this);
   }
 
-  protected clearEvent(type: EventConstant) {
-    return (subType: EventZIndex) => {
-      if (!this.eventStack[type]) {
-        return;
-      }
-      this.eventStack[type][subType] = [];
+  protected clearEvent(type: EventConstant, subType: EventZIndex) {
+    if (!this.eventStack[type]) {
+      return;
     }
+    this.eventStack[type][subType] = [];
   }
 
-  protected setEvent(type: EventConstant) {
+  protected setEvent(type: EventConstant, props: EventStackType) {
     if (!this.eventStack[type]) {
       this.eventStack[type] = [];
     }
-
-    return (props: EventStackType) => {
-      const pointer = this.eventStack[type][props.type];
-      if (pointer) {
-        pointer.push(props);
-      } else {
-        this.eventStack[type][props.type] = [props];
-      }
+    const pointer = this.eventStack[type][props.type];
+    if (pointer) {
+      pointer.push(props);
+    } else {
+      this.eventStack[type][props.type] = [props];
     }
   }
 
-  protected dispatchEvent(type: EventConstant) {
-    return (e: MouseEvent) => {
-      const innerFuncArr: ((e: MouseEvent) => void)[] = [];
-      const outerFuncArr: ((e: MouseEvent) => void)[] = [];
-      let isFirst = true;
-      this.eventStack[type]?.forEach(events => {
-        if (!isFirst) {
-          return;
-        }
-        events.forEach(eventStack => {
-          if (eventStack.judgeFunc) {
-            const preData = eventStack.judgeFunc(e);
-            if (preData !== false) {
-              isFirst = false;
-              innerFuncArr.push((e: MouseEvent) => {
-                eventStack.innerFunc(e, preData);
-              });
-            } else {
-              eventStack.outerFunc && outerFuncArr.push(eventStack.outerFunc);
-            }
+  protected dispatchEvent(type: EventConstant, e: MouseEvent) {
+    const innerFuncArr: ((e: MouseEvent) => void)[] = [];
+    const outerFuncArr: ((e: MouseEvent) => void)[] = [];
+    let isFirst = true;
+    this.eventStack[type]?.forEach(events => {
+      if (!isFirst) {
+        return;
+      }
+      events.forEach(eventStack => {
+        if (eventStack.judgeFunc) {
+          const preData = eventStack.judgeFunc(e);
+          if (preData !== false) {
+            isFirst = false;
+            innerFuncArr.push((e: MouseEvent) => {
+              eventStack.innerFunc(e, preData);
+            });
+          } else {
+            eventStack.outerFunc && outerFuncArr.push(eventStack.outerFunc);
           }
-          return false;
-        })
+        }
+        return false;
       })
-      outerFuncArr.flat().forEach(fn => fn(e))
-      innerFuncArr.flat().forEach(fn => fn(e))
-    }
+    })
+    outerFuncArr.flat().forEach(fn => fn(e))
+    innerFuncArr.flat().forEach(fn => fn(e))
   }
 }

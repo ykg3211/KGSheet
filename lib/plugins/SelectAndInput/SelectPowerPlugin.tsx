@@ -87,7 +87,7 @@ export default class SelectPowerPlugin {
     let isMouseDown_top_Cell = false;
     let isMouseDown_left_Cell = false;
     const mouseDownCB = (e, point) => {
-      const cell = this._this.calcPosition(point);
+      const cell = this._this.getCellByPoint(point);
       if (!cell) {
         return;
       }
@@ -134,7 +134,7 @@ export default class SelectPowerPlugin {
       }
     }
 
-    this._this.setEvent(EventConstant.MOUSE_DOWN)({
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
@@ -155,7 +155,7 @@ export default class SelectPowerPlugin {
 
     const mouseMoveCB = (e, point) => {
       // 超过左边框还能识别的兼容
-      const cell = this._this.calcPosition([Math.max(this._this.paddingLeft + 1, point[0]), Math.max(this._this.paddingTop + 1, point[1])]);
+      const cell = this._this.getCellByPoint([Math.max(this._this.paddingLeft + 1, point[0]), Math.max(this._this.paddingTop + 1, point[1])]);
       if (!cell) {
         return;
       }
@@ -191,7 +191,7 @@ export default class SelectPowerPlugin {
       this._this._render();
     }
 
-    this._this.setEvent(EventConstant.MOUSE_MOVE)({
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e, true);
@@ -212,7 +212,7 @@ export default class SelectPowerPlugin {
       isMouseDown_left_Cell = false;
     }
 
-    this._this.setEvent(EventConstant.MOUSE_UP)({
+    this._this.setEvent(EventConstant.MOUSE_UP, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: () => {
         if (this._startCell && (isMouseDown_normalCell || isMouseDown_top_Cell || isMouseDown_left_Cell)) {

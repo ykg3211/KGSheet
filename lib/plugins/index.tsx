@@ -5,7 +5,7 @@ import MouseMovePlugin from "./MouseMovePlugin";
 import ScrollPlugin from "./ScrollPlugin";
 import SideBarResizePlugin from "./SideBarResizePlugin";
 import SelectPowerPlugin from "./SelectAndInput/SelectPowerPlugin";
-import CommonInputPlugin from "./SelectAndInput/CommonInputPlugin";
+import EditCellPlugin from "./SelectAndInput/EditCellPlugin";
 
 export enum PluginTypeEnum {
   EventStack = 'EventStack',
@@ -44,7 +44,7 @@ export default class Plugins {
     this.register(SelectPowerPlugin); // PluginTypeEnum.SelectPowerPlugin
 
     // 选中之后输入单元格的插件
-    this.register(CommonInputPlugin); // PluginTypeEnum.SelectPowerPlugin
+    this.register(EditCellPlugin); // PluginTypeEnum.SelectPowerPlugin
   }
 
   public deregistration(name?: string) {
@@ -64,6 +64,6 @@ export default class Plugins {
     }
 
     this.pluginsArr[name] = newPlugin;
-    this._this['_' + name] = newPlugin;
+    this._this[name] = newPlugin;
   }
 }

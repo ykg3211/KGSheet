@@ -2,6 +2,7 @@ export enum EventConstant {
   RENDER = 'render',
   DARKMODE_CHANGE = 'dark_mode_change',
   DESTROY = 'destroy',
+  DB_CLICK = 'dblclick',
   CLICK = 'click',
   SCALE_CHANGE = 'scale_change',
   MOUSE_DOWN = 'mouse_down',

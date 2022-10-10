@@ -4,7 +4,7 @@ const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
 const createDefaultStyle = () => {
   const result: cellStyle = {
-    align: 'center',
+    align: 'left',
     fontSize: 12,
   }
   return result;
@@ -24,7 +24,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     h: new Array(h).fill(BASE_HEIGHT),
     cells: [],
     spanCells: {
-      '1_1': {
+      '1_5': {
         span: [1, 3],
         ...createDefaultCell(10, 10)
       },
