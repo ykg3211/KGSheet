@@ -153,8 +153,9 @@ export default class SelectPowerPlugin {
       },
     })
 
-    const moseMoveCB = (e, point) => {
-      const cell = this._this.calcPosition(point);
+    const mouseMoveCB = (e, point) => {
+      // 超过左边框还能识别的兼容
+      const cell = this._this.calcPosition([Math.max(this._this.paddingLeft + 1, point[0]), Math.max(this._this.paddingTop + 1, point[1])]);
       if (!cell) {
         return;
       }
@@ -202,7 +203,7 @@ export default class SelectPowerPlugin {
         }
         return false;
       },
-      innerFunc: moseMoveCB.bind(this),
+      innerFunc: mouseMoveCB.bind(this),
     })
 
     const moseUpCB = () => {
