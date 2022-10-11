@@ -55,7 +55,7 @@ export default class DrawLayer extends BaseEvent {
 
   public reverseDarkMode(v?: boolean) {
     this.darkMode = v === undefined ? !this.darkMode : v;
-    this.emit(EventConstant.DARKMODE_CHANGE)
+    this.emit(EventConstant.DARK_MODE_CHANGE)
     this.emit(EventConstant.RENDER);
   }
 

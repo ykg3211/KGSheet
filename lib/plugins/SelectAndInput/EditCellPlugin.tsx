@@ -10,7 +10,8 @@ export default class EditCellPlugin {
   public name: string;
   private _this: Base;
   private selectPlugin: SelectPowerPlugin;
-  private editDom: null | HTMLTextAreaElement
+  private editDom: null | HTMLTextAreaElement;
+  private editCell: null | selectedCellType
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.CommonInputPowerPlugin;
@@ -30,6 +31,18 @@ export default class EditCellPlugin {
     this._this.addRenderFunction(RenderZIndex.TABLE_CELLS, [() => {
       console.log(1)
     }])
+    this._this.on(EventConstant.SCROLL_CONTENT, ({ scrollTop, scrollLeft }) => {
+      if (this.editCell && this.editDom && this._this.canvasDom) {
+        console.log(scrollTop, scrollLeft);
+
+        const position = this._this.getRectByCell(this.editCell);
+
+        position[0] += this._this.canvasDom.offsetLeft;
+        position[1] += this._this.canvasDom.offsetTop;
+
+        this.resetEditDomPosition(this.editCell, position);
+      }
+    })
   }
 
   private initEvent() {
@@ -38,12 +51,14 @@ export default class EditCellPlugin {
       column: number
     }) => {
       if (this._this.canvasDom) {
-        const position = this._this.getRectByCell(cell);
+        this.editCell = cell;
+
+        const position = this._this.getRectByCell(this.editCell);
 
         position[0] += this._this.canvasDom.offsetLeft;
         position[1] += this._this.canvasDom.offsetTop;
 
-        this.createEditBox(cell, position);
+        this.createEditBox(this.editCell, position);
       }
     }
     this._this.setEvent(EventConstant.DB_CLICK, {
@@ -53,6 +68,11 @@ export default class EditCellPlugin {
         if (!point) {
           return false;
         }
+
+        if (this.selectPlugin._startCell && this.selectPlugin._endCell && this.selectPlugin._startCell.row !== this.selectPlugin._endCell.row && this.selectPlugin._startCell.column !== this.selectPlugin._endCell.column) {
+          return false;
+        }
+
         const cell = this._this.getCellByPoint([point[0], point[1]]);
         if (cell && cell.column !== -1 && cell.row !== -1) {
           return cell;
@@ -72,6 +92,31 @@ export default class EditCellPlugin {
       },
       innerFunc: () => { },
     })
+
+
+    // 处理鼠标悬浮改变样式的。  边框和右下角
+    const handleOverCursor = (e: MouseEvent) => {
+
+    }
+
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
+      type: EventZIndex.TABLE_CELLS,
+      judgeFunc: (e) => {
+        return false
+      },
+      innerFunc: handleOverCursor.bind(this),
+      outerFunc: () => {
+        document.body.style.cursor = 'default';
+      }
+    })
+
+  }
+
+  private resetEditDomPosition(cell: selectedCellType, [x, y, w, h]: [number, number, number, number]) {
+    if (!this.editDom) {
+      return;
+    }
+    this.editDom.style.transform = `translate(${x + 1}px, ${y + 2}px)`;
   }
 
   private createEditBox(cell: selectedCellType, [x, y, w, h]: [number, number, number, number]) {
@@ -128,7 +173,7 @@ export default class EditCellPlugin {
     dom.style.fontSize = cellStyle.fontSize + 'px' || '12px';
     dom.style.font = cellStyle.font || '';
     dom.style.textAlign = cellStyle.align || '';
-    dom.style.color = cellStyle.fontColor || '';
+    dom.style.color = cellStyle.fontColor || this._this.color('black');
     dom.style.position = 'absolute';
     dom.style.top = '0px';
     dom.style.left = '0px';

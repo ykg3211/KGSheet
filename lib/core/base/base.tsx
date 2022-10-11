@@ -38,7 +38,7 @@ class Base extends Render {
   }
 
   private initDarkMode() {
-    this.on(EventConstant.DARKMODE_CHANGE, () => {
+    this.on(EventConstant.DARK_MODE_CHANGE, () => {
       if (this.canvasDom) {
         this.canvasDom.style.backgroundColor = this.color('white')
       }

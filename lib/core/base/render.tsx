@@ -5,6 +5,7 @@ import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
 import { _throttleByRequestAnimationFrame } from '../../utils'
 import { EventConstant } from '../../plugins/event';
+import { PluginTypeEnum } from '../../plugins';
 
 
 export default class Render extends DrawLayer {
@@ -96,6 +97,10 @@ export default class Render extends DrawLayer {
   }
   public set scrollTop(v: number) {
     this._scrollTop = v;
+    this.emit(EventConstant.SCROLL_CONTENT, {
+      scrollTop: this._scrollTop,
+      scrollLeft: this._scrollLeft,
+    })
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
       this._render();
@@ -107,6 +112,10 @@ export default class Render extends DrawLayer {
   }
   public set scrollLeft(v: number) {
     this._scrollLeft = v;
+    this.emit(EventConstant.SCROLL_CONTENT, {
+      scrollTop: this._scrollTop,
+      scrollLeft: this._scrollLeft,
+    })
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
       this._render();
@@ -231,6 +240,17 @@ export default class Render extends DrawLayer {
     this.resetRenderFunction(RenderZIndex.SIDE_BAR, renderBarArr.map(item => () => {
       this.drawSideBar(item);
     }));
+
+    // this.resetRenderFunction(RenderZIndex.SHADOW, [(ctx) => {
+    //   ctx.save();
+    //   ctx.shadowOffsetX = 0;
+    //   ctx.shadowOffsetY = 0;
+    //   ctx.shadowBlur = 20;
+    //   ctx.shadowColor = "rgba(0, 0, 0, 1)";
+    //   this.drawLine([this.paddingLeft, this.paddingTop], [this.width, this.paddingTop]);
+    //   this.drawLine([this.paddingLeft, this.paddingTop], [this.paddingLeft, this.height]);
+    //   ctx.restore();
+    // }]);
 
     // 开始绘制
     this._renderFunctions();

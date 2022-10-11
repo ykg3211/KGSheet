@@ -72,6 +72,7 @@ export default class SelectPowerPlugin {
       }
     }])
 
+    // 绘制选中单元格之后在X Y轴的映射线
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS_SIDEBAR_LINE, [(ctx) => {
       if (!this.isSelect) {
         return;
