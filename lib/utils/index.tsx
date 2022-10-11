@@ -1,3 +1,5 @@
+import { selectedCellType } from "../core/base/base";
+
 export function isNN(v: any) {
   return v === undefined || v === null
 }
@@ -15,6 +17,29 @@ export function combineRect([_x, _y, _w, _h], [x, y, w, h]) {
   const endPoint = [Math.max(_x + _w, x + w), Math.max(_y + _h, y + h)];
 
   return [startPoint[0], startPoint[1], endPoint[0] - startPoint[0], endPoint[1] - startPoint[1]]
+}
+
+export function combineCell(cells: selectedCellType[]) {
+  const leftTopCell: selectedCellType = {
+    row: Infinity,
+    column: Infinity
+  };
+  const rightBottomCell: selectedCellType = {
+    row: -Infinity,
+    column: -Infinity
+  };
+  cells.forEach(cell => {
+    leftTopCell.row = Math.min(leftTopCell.row, cell.row);
+    leftTopCell.column = Math.min(leftTopCell.column, cell.column);
+
+    rightBottomCell.row = Math.max(rightBottomCell.row, cell.row);
+    rightBottomCell.column = Math.max(rightBottomCell.column, cell.column);
+  })
+
+  return {
+    leftTopCell,
+    rightBottomCell
+  }
 }
 
 export function _throttleByRequestAnimationFrame(fn: Function, t: number = 0) {

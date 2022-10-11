@@ -7,14 +7,15 @@ import { EventConstant } from "./event";
 import { isNN } from "../utils";
 import { judgeOver } from "../utils";
 import { PluginTypeEnum } from ".";
+import { rectType } from "../core/base/drawLayer";
 export default class ScrollPlugin {
   private _this: Base;
   public name: string;
   private _scrollBarWidth: number;
   private scrollBarXW: number;
   private scrollBarYW: number;
-  private Xxywh: [number, number, number, number]; // X轴滚动块的坐标
-  private Yxywh: [number, number, number, number]; // Y轴滚动块的坐标
+  private Xxywh: rectType; // X轴滚动块的坐标
+  private Yxywh: rectType; // Y轴滚动块的坐标
 
   constructor(_this: Base) {
     this._this = _this;

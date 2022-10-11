@@ -51,6 +51,22 @@ export default class SelectPowerPlugin {
     return this._startCell && this._endCell;
   }
 
+  public get getCornerCell() {
+    if (!this._borderPosition) {
+      return null;
+    }
+    const { anchor, w, h } = this._borderPosition;
+    const leftTopCell = this._this.getCellByPoint(anchor.map(item => item + 3) as any);
+    const rightBottomCell = this._this.getCellByPoint([anchor[0] + w - 3, anchor[1] + h - 3]);
+    if (leftTopCell && rightBottomCell) {
+      return {
+        leftTopCell,
+        rightBottomCell
+      };
+    }
+    return null;
+  }
+
   public remove() {
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS, [])
   }
@@ -182,7 +198,6 @@ export default class SelectPowerPlugin {
           this._endCell.row = cell.row
         }
       }
-
 
       this._this._render();
     }

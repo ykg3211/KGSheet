@@ -6,6 +6,7 @@ import ScrollPlugin from "./ScrollPlugin";
 import SideBarResizePlugin from "./SideBarResizePlugin";
 import SelectPowerPlugin from "./SelectAndInput/SelectPowerPlugin";
 import EditCellPlugin from "./SelectAndInput/EditCellPlugin";
+import RightClickPlugin from "./RightClickPlugin";
 
 export enum PluginTypeEnum {
   EventStack = 'EventStack',
@@ -15,6 +16,7 @@ export enum PluginTypeEnum {
   SideBarResizePlugin = 'SideBarResizePlugin',
   SelectPowerPlugin = 'SelectPowerPlugin',
   CommonInputPowerPlugin = 'CommonInputPowerPlugin',
+  RightClickPlugin = 'RightClickPlugin',
 }
 
 export interface PluginType {
@@ -45,6 +47,8 @@ export default class Plugins {
 
     // 选中之后输入单元格的插件
     this.register(EditCellPlugin); // PluginTypeEnum.SelectPowerPlugin
+
+    this.register(RightClickPlugin);
   }
 
   public deregistration(name?: string) {

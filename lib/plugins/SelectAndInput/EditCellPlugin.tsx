@@ -2,18 +2,27 @@
 import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
+import { rectType } from "../../core/base/drawLayer";
 import { cell } from "../../interfaces";
-import { judgeCross } from "../../utils";
+import { combineCell, judgeCross, judgeOver } from "../../utils";
 import { EventConstant } from "../event";
-import SelectPowerPlugin from "./SelectPowerPlugin";
+import SelectPowerPlugin, { borderType } from "./SelectPowerPlugin";
+
+export interface CellScopeType {
+  startCell: selectedCellType;
+  endCell: selectedCellType;
+}
 
 export default class EditCellPlugin {
   public name: string;
   private _this: Base;
   private selectPlugin: SelectPowerPlugin;
   private editDom: null | HTMLTextAreaElement;
-  private editCell: null | selectedCellType
+  private editCell: null | selectedCellType;
 
+  private startCopyCell: null | CellScopeType;  // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
+  private startRegularCell: null | CellScopeType;  // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
+  private currentCell: null | selectedCellType;
   constructor(_this: Base) {
     this.name = PluginTypeEnum.CommonInputPowerPlugin;
     this._this = _this;
@@ -25,17 +34,57 @@ export default class EditCellPlugin {
     }
 
     this.initEvent();
+    this.addRenderFunc();
     this.transformEditDom();
   }
 
-  private transformEditDom() {
-    this._this.addRenderFunction(RenderZIndex.TABLE_CELLS, [() => {
-      console.log(1)
+  private addRenderFunc() {
+    this._this.addRenderFunction(RenderZIndex.SELECT_CELLS, [(ctx) => {
+      if (!this.currentCell) {
+        return;
+      }
+      if (this.startRegularCell) {
+        const { startCell, endCell } = this.startRegularCell;
+        const { currentCell } = this;
+        const { leftTopCell, rightBottomCell } = combineCell([startCell, endCell, currentCell]);
+
+        this.drawDashBorder(ctx, this.calBorder(leftTopCell, rightBottomCell))
+
+        return;
+      }
+
+      if (this.startCopyCell) {
+
+      }
     }])
+  }
+
+  private calBorder(startCell: selectedCellType, endCell: selectedCellType) {
+    const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop, renderSpanCellsArr } = this._this;
+
+    const cellPosition: rectType = [
+      _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
+      _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
+      _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
+      _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
+    ]
+
+    return cellPosition;
+  }
+
+  private drawDashBorder(ctx: CanvasRenderingContext2D, rect: rectType) {
+    ctx.save();
+    ctx.strokeStyle = '#4a89fe'
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.setLineDash([5]);
+    ctx.strokeRect(...rect);
+    ctx.restore();
+  }
+
+  private transformEditDom() {
     this._this.on(EventConstant.SCROLL_CONTENT, ({ scrollTop, scrollLeft }) => {
       if (this.editCell && this.editDom && this._this.canvasDom) {
-        console.log(scrollTop, scrollLeft);
-
         const position = this._this.getRectByCell(this.editCell);
 
         position[0] += this._this.canvasDom.offsetLeft;
@@ -46,7 +95,50 @@ export default class EditCellPlugin {
     })
   }
 
+  private commonJudgeFunc(e: MouseEvent) {
+    const point = this._this.transformXYInContainer(e);
+    if (!point || !this.selectPlugin._borderPosition) {
+      return false;
+    }
+    const { anchor, w, h } = this.selectPlugin._borderPosition;
+    const strokeRectWidth = 8;
+    // 判断是不是单元格内部
+    if (judgeOver(point, [anchor[0] + strokeRectWidth / 2, anchor[1] + strokeRectWidth / 2, w - strokeRectWidth, + h - strokeRectWidth])) {
+      return false;
+    }
+    // 判断是不是单元格外部
+    if (!judgeOver(point, [anchor[0] - strokeRectWidth / 2, anchor[1] - strokeRectWidth / 2, w + strokeRectWidth, + h + strokeRectWidth])) {
+      return false;
+    }
+    // 判断是不是右下角的小框
+    if (judgeOver(point, [anchor[0] + w - strokeRectWidth / 2, anchor[1] + h - strokeRectWidth / 2, strokeRectWidth, strokeRectWidth])) {
+      return 'grab';
+    }
+
+    // 剩下的肯定是边框了
+    return 'cell'
+  }
+
   private initEvent() {
+    // 这个比较hack， 借助scrollbar最高的优先级，并且在judge方法中来判断鼠标有没有点到输入框的外部。 为了不管怎么样，都能运行到。
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
+      type: EventZIndex.SCROLL_BAR,
+      judgeFunc: (e) => {
+        if (this.editDom && !(e as any).path.includes(this.editDom)) {
+          this.removeDom();
+        }
+        return false;
+      },
+      innerFunc: () => { },
+    })
+
+    this.handleMouseDown();
+    this.handleDBClick();
+    this.handleMouseMove();
+    this.handleMouseUp();
+  }
+
+  private handleDBClick() {
     const dbClickCB = (e, cell: {
       row: number,
       column: number
@@ -82,40 +174,55 @@ export default class EditCellPlugin {
       },
       innerFunc: dbClickCB.bind(this),
     })
+  }
+  private handleMouseDown() {
+    // 处理鼠标点击事件
+    const handleMouseDownCursor = (e: MouseEvent, type) => {
+      const cells = this.selectPlugin.getCornerCell;
+      if (!cells) {
+        return;
+      }
 
-
-    // 这个比较hack， 借助scrollbar最高的优先级，并且在judge方法中来判断鼠标有没有点到输入框的外部。 为了不管怎么样，都能运行到。
-    this._this.setEvent(EventConstant.MOUSE_DOWN, {
-      type: EventZIndex.SCROLL_BAR,
-      judgeFunc: (e) => {
-        if (this.editDom && !(e as any).path.includes(this.editDom)) {
-          this.removeDom();
+      const { leftTopCell, rightBottomCell } = cells;
+      // cell 代表边框， 说明是剪切操作
+      if (type === 'cell') {
+        this.startCopyCell = {
+          startCell: leftTopCell,
+          endCell: rightBottomCell,
         }
-        return false;
+      } else if (type === 'grab') {
+        this.startRegularCell = {
+          startCell: leftTopCell,
+          endCell: rightBottomCell,
+        }
+      }
+    }
+
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        return this.commonJudgeFunc(e);
       },
-      innerFunc: () => { },
+      innerFunc: handleMouseDownCursor.bind(this),
+      outerFunc: () => {
+        document.body.style.cursor = 'default';
+      }
     })
-
-
+  }
+  private handleMouseMove() {
     // 处理鼠标悬浮改变样式的。  边框和右下角
-    const handleOverCursor = (e: MouseEvent) => {
-
+    const handleOverCursor = (e: MouseEvent, type) => {
+      if (type === 'grab') {
+        document.body.style.cursor = 'cell';
+      } else if (type === 'cell') {
+        document.body.style.cursor = 'grab';
+      }
     }
 
     this._this.setEvent(EventConstant.MOUSE_MOVE, {
-      type: EventZIndex.TABLE_CELLS,
+      type: EventZIndex.SELECT_TABLE_CELL,
       judgeFunc: (e) => {
-        const point = this._this.transformXYInContainer(e);
-        if (!point || !this.selectPlugin._borderPosition) {
-          return;
-        }
-
-        // 只有输入框在视图内部才需要
-        if (judgeCross([this.selectPlugin._borderPosition.anchor[0], this.selectPlugin._borderPosition.anchor[1], this.selectPlugin._borderPosition.w, this.selectPlugin._borderPosition.h], [0, 0, this._this.width, this._this.height])) {
-
-        }
-
-        return false
+        return this.commonJudgeFunc(e);
       },
       innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
@@ -123,16 +230,72 @@ export default class EditCellPlugin {
       }
     })
 
+
+
+    const handleMouseMoveCB = (e: MouseEvent) => {
+      const point = this._this.transformXYInContainer(e, true);
+      if (!point) {
+        return;
+      }
+
+      const cell = this._this.getCellByPoint(point);
+
+      if (!cell) {
+        return;
+      }
+
+      this.currentCell = cell;
+      this._this._render();
+    }
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        if (this.startCopyCell || this.startRegularCell) {
+          return true;
+        }
+        return false;
+      },
+      innerFunc: handleMouseMoveCB.bind(this),
+    })
+  }
+  private handleMouseUp() {
+    // 处理鼠标点击事件
+    const handleMouseUp = (e: MouseEvent, point) => {
+      this.startCopyCell = null;
+      this.startRegularCell = null;
+      this.currentCell = null;
+      this._this._render();
+    }
+
+    this._this.setEvent(EventConstant.MOUSE_UP, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        if (!(this.startCopyCell || this.startRegularCell)) {
+          return false;
+        }
+        const point = this._this.transformXYInContainer(e);
+        if (!point) {
+          return false;
+        }
+        const { paddingLeft, paddingTop, width, height } = this._this;
+        const { _scrollBarWidth = 10 } = this._this[PluginTypeEnum.ScrollPlugin]
+        if (judgeOver(point, [paddingLeft, paddingTop, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth])) {
+          return point;
+        }
+        return false
+      },
+      innerFunc: handleMouseUp.bind(this),
+    })
   }
 
-  private resetEditDomPosition(cell: selectedCellType, [x, y, w, h]: [number, number, number, number]) {
+  private resetEditDomPosition(cell: selectedCellType, [x, y, w, h]: rectType) {
     if (!this.editDom) {
       return;
     }
     this.editDom.style.transform = `translate(${x + 1}px, ${y + 2}px)`;
   }
 
-  private createEditBox(cell: selectedCellType, [x, y, w, h]: [number, number, number, number]) {
+  private createEditBox(cell: selectedCellType, [x, y, w, h]: rectType) {
     if (this.editDom) {
       return;
     }

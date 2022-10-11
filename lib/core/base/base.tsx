@@ -3,6 +3,7 @@ import Render from "./render";
 import Plugins from "../../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../../plugins/EventStack";
 import { judgeOver } from "../../utils";
+import { rectType } from "./drawLayer";
 
 export interface selectedCellType {
   row: number,
@@ -89,7 +90,7 @@ class Base extends Render {
     }
     const result = [e.pageX - this.canvasDom.offsetLeft, e.pageY - this.canvasDom.offsetTop];
     if (result[0] > 0 && result[1] > 0 && result[0] < this._width && result[1] < this._height) {
-      return result.map(item => item / this._scale);
+      return result.map(item => item / this._scale) as [number, number];
     }
 
     if (alwayInner) {
@@ -98,7 +99,7 @@ class Base extends Render {
 
       result[0] = Math.min(this._width, result[0]);
       result[1] = Math.min(this._height, result[1]);
-      return result;
+      return result as [number, number];
     }
 
     return false;
@@ -202,7 +203,7 @@ class Base extends Render {
       _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
       _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
       _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
-    ] as [number, number, number, number]
+    ] as rectType
   }
 
   /**
