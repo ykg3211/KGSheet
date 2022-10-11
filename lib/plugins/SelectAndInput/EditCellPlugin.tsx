@@ -3,6 +3,7 @@ import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { cell } from "../../interfaces";
+import { judgeCross } from "../../utils";
 import { EventConstant } from "../event";
 import SelectPowerPlugin from "./SelectPowerPlugin";
 
@@ -82,6 +83,8 @@ export default class EditCellPlugin {
       innerFunc: dbClickCB.bind(this),
     })
 
+
+    // 这个比较hack， 借助scrollbar最高的优先级，并且在judge方法中来判断鼠标有没有点到输入框的外部。 为了不管怎么样，都能运行到。
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
@@ -102,6 +105,16 @@ export default class EditCellPlugin {
     this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
+        const point = this._this.transformXYInContainer(e);
+        if (!point || !this.selectPlugin._borderPosition) {
+          return;
+        }
+
+        // 只有输入框在视图内部才需要
+        if (judgeCross([this.selectPlugin._borderPosition.anchor[0], this.selectPlugin._borderPosition.anchor[1], this.selectPlugin._borderPosition.w, this.selectPlugin._borderPosition.h], [0, 0, this._this.width, this._this.height])) {
+
+        }
+
         return false
       },
       innerFunc: handleOverCursor.bind(this),
@@ -170,8 +183,8 @@ export default class EditCellPlugin {
     Object.keys(cellStyle).forEach(key => {
       dom.style[key] = cellStyle[key];
     })
-    dom.style.fontSize = cellStyle.fontSize + 'px' || '12px';
     dom.style.font = cellStyle.font || '';
+    dom.style.fontSize = cellStyle.fontSize + 'px' || '12px';
     dom.style.textAlign = cellStyle.align || '';
     dom.style.color = cellStyle.fontColor || this._this.color('black');
     dom.style.position = 'absolute';

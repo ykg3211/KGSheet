@@ -29,6 +29,7 @@ export default class SelectPowerPlugin {
   public selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
   public _startCell: cellPositionType | null; // 选择 一开始的格子
   public _endCell: cellPositionType | null; // 选择 结尾的格子
+  public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
 
   private fillRectWidth: number;
   private strokeRectWidth: number;
@@ -39,6 +40,7 @@ export default class SelectPowerPlugin {
     this._startCell = null;
     this._endCell = null;
 
+    this._borderPosition = null;
     this.initCellClick();
     this.registerRenderFunc();
     this.fillRectWidth = 4;
@@ -54,21 +56,13 @@ export default class SelectPowerPlugin {
   }
 
   private registerRenderFunc() {
-    /**
-     * 提取出border是为了避免重复计算
-     * 渲染器是先渲染 SELECT_CELLS 在渲染 SELECT_CELLS_SIDEBAR_LINE
-     * 所以每次在SELECT_CELLS_SIDEBAR_LINE 都能拿到最新的border
-     * 不能乱！！
-     */
-    let border;
-
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS, [(ctx) => {
       if (!this.isSelect) {
         return;
       }
-      border = this.calcBorder();
-      if (border) {
-        this.drawSelectedBorder(ctx, border);
+      this._borderPosition = this.calcBorder();
+      if (this._borderPosition) {
+        this.drawSelectedBorder(ctx, this._borderPosition);
       }
     }])
 
@@ -77,8 +71,8 @@ export default class SelectPowerPlugin {
       if (!this.isSelect) {
         return;
       }
-      if (border) {
-        this.drawSideBarLine(ctx, border);
+      if (this._borderPosition) {
+        this.drawSideBarLine(ctx, this._borderPosition);
       }
     }])
   }
@@ -150,6 +144,7 @@ export default class SelectPowerPlugin {
         this.selectCell = null;
         this._startCell = null;
         this._endCell = null;
+        this._borderPosition = null;
         this._this._render();
       },
     })
