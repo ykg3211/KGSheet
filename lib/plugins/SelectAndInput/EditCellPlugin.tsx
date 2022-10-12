@@ -83,7 +83,7 @@ export default class EditCellPlugin {
   }
 
   private transformEditDom() {
-    this._this.on(EventConstant.SCROLL_CONTENT, () => {
+    this._this.addRenderFunction(RenderZIndex.SCROLL_BAR, [() => {
       if (this.editCell && this.editDom && this._this.canvasDom) {
         const position = this._this.getRectByCell(this.editCell);
 
@@ -92,7 +92,7 @@ export default class EditCellPlugin {
 
         this.resetEditDomPosition(...position);
       }
-    })
+    }])
   }
 
   private commonJudgeFunc(e: MouseEvent) {
@@ -308,6 +308,9 @@ export default class EditCellPlugin {
     y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y)
 
 
+    this.editDom.style.width = (w - 3) * this._this.scale + 'px';
+    this.editDom.style.height = (h - 2) * this._this.scale + 'px';
+
     this.editDom.style.display = display ? 'block' : 'none'
 
     this.editDom.style.transform = `translate(${x}px, ${y}px)`;
@@ -324,8 +327,6 @@ export default class EditCellPlugin {
     this.stopPropagation(this.editDom);
 
     // 需要微调是为了不遮挡
-    this.editDom.style.width = w - 3 + 'px';
-    this.editDom.style.height = h - 2 + 'px';
     this.resetEditDomPosition(x, y, w, h)
 
     this.handleDomValue(this.editDom, originData);
@@ -366,7 +367,7 @@ export default class EditCellPlugin {
       dom.style[key] = cellStyle[key];
     })
     dom.style.font = cellStyle.font || '';
-    dom.style.fontSize = cellStyle.fontSize + 'px' || '12px';
+    dom.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
     dom.style.textAlign = cellStyle.align || '';
     dom.style.color = cellStyle.fontColor || this._this.color('black');
     dom.style.position = 'absolute';

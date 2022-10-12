@@ -194,7 +194,7 @@ export default class ScrollPlugin {
         const originAbsoluteX = this._this.scrollTop + e.pageY;
         const originAbsoluteY = this._this.scrollLeft + e.pageX;
         const temp = this._this.scale + (deltaY / 1000);
-        this._this.scale = temp < 1 ? 1 : (temp > this._this.maxScale ? this._this.maxScale : temp);
+        this._this.scale = temp < this._this.minScale ? this._this.minScale : (temp > this._this.maxScale ? this._this.maxScale : temp);
 
         // todo @yukaige 缩放的时候中心是鼠标位置。
         const changeMultiple = this._this.scale / initScale;

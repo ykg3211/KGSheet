@@ -17,6 +17,7 @@ export default class Render extends DrawLayer {
   public contentHeight: number; // 实际内容的宽度
   public _scale: number; // 缩放比例
   public maxScale: number; // 最大缩放比例
+  public minScale: number; // 最小缩放比例
 
   public mouseX: number;// 鼠标x坐标
   public mouseY: number;// 鼠标y坐标
@@ -47,6 +48,7 @@ export default class Render extends DrawLayer {
     this.paddingLeft = 40;
     this._scale = 1;
     this.maxScale = 4;
+    this.minScale = 0.4;
     this.renderFuncArr = [];
     this.renderDataScope = [[0, 0], [0, 0]];
     this.renderSpanCellsArr = [];
@@ -86,7 +88,6 @@ export default class Render extends DrawLayer {
   }
   public set scale(v: number) {
     this._scale = v;
-    this.emit(EventConstant.SCALE_CHANGE, this._scale);
     setTimeout(() => {
       this._render();
     }, 0);
