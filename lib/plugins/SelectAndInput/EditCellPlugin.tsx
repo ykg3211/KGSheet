@@ -83,14 +83,14 @@ export default class EditCellPlugin {
   }
 
   private transformEditDom() {
-    this._this.on(EventConstant.SCROLL_CONTENT, ({ scrollTop, scrollLeft }) => {
+    this._this.on(EventConstant.SCROLL_CONTENT, () => {
       if (this.editCell && this.editDom && this._this.canvasDom) {
         const position = this._this.getRectByCell(this.editCell);
 
         position[0] += this._this.canvasDom.offsetLeft;
         position[1] += this._this.canvasDom.offsetTop;
 
-        this.resetEditDomPosition(this.editCell, position);
+        this.resetEditDomPosition(...position);
       }
     })
   }
@@ -288,11 +288,29 @@ export default class EditCellPlugin {
     })
   }
 
-  private resetEditDomPosition(cell: selectedCellType, [x, y, w, h]: rectType) {
-    if (!this.editDom) {
+  private resetEditDomPosition(x: number, y: number, w: number, h: number) {
+    if (!this.editDom || !this._this.canvasDom) {
       return;
     }
-    this.editDom.style.transform = `translate(${x + 1}px, ${y + 2}px)`;
+    const { paddingLeft, paddingTop, width, height } = this._this;
+    const { _scrollBarWidth = 10 } = this._this[PluginTypeEnum.ScrollPlugin]
+    const contentX = paddingLeft + (this._this.canvasDom?.offsetLeft || 0);
+    const contentY = paddingTop + (this._this.canvasDom?.offsetTop || 0);
+
+    const display = judgeCross([x, y, w, h], [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth]);
+
+    x += 2;
+    y += 1;
+    x = Math.max(contentX, x)
+    y = Math.max(contentY, y)
+
+    x = Math.min(this._this.canvasDom.offsetLeft + width - _scrollBarWidth - w + 3, x)
+    y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y)
+
+
+    this.editDom.style.display = display ? 'block' : 'none'
+
+    this.editDom.style.transform = `translate(${x}px, ${y}px)`;
   }
 
   private createEditBox(cell: selectedCellType, [x, y, w, h]: rectType) {
@@ -305,9 +323,10 @@ export default class EditCellPlugin {
     this.setCommonStyle(this.editDom, originData);
     this.stopPropagation(this.editDom);
 
-    this.editDom.style.width = w - 2 + 'px';
-    this.editDom.style.height = h - 4 + 'px';
-    this.editDom.style.transform = `translate(${x + 1}px, ${y + 2}px)`;
+    // 需要微调是为了不遮挡
+    this.editDom.style.width = w - 3 + 'px';
+    this.editDom.style.height = h - 2 + 'px';
+    this.resetEditDomPosition(x, y, w, h)
 
     this.handleDomValue(this.editDom, originData);
     (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.editDom);
@@ -354,7 +373,8 @@ export default class EditCellPlugin {
     dom.style.top = '0px';
     dom.style.left = '0px';
     dom.style.outline = 'none';
-    dom.style.border = 'none';
+    dom.style.border = '1px solid #4a89fe';
+    // dom.style.border = 'none';
     dom.style.resize = 'none';
   }
 }
