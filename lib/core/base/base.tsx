@@ -4,6 +4,7 @@ import Plugins from "../../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../../plugins/EventStack";
 import { judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
+import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
 
 export interface selectedCellType {
   row: number,
@@ -217,6 +218,19 @@ class Base extends Render {
       return this._data.spanCells[cell.row + '_' + cell.column];
     }
     return this._data.cells[cell.row].cells[cell.column];
+  }
+
+  /**
+   * getDataByScope
+   */
+  public getDataByScope({
+    leftTopCell,
+    rightBottomCell
+  }: CellCornerScopeType) {
+    const result = this._data.cells.slice(leftTopCell.row, rightBottomCell.row + 1).map(row => {
+      return row.cells.slice(leftTopCell.column, rightBottomCell.column + 1);
+    })
+    return JSON.parse(JSON.stringify(result))
   }
 }
 

@@ -6,7 +6,7 @@ import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { combineCell, combineRect, judgeCross } from "../../utils";
 import { EventConstant } from "../event";
-import { CellScopeType } from "./EditCellPlugin";
+import { CellCornerScopeType, CellScopeType } from "./EditCellPlugin";
 
 export interface borderType {
   anchor: [number, number],
@@ -324,5 +324,9 @@ export default class SelectPowerPlugin {
     ctx.fillStyle = '#4a89fe'
     ctx.fillRect(anchor[0] + w - this.fillRectWidth / 2, anchor[1] + h - this.fillRectWidth / 2, this.fillRectWidth, this.fillRectWidth);
     ctx.strokeRect(anchor[0] + w - this.strokeRectWidth / 2, anchor[1] + h - this.strokeRectWidth / 2, this.strokeRectWidth, this.strokeRectWidth);
+  }
+  public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
+    this._startCell = leftTopCell;
+    this._endCell = rightBottomCell;
   }
 }

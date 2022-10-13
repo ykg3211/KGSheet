@@ -5,12 +5,18 @@ import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { rectType } from "../../core/base/drawLayer";
 import { cell } from "../../interfaces";
 import { combineCell, judgeCross, judgeOver } from "../../utils";
+import { createDefaultCell } from "../../utils/defaultData";
 import { EventConstant } from "../event";
 import SelectPowerPlugin, { borderType } from "./SelectPowerPlugin";
 
 export interface CellScopeType {
   startCell: selectedCellType;
   endCell: selectedCellType;
+}
+
+export interface CellCornerScopeType {
+  leftTopCell: selectedCellType;
+  rightBottomCell: selectedCellType;
 }
 
 export default class EditCellPlugin {
@@ -344,7 +350,7 @@ export default class EditCellPlugin {
 
     const display = judgeCross([x, y, w, h], [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth]);
 
-    x += 2;
+    x += 1;
     y += 1;
     x = Math.max(contentX, x)
     y = Math.max(contentY, y)
@@ -353,7 +359,7 @@ export default class EditCellPlugin {
     y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y)
 
 
-    this.editDom.style.width = (w - 3) * this._this.scale + 'px';
+    this.editDom.style.width = (w - 2) * this._this.scale + 'px';
     this.editDom.style.height = (h - 2) * this._this.scale + 'px';
 
     this.editDom.style.display = display ? 'block' : 'none'
@@ -431,9 +437,9 @@ export default class EditCellPlugin {
       leftTopCell.row += this.currentCell.row - this.pointDownCell.row;
       rightBottomCell.column += this.currentCell.column - this.pointDownCell.column;
       rightBottomCell.row += this.currentCell.row - this.pointDownCell.row;
-      return { leftTopCell, rightBottomCell } as { leftTopCell: selectedCellType, rightBottomCell: selectedCellType }
+      return { leftTopCell, rightBottomCell } as CellCornerScopeType
     }
-    return { leftTopCell, rightBottomCell } as { leftTopCell: selectedCellType, rightBottomCell: selectedCellType }
+    return { leftTopCell, rightBottomCell } as CellCornerScopeType
   }
   private handleCopyCB() {
     if (!this.startCopyCell) {
@@ -441,12 +447,24 @@ export default class EditCellPlugin {
     }
     const sourceCells: CellScopeType = JSON.parse(JSON.stringify(this.startCopyCell));
     const targetCells = this.getCurrentScopeInCopy();
-    console.log(sourceCells);
-    console.log(targetCells);
-
+    const source = this._this.getDataByScope({
+      leftTopCell: sourceCells.startCell,
+      rightBottomCell: sourceCells.endCell
+    });
     for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
-      console.log(row)
+      for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
+        this._this._data.cells[row].cells[column] = createDefaultCell('1');
+      }
     }
+    for (let row = targetCells.leftTopCell.row; row <= targetCells.rightBottomCell.row; row++) {
+      for (let column = targetCells.leftTopCell.column; column <= targetCells.rightBottomCell.column; column++) {
+        this._this._data.cells[row].cells[column] = source[row - targetCells.leftTopCell.row][column - targetCells.leftTopCell.column];
+        this._this._data.cells[row].cells[column] = source[row - targetCells.leftTopCell.row][column - targetCells.leftTopCell.column];
+      }
+    }
+
+    this.selectPlugin.selectCells(targetCells)
+
   }
   private handleRegularCB() {
 
