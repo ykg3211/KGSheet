@@ -15,8 +15,8 @@ export enum RenderZIndex {
 // 事件的识别顺序, 越上面越大
 // 意思就是上面的judgeFunc方法返回true的时候下面的方法就不执行。 但是同级的方法还是会执行。
 export enum EventZIndex {
+  SELECT_TABLE_CELL, // 选中单元格的边框
   SCROLL_BAR, // 滚动条
   SIDE_BAR, // 左上边框
-  SELECT_TABLE_CELL, // 选中单元格的边框
   TABLE_CELLS, // 单元格
 }

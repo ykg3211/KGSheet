@@ -313,9 +313,7 @@ export default class EditCellPlugin {
       this.pointDownCell = null;
       this.startRegularCell = null;
       this.currentCell = null;
-      setTimeout(() => {
-        this._this._render();
-      }, 0);
+      this._this._render();
     }
 
     this._this.setEvent(EventConstant.MOUSE_UP, {
@@ -426,7 +424,6 @@ export default class EditCellPlugin {
     dom.style.left = '0px';
     dom.style.outline = 'none';
     dom.style.border = '1px solid #4a89fe';
-    // dom.style.border = 'none';
     dom.style.resize = 'none';
   }
 

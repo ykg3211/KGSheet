@@ -42,14 +42,14 @@ export function combineCell(cells: selectedCellType[]) {
   }
 }
 
-export function _throttleByRequestAnimationFrame(fn: Function, t: number = 0) {
+export function _throttleByRequestAnimationFrame(fn: Function) {
   let flag = true;
   return () => {
     if (flag) {
       flag = false;
-      fn();
       window.requestAnimationFrame(() => {
         flag = true;
+        fn();
       })
     }
   }
