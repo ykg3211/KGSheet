@@ -20,7 +20,10 @@ export default class EditCellPlugin {
   private editDom: null | HTMLTextAreaElement;
   private editCell: null | selectedCellType;
 
+
+  private pointDownCell: null | selectedCellType;  // 剪切单元格专用的，记录鼠标点下去的时候的cell位置。
   private startCopyCell: null | CellScopeType;  // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
+
   private startRegularCell: null | CellScopeType;  // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
   private currentCell: null | selectedCellType;
   constructor(_this: Base) {
@@ -53,14 +56,21 @@ export default class EditCellPlugin {
         return;
       }
 
-      if (this.startCopyCell) {
+      if (this.startCopyCell && this.pointDownCell) {
+        const { leftTopCell, rightBottomCell } = this.getCurrentScopeInCopy();
 
+        this.drawDashBorder(ctx, this.calBorder(leftTopCell, rightBottomCell))
       }
     }])
   }
 
   private calBorder(startCell: selectedCellType, endCell: selectedCellType) {
-    const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop, renderSpanCellsArr } = this._this;
+    const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop } = this._this;
+
+    startCell.column = Math.max(0, startCell.column);
+    startCell.row = Math.max(0, startCell.row);
+    endCell.column = Math.max(0, endCell.column);
+    endCell.row = Math.max(0, endCell.row);
 
     const cellPosition: rectType = [
       _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
@@ -95,6 +105,8 @@ export default class EditCellPlugin {
     }])
   }
 
+
+  // 通用的判断鼠标是在边框还是右下角rect的方法
   private commonJudgeFunc(e: MouseEvent) {
     const point = this._this.transformXYInContainer(e);
     if (!point || !this.selectPlugin._borderPosition) {
@@ -112,11 +124,11 @@ export default class EditCellPlugin {
     }
     // 判断是不是右下角的小框
     if (judgeOver(point, [anchor[0] + w - strokeRectWidth / 2, anchor[1] + h - strokeRectWidth / 2, strokeRectWidth, strokeRectWidth])) {
-      return 'grab';
+      return ['grab', point];
     }
 
     // 剩下的肯定是边框了
-    return 'cell'
+    return ['cell', point]
   }
 
   private initEvent() {
@@ -157,6 +169,10 @@ export default class EditCellPlugin {
     this._this.setEvent(EventConstant.DB_CLICK, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
+        if (this.commonJudgeFunc(e)) {
+          return false;
+        }
+
         const point = this._this.transformXYInContainer(e, true);
         if (!point) {
           return false;
@@ -175,15 +191,35 @@ export default class EditCellPlugin {
       innerFunc: dbClickCB.bind(this),
     })
   }
+
   private handleMouseDown() {
     // 处理鼠标点击事件
-    const handleMouseDownCursor = (e: MouseEvent, type) => {
-      const cells = this.selectPlugin.getCornerCell;
-      if (!cells) {
+    const handleMouseDownCursor = (e: MouseEvent, [type, point]) => {
+      const cells = this.selectPlugin.cornerCells;
+      const cell = this._this.getCellByPoint(point);
+      if (!cells || !cell) {
         return;
       }
+      const { startCell: leftTopCell, endCell: rightBottomCell } = cells;
 
-      const { leftTopCell, rightBottomCell } = cells;
+
+      // 下面是为了收敛选中的cell的，保证是框选内部的cell
+      if (cell.column < leftTopCell.column) {
+        cell.column = leftTopCell.column;
+      }
+      if (cell.column > rightBottomCell.column) {
+        cell.column = rightBottomCell.column;
+      }
+
+      if (cell.row < leftTopCell.row) {
+        cell.row = leftTopCell.row;
+      }
+      if (cell.row > rightBottomCell.row) {
+        cell.row = rightBottomCell.row;
+      }
+
+      this.pointDownCell = cell;
+
       // cell 代表边框， 说明是剪切操作
       if (type === 'cell') {
         this.startCopyCell = {
@@ -211,7 +247,7 @@ export default class EditCellPlugin {
   }
   private handleMouseMove() {
     // 处理鼠标悬浮改变样式的。  边框和右下角
-    const handleOverCursor = (e: MouseEvent, type) => {
+    const handleOverCursor = (e: MouseEvent, [type, point]) => {
       if (type === 'grab') {
         document.body.style.cursor = 'cell';
       } else if (type === 'cell') {
@@ -260,11 +296,20 @@ export default class EditCellPlugin {
   }
   private handleMouseUp() {
     // 处理鼠标点击事件
-    const handleMouseUp = (e: MouseEvent, point) => {
+    const handleMouseUp = () => {
+      if (this.startCopyCell) {
+        this.handleCopyCB();
+      }
+      if (this.startRegularCell) {
+        this.handleRegularCB();
+      }
       this.startCopyCell = null;
+      this.pointDownCell = null;
       this.startRegularCell = null;
       this.currentCell = null;
-      this._this._render();
+      setTimeout(() => {
+        this._this._render();
+      }, 0);
     }
 
     this._this.setEvent(EventConstant.MOUSE_UP, {
@@ -377,5 +422,33 @@ export default class EditCellPlugin {
     dom.style.border = '1px solid #4a89fe';
     // dom.style.border = 'none';
     dom.style.resize = 'none';
+  }
+
+  private getCurrentScopeInCopy() {
+    const { startCell: leftTopCell, endCell: rightBottomCell } = JSON.parse(JSON.stringify(this.startCopyCell));
+    if (this.currentCell && this.pointDownCell) {
+      leftTopCell.column += this.currentCell.column - this.pointDownCell.column;
+      leftTopCell.row += this.currentCell.row - this.pointDownCell.row;
+      rightBottomCell.column += this.currentCell.column - this.pointDownCell.column;
+      rightBottomCell.row += this.currentCell.row - this.pointDownCell.row;
+      return { leftTopCell, rightBottomCell } as { leftTopCell: selectedCellType, rightBottomCell: selectedCellType }
+    }
+    return { leftTopCell, rightBottomCell } as { leftTopCell: selectedCellType, rightBottomCell: selectedCellType }
+  }
+  private handleCopyCB() {
+    if (!this.startCopyCell) {
+      return;
+    }
+    const sourceCells: CellScopeType = JSON.parse(JSON.stringify(this.startCopyCell));
+    const targetCells = this.getCurrentScopeInCopy();
+    console.log(sourceCells);
+    console.log(targetCells);
+
+    for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
+      console.log(row)
+    }
+  }
+  private handleRegularCB() {
+
   }
 }

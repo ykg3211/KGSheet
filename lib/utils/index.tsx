@@ -5,7 +5,7 @@ export function isNN(v: any) {
 }
 
 export function judgeOver([_x, _y], [x, y, w, h]) {
-  return _x > x && _x < x + w && _y > y && _y < y + h;
+  return _x >= x && _x <= x + w && _y >= y && _y <= y + h;
 }
 
 export function judgeCross([_x, _y, _w, _h], [x, y, w, h]) {

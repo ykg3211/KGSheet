@@ -115,12 +115,12 @@ class Base extends Render {
     let selectedCell: selectedCellType | null = null;
 
     // 点击最左上角的
-    if (point[0] < this.paddingLeft && point[1] < this.paddingTop) {
+    if (point[0] <= this.paddingLeft && point[1] <= this.paddingTop) {
       selectedCell = {
         row: -1,
         column: -1
       }
-    } else if (point[0] < this.paddingLeft) { // 计算选中的左侧bar
+    } else if (point[0] <= this.paddingLeft) { // 计算选中的左侧bar
       renderCellsArr.map(row => row[0]).some(cell => {
         if (judgeOver(point, [0, cell.point[1], this.width, cell.h])) {
           selectedCell = {
@@ -131,7 +131,7 @@ class Base extends Render {
         }
         return false
       })
-    } else if (point[1] < this.paddingTop) {   // 计算选中的上方bar
+    } else if (point[1] <= this.paddingTop) {   // 计算选中的上方bar
       renderCellsArr[0].some(cell => {
         if (judgeOver(point, [cell.point[0], 0, cell.w, this.height])) {
           selectedCell = {
@@ -156,7 +156,7 @@ class Base extends Render {
       }
       renderCellsArr.some(row => {
         if (row.length > 0) {
-          if (point[1] > row[0].point[1] && point[1] < (row[0].point[1] + row[0].h)) {
+          if (point[1] >= row[0].point[1] && point[1] < (row[0].point[1] + row[0].h)) {
             row.some(cell => {
               if (judgeOver(point, [cell.point[0], cell.point[1], cell.w, cell.h])) {
                 selectedCell = {

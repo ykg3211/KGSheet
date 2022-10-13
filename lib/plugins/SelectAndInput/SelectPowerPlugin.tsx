@@ -4,8 +4,9 @@
 import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
-import { combineRect, judgeCross } from "../../utils";
+import { combineCell, combineRect, judgeCross } from "../../utils";
 import { EventConstant } from "../event";
+import { CellScopeType } from "./EditCellPlugin";
 
 export interface borderType {
   anchor: [number, number],
@@ -25,6 +26,7 @@ export default class SelectPowerPlugin {
   private _this: Base;
 
   public selectedCells: null | selectedCellsType;
+  public cornerCells: CellScopeType | undefined;
 
   public selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
   public _startCell: cellPositionType | null; // 选择 一开始的格子
@@ -51,22 +53,6 @@ export default class SelectPowerPlugin {
     return this._startCell && this._endCell;
   }
 
-  public get getCornerCell() {
-    if (!this._borderPosition) {
-      return null;
-    }
-    const { anchor, w, h } = this._borderPosition;
-    const leftTopCell = this._this.getCellByPoint(anchor.map(item => item + 3) as any);
-    const rightBottomCell = this._this.getCellByPoint([anchor[0] + w - 3, anchor[1] + h - 3]);
-    if (leftTopCell && rightBottomCell) {
-      return {
-        leftTopCell,
-        rightBottomCell
-      };
-    }
-    return null;
-  }
-
   public remove() {
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS, [])
   }
@@ -76,7 +62,9 @@ export default class SelectPowerPlugin {
       if (!this.isSelect) {
         return;
       }
-      this._borderPosition = this.calcBorder();
+      const border = this.calcBorder();
+      this._borderPosition = border?.cellPosition;
+      this.cornerCells = border?.cellScope;
       if (this._borderPosition) {
         this.drawSelectedBorder(ctx, this._borderPosition);
       }
@@ -241,11 +229,11 @@ export default class SelectPowerPlugin {
     if (!(this._startCell && this._endCell)) {
       return;
     }
-    const startCell: cellPositionType = {
+    let startCell: cellPositionType = {
       row: Math.min(this._startCell.row, this._endCell.row),
       column: Math.min(this._startCell.column, this._endCell.column),
     };
-    const endCell: cellPositionType = {
+    let endCell: cellPositionType = {
       row: Math.max(this._startCell.row, this._endCell.row),
       column: Math.max(this._startCell.column, this._endCell.column),
     };
@@ -261,9 +249,21 @@ export default class SelectPowerPlugin {
       h: _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
     }
 
+    const crossSpanCells: selectedCellType[] = [startCell, endCell];
+
     renderSpanCellsArr.forEach(cell => {
       if (judgeCross([cell.point[0], cell.point[1], cell.w, cell.h], [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h])) {
         const temp = combineRect([cell.point[0], cell.point[1], cell.w, cell.h], [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h]);
+
+        crossSpanCells.push({
+          row: cell.location.row,
+          column: cell.location.column
+        });
+        crossSpanCells.push({
+          row: cell.location.row + cell.cell.span[1] - 1,
+          column: cell.location.column + cell.cell.span[0] - 1
+        });
+
         cellPosition.anchor[0] = temp[0];
         cellPosition.anchor[1] = temp[1];
         cellPosition.w = temp[2];
@@ -271,7 +271,19 @@ export default class SelectPowerPlugin {
       }
     })
 
-    return cellPosition;
+    if (crossSpanCells.length > 2) {
+      const { leftTopCell, rightBottomCell } = combineCell(crossSpanCells);
+      startCell = leftTopCell;
+      endCell = rightBottomCell;
+    }
+
+    return {
+      cellPosition,
+      cellScope: {
+        startCell,
+        endCell
+      } as CellScopeType
+    };
   }
 
   private drawSideBarLine(ctx: CanvasRenderingContext2D, { anchor, w, h }: borderType) {

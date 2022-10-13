@@ -41,7 +41,7 @@ export interface renderCellProps {
     column: number,
   },
   point: number[];
-  cell: cell;
+  cell: spanCell;
   w: number;
   h: number;
 }
