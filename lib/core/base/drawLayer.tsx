@@ -1,5 +1,5 @@
 import { CellTypeEnum, renderBarProps, renderCellProps } from '../../interfaces';
-import BaseEvent, { EventConstant } from '../../plugins/event';
+import BaseEvent, { EventConstant } from '../../plugins/base/event';
 import { isNN } from '../../utils';
 export type rectType = [number, number, number, number];
 

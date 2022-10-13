@@ -1,4 +1,4 @@
-import { EventConstant } from "../plugins/event";
+import { EventConstant } from "../plugins/base/event";
 import Base from "./base/base";
 import createDefaultData from "../utils/defaultData";
 import { excelConfig } from "../interfaces";

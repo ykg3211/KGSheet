@@ -5,7 +5,7 @@ import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { combineCell, combineRect, judgeCross } from "../../utils";
-import { EventConstant } from "../event";
+import { EventConstant } from "../base/event";
 import { CellCornerScopeType, CellScopeType } from "./EditCellPlugin";
 
 export interface borderType {

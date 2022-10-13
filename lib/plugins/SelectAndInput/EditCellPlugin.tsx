@@ -6,8 +6,8 @@ import { rectType } from "../../core/base/drawLayer";
 import { cell } from "../../interfaces";
 import { combineCell, judgeCross, judgeOver } from "../../utils";
 import { createDefaultCell } from "../../utils/defaultData";
-import { EventConstant } from "../event";
-import SelectPowerPlugin, { borderType } from "./SelectPowerPlugin";
+import { EventConstant } from "../base/event";
+import SelectPowerPlugin from "./SelectPowerPlugin";
 
 export interface CellScopeType {
   startCell: selectedCellType;
@@ -324,7 +324,7 @@ export default class EditCellPlugin {
         }
         const point = this._this.transformXYInContainer(e);
         if (!point) {
-          return false;
+          return true;
         }
         const { paddingLeft, paddingTop, width, height } = this._this;
         const { _scrollBarWidth = 10 } = this._this[PluginTypeEnum.ScrollPlugin]
@@ -430,10 +430,19 @@ export default class EditCellPlugin {
   private getCurrentScopeInCopy() {
     const { startCell: leftTopCell, endCell: rightBottomCell } = JSON.parse(JSON.stringify(this.startCopyCell));
     if (this.currentCell && this.pointDownCell) {
-      leftTopCell.column += this.currentCell.column - this.pointDownCell.column;
-      leftTopCell.row += this.currentCell.row - this.pointDownCell.row;
-      rightBottomCell.column += this.currentCell.column - this.pointDownCell.column;
-      rightBottomCell.row += this.currentCell.row - this.pointDownCell.row;
+      let columnGap = this.currentCell.column - this.pointDownCell.column;
+      let rowGap = this.currentCell.row - this.pointDownCell.row;
+
+      columnGap = Math.max(columnGap, -leftTopCell.column);
+      rowGap = Math.max(rowGap, -leftTopCell.row);
+
+      columnGap = Math.min(columnGap, this._this._data.w.length - rightBottomCell.column);
+      rowGap = Math.min(rowGap, this._this._data.h.length + 1 - rightBottomCell.row);
+
+      leftTopCell.column += columnGap;
+      leftTopCell.row += rowGap;
+      rightBottomCell.column += columnGap;
+      rightBottomCell.row += rowGap;
       return { leftTopCell, rightBottomCell } as CellCornerScopeType
     }
     return { leftTopCell, rightBottomCell } as CellCornerScopeType
@@ -450,9 +459,10 @@ export default class EditCellPlugin {
     });
     for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
       for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
-        this._this._data.cells[row].cells[column] = createDefaultCell('1');
+        this._this._data.cells[row].cells[column] = createDefaultCell();
       }
     }
+
     for (let row = targetCells.leftTopCell.row; row <= targetCells.rightBottomCell.row; row++) {
       for (let column = targetCells.leftTopCell.column; column <= targetCells.rightBottomCell.column; column++) {
         this._this._data.cells[row].cells[column] = source[row - targetCells.leftTopCell.row][column - targetCells.leftTopCell.column];

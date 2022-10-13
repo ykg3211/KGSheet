@@ -1,13 +1,13 @@
 // @ts-n ocheck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import Base from "../core/base/base";
-import { EventZIndex, RenderZIndex } from "../core/base/constant";
-import { EventConstant } from "./event";
-import { isNN } from "../utils";
-import { judgeOver } from "../utils";
-import { PluginTypeEnum } from ".";
-import { rectType } from "../core/base/drawLayer";
+import Base from "../../core/base/base";
+import { EventZIndex, RenderZIndex } from "../../core/base/constant";
+import { EventConstant } from "../base/event";
+import { isNN } from "../../utils";
+import { judgeOver } from "../../utils";
+import { PluginTypeEnum } from "..";
+import { rectType } from "../../core/base/drawLayer";
 export default class ScrollPlugin {
   private _this: Base;
   public name: string;

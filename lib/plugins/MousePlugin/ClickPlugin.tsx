@@ -1,9 +1,9 @@
 // @ts-noc heck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginTypeEnum } from ".";
-import Base from "../core/base/base";
-import { EventConstant } from "./event";
+import { PluginTypeEnum } from "..";
+import Base from "../../core/base/base";
+import { EventConstant } from "../base/event";
 
 export default class ClickPlugin {
   private _this: Base;

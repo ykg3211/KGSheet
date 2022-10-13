@@ -24,7 +24,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     h: new Array(h).fill(BASE_HEIGHT),
     cells: [],
     spanCells: {
-      '22_15': {
+      '2_3': {
         span: [1, 3],
         ...createDefaultCell('', 10, 10)
       },

@@ -1,10 +1,11 @@
-import { EventConstant } from "../../plugins/event";
+import { EventConstant } from "../../plugins/base/event";
 import Render from "./render";
 import Plugins from "../../plugins";
-import { dispatchEventType, setEventType, clearEventType } from "../../plugins/EventStack";
+import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventStack";
 import { judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
+import { spanCell } from "../../interfaces";
 
 export interface selectedCellType {
   row: number,
@@ -231,6 +232,16 @@ class Base extends Render {
       return row.cells.slice(leftTopCell.column, rightBottomCell.column + 1);
     })
     return JSON.parse(JSON.stringify(result))
+  }
+
+  /**
+   * setDataByScope
+   */
+  public setDataByScope({
+    leftTopCell,
+    rightBottomCell
+  }: CellCornerScopeType, data: spanCell[][]) {
+
   }
 }
 
