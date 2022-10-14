@@ -54,3 +54,7 @@ export function _throttleByRequestAnimationFrame(fn: Function) {
     }
   }
 }
+
+export function deepClone(v: any) {
+  return JSON.parse(JSON.stringify(v));
+}

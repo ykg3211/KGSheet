@@ -30,9 +30,9 @@ export interface spanCell extends cell {
 export interface excelConfig {
   w: number[];
   h: number[];
-  cells: rows[];
+  cells: cell[][];
   //               'row_column'
-  spanCells?: Record<string, spanCell>
+  spanCells: Record<string, spanCell>
 }
 
 export interface renderCellProps {

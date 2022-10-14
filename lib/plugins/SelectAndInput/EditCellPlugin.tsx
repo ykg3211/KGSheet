@@ -4,7 +4,7 @@ import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { rectType } from "../../core/base/drawLayer";
 import { cell } from "../../interfaces";
-import { combineCell, judgeCross, judgeOver } from "../../utils";
+import { combineCell, deepClone, judgeCross, judgeOver } from "../../utils";
 import { createDefaultCell } from "../../utils/defaultData";
 import { EventConstant } from "../base/event";
 import SelectPowerPlugin from "./SelectPowerPlugin";
@@ -31,7 +31,7 @@ export default class EditCellPlugin {
   private startCopyCell: null | CellScopeType;  // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
 
   private startRegularCell: null | CellScopeType;  // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
-  private currentCell: null | selectedCellType;
+  private currentCell: null | selectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   constructor(_this: Base) {
     this.name = PluginTypeEnum.CommonInputPowerPlugin;
     this._this = _this;
@@ -228,11 +228,13 @@ export default class EditCellPlugin {
 
       // cell 代表边框， 说明是剪切操作
       if (type === 'cell') {
+        this.removeDom();
         this.startCopyCell = {
           startCell: leftTopCell,
           endCell: rightBottomCell,
         }
       } else if (type === 'grab') {
+        this.removeDom();
         this.startRegularCell = {
           startCell: leftTopCell,
           endCell: rightBottomCell,
@@ -405,6 +407,7 @@ export default class EditCellPlugin {
       this.editDom.remove();
       this.editDom.removeEventListener('mousedown', this._stopPropagation);
       this.editDom = null;
+      this._this._render();
     }
   }
 
@@ -428,7 +431,7 @@ export default class EditCellPlugin {
   }
 
   private getCurrentScopeInCopy() {
-    const { startCell: leftTopCell, endCell: rightBottomCell } = JSON.parse(JSON.stringify(this.startCopyCell));
+    const { startCell: leftTopCell, endCell: rightBottomCell } = deepClone(this.startCopyCell);
     if (this.currentCell && this.pointDownCell) {
       let columnGap = this.currentCell.column - this.pointDownCell.column;
       let rowGap = this.currentCell.row - this.pointDownCell.row;
@@ -437,7 +440,7 @@ export default class EditCellPlugin {
       rowGap = Math.max(rowGap, -leftTopCell.row);
 
       columnGap = Math.min(columnGap, this._this._data.w.length - rightBottomCell.column);
-      rowGap = Math.min(rowGap, this._this._data.h.length + 1 - rightBottomCell.row);
+      rowGap = Math.min(rowGap, this._this._data.h.length - 1 - rightBottomCell.row);
 
       leftTopCell.column += columnGap;
       leftTopCell.row += rowGap;
@@ -451,24 +454,39 @@ export default class EditCellPlugin {
     if (!this.startCopyCell) {
       return;
     }
-    const sourceCells: CellScopeType = JSON.parse(JSON.stringify(this.startCopyCell));
+    const sourceCells: CellScopeType = deepClone(this.startCopyCell);
     const targetCells = this.getCurrentScopeInCopy();
-    const source = this._this.getDataByScope({
+    const SourceData = this._this.getDataByScope({
       leftTopCell: sourceCells.startCell,
       rightBottomCell: sourceCells.endCell
     });
+
+
     for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
       for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
-        this._this._data.cells[row].cells[column] = createDefaultCell();
+        this._this._data.cells[row][column] = createDefaultCell();
       }
     }
 
-    for (let row = targetCells.leftTopCell.row; row <= targetCells.rightBottomCell.row; row++) {
-      for (let column = targetCells.leftTopCell.column; column <= targetCells.rightBottomCell.column; column++) {
-        this._this._data.cells[row].cells[column] = source[row - targetCells.leftTopCell.row][column - targetCells.leftTopCell.column];
-        this._this._data.cells[row].cells[column] = source[row - targetCells.leftTopCell.row][column - targetCells.leftTopCell.column];
-      }
+    const tempMap = {};
+
+    Object.keys(SourceData.data.spanCells).forEach(key => {
+      delete this._this._data.spanCells[key];
+      const newKey = key.split('_').map(Number);
+      newKey[0] += targetCells.leftTopCell.row - SourceData.scope.leftTopCell.row;
+      newKey[1] += targetCells.leftTopCell.column - SourceData.scope.leftTopCell.column;
+      tempMap[newKey.join('_')] = SourceData.data.spanCells[key];
+    })
+    SourceData.data.spanCells = tempMap;
+
+    this._this._data.spanCells = {
+      ...this._this._data.spanCells,
+      ...SourceData.data.spanCells
     }
+    this._this.setDataByScope({
+      scope: targetCells,
+      data: SourceData.data
+    });
 
     this.selectPlugin.selectCells(targetCells)
 

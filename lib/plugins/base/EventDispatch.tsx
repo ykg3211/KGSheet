@@ -1,10 +1,10 @@
 // @ts-no check
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginTypeEnum } from "../";
+import { PluginTypeEnum } from "..";
 import Base from "../../core/base/base";
 import { EventZIndex } from "../../core/base/constant";
-import { EventConstant } from "../base/event";
+import { EventConstant } from "./event";
 
 // preData 是为了服用judge得到的值
 type preData = any;
@@ -19,15 +19,12 @@ export interface EventStackType {
   innerFunc: (e: MouseEvent, preData?: preData) => void | Array<(e: MouseEvent) => void>;
   outerFunc?: (e: MouseEvent, preData?: preData) => void | Array<(e: MouseEvent) => void>;
 }
-export enum EventType {
-
-}
 
 export type setEventType = (type: EventConstant, props: EventStackType) => void;
 export type clearEventType = (type: EventConstant, zIndex: EventZIndex) => void;
 export type dispatchEventType = (type: EventConstant, e: MouseEvent) => void;
 
-export default class EventStack {
+export default class EventDispatch {
   private _this: Base;
   public name: string;
   private eventStack: Partial<Record<EventConstant, Array<EventStackType[]>>>;
@@ -46,7 +43,7 @@ export default class EventStack {
   // }
   constructor(_this: Base) {
     this._this = _this;
-    this.name = PluginTypeEnum.EventStack;
+    this.name = PluginTypeEnum.EventDispatch;
     this.eventStack = {};
     this._this.setEvent = this.setEvent.bind(this);
     this._this.dispatchEvent = this.dispatchEvent.bind(this);

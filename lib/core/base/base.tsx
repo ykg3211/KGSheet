@@ -1,11 +1,16 @@
 import { EventConstant } from "../../plugins/base/event";
 import Render from "./render";
 import Plugins from "../../plugins";
-import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventStack";
-import { judgeOver } from "../../utils";
+import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventDispatch";
+import { deepClone, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
-import { spanCell } from "../../interfaces";
+import { excelConfig, spanCell } from "../../interfaces";
+
+export interface BaseDataType {
+  scope: CellCornerScopeType;
+  data: excelConfig;
+}
 
 export interface selectedCellType {
   row: number,
@@ -218,7 +223,7 @@ class Base extends Render {
     if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
       return this._data.spanCells[cell.row + '_' + cell.column];
     }
-    return this._data.cells[cell.row].cells[cell.column];
+    return this._data.cells[cell.row][cell.column];
   }
 
   /**
@@ -228,20 +233,62 @@ class Base extends Render {
     leftTopCell,
     rightBottomCell
   }: CellCornerScopeType) {
-    const result = this._data.cells.slice(leftTopCell.row, rightBottomCell.row + 1).map(row => {
-      return row.cells.slice(leftTopCell.column, rightBottomCell.column + 1);
+    leftTopCell = deepClone(leftTopCell);
+    rightBottomCell = deepClone(rightBottomCell);
+
+    const cells = this._data.cells.slice(leftTopCell.row, rightBottomCell.row + 1).map(row => {
+      return row.slice(leftTopCell.column, rightBottomCell.column + 1);
     })
-    return JSON.parse(JSON.stringify(result))
+
+    const spanCells: Record<string, spanCell> = {};
+
+    for (let row = leftTopCell.row; row < rightBottomCell.row + 1; row++) {
+      for (let column = leftTopCell.column; column < rightBottomCell.column + 1; column++) {
+        if (this._data.spanCells[row + '_' + column]) {
+          spanCells[row + '_' + column] = this._data.spanCells[row + '_' + column];
+        }
+      }
+    }
+
+    let result: excelConfig = {
+      w: this._data.w.slice(leftTopCell.column, rightBottomCell.column + 1),
+      h: this._data.h.slice(leftTopCell.row, rightBottomCell.row + 1),
+      cells,
+      spanCells,
+    }
+
+    result = deepClone(result);
+
+    return {
+      scope: {
+        leftTopCell,
+        rightBottomCell
+      },
+      data: result
+    } as BaseDataType;
   }
 
   /**
    * setDataByScope
    */
-  public setDataByScope({
-    leftTopCell,
-    rightBottomCell
-  }: CellCornerScopeType, data: spanCell[][]) {
-
+  public setDataByScope(SourceData: BaseDataType) {
+    if (!SourceData) {
+      return;
+    }
+    const { scope, data } = SourceData;
+    const { leftTopCell, rightBottomCell } = scope;
+    for (let row = leftTopCell.row; row <= rightBottomCell.row; row++) {
+      for (let column = leftTopCell.column; column <= rightBottomCell.column; column++) {
+        this._data.cells[row][column] = data.cells[row - leftTopCell.row][column - leftTopCell.column];
+        this._data.cells[row][column] = data.cells[row - leftTopCell.row][column - leftTopCell.column];
+        // 用来撑大单元格的
+        if (row === leftTopCell.row) {
+          this._data.w[column] = data.w[column - leftTopCell.column];
+        }
+      }
+      // 用来撑大单元格的
+      this._data.h[row] = data.h[row - leftTopCell.row];
+    }
   }
 }
 

@@ -175,7 +175,7 @@ export default class Render extends DrawLayer {
         if (!this.renderCellsArr[row]) {
           this.renderCellsArr[row] = [];
         }
-        rows.cells.forEach((column, cIndex) => {
+        rows.forEach((column, cIndex) => {
           if (renderThisRow && point[0] + this.data.w[cIndex] > 0 && point[0] < this.width) {
             startRIndex = startRIndex === null ? rIndex : startRIndex;
             startCIndex = startCIndex === null ? cIndex : startCIndex;

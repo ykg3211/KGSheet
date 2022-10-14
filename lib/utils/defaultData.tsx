@@ -36,9 +36,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     for (let _w = 0; _w < w; _w++) {
       temp.push(createDefaultCell('', _h, _w));
     }
-    result.cells.push({
-      cells: temp
-    });
+    result.cells.push(temp);
   }
 
   return result;
