@@ -1,12 +1,14 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 import { PluginTypeEnum } from "..";
-import Base, { selectedCellType } from "../../core/base/base";
+import Base, { BaseDataType, selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
 import { rectType } from "../../core/base/drawLayer";
 import { cell } from "../../interfaces";
-import { combineCell, deepClone, judgeCross, judgeOver } from "../../utils";
+import { combineCell, debounce, deepClone, judgeCross, judgeOver } from "../../utils";
 import { createDefaultCell } from "../../utils/defaultData";
 import { EventConstant } from "../base/event";
+import EventStack from "../EventStack";
+import { EventType } from "../EventStack";
 import SelectPowerPlugin from "./SelectPowerPlugin";
 
 export interface CellScopeType {
@@ -22,7 +24,8 @@ export interface CellCornerScopeType {
 export default class EditCellPlugin {
   public name: string;
   private _this: Base;
-  private selectPlugin: SelectPowerPlugin;
+  private SelectPlugin: SelectPowerPlugin;
+  private EventStackPlugin: EventStack;
   private editDom: null | HTMLTextAreaElement;
   private editCell: null | selectedCellType;
 
@@ -36,15 +39,24 @@ export default class EditCellPlugin {
     this.name = PluginTypeEnum.CommonInputPowerPlugin;
     this._this = _this;
 
-    if (this._this[PluginTypeEnum.SelectPowerPlugin]) {
-      this.selectPlugin = this._this[PluginTypeEnum.SelectPowerPlugin]
-    } else {
-      console.error('CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!');
-    }
+    this.initPlugin();
 
     this.initEvent();
     this.addRenderFunc();
     this.transformEditDom();
+  }
+
+  private initPlugin() {
+    if (this._this[PluginTypeEnum.SelectPowerPlugin]) {
+      this.SelectPlugin = this._this[PluginTypeEnum.SelectPowerPlugin]
+    } else {
+      console.error('CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!');
+    }
+    if (this._this[PluginTypeEnum.EventStack]) {
+      this.EventStackPlugin = this._this[PluginTypeEnum.EventStack]
+    } else {
+      console.error('CommonInputPlugin 依赖于 EventStack, 请正确注册插件!');
+    }
   }
 
   private addRenderFunc() {
@@ -115,10 +127,10 @@ export default class EditCellPlugin {
   // 通用的判断鼠标是在边框还是右下角rect的方法
   private commonJudgeFunc(e: MouseEvent) {
     const point = this._this.transformXYInContainer(e);
-    if (!point || !this.selectPlugin._borderPosition) {
+    if (!point || !this.SelectPlugin._borderPosition) {
       return false;
     }
-    const { anchor, w, h } = this.selectPlugin._borderPosition;
+    const { anchor, w, h } = this.SelectPlugin._borderPosition;
     const strokeRectWidth = 8;
     // 判断是不是单元格内部
     if (judgeOver(point, [anchor[0] + strokeRectWidth / 2, anchor[1] + strokeRectWidth / 2, w - strokeRectWidth, + h - strokeRectWidth])) {
@@ -179,12 +191,12 @@ export default class EditCellPlugin {
           return false;
         }
 
-        const point = this._this.transformXYInContainer(e, true);
+        const point = this._this.transformXYInContainer(e);
         if (!point) {
           return false;
         }
 
-        if (this.selectPlugin._startCell && this.selectPlugin._endCell && this.selectPlugin._startCell.row !== this.selectPlugin._endCell.row && this.selectPlugin._startCell.column !== this.selectPlugin._endCell.column) {
+        if (this.SelectPlugin._startCell && this.SelectPlugin._endCell && this.SelectPlugin._startCell.row !== this.SelectPlugin._endCell.row && this.SelectPlugin._startCell.column !== this.SelectPlugin._endCell.column) {
           return false;
         }
 
@@ -201,7 +213,7 @@ export default class EditCellPlugin {
   private handleMouseDown() {
     // 处理鼠标点击事件
     const handleMouseDownCursor = (e: MouseEvent, [type, point]) => {
-      const cells = this.selectPlugin.cornerCells;
+      const cells = this.SelectPlugin.cornerCells;
       const cell = this._this.getCellByPoint(point);
       if (!cells || !cell) {
         return;
@@ -324,16 +336,7 @@ export default class EditCellPlugin {
         if (!(this.startCopyCell || this.startRegularCell)) {
           return false;
         }
-        const point = this._this.transformXYInContainer(e);
-        if (!point) {
-          return true;
-        }
-        const { paddingLeft, paddingTop, width, height } = this._this;
-        const { _scrollBarWidth = 10 } = this._this[PluginTypeEnum.ScrollPlugin]
-        if (judgeOver(point, [paddingLeft, paddingTop, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth])) {
-          return point;
-        }
-        return false
+        return true;
       },
       innerFunc: handleMouseUp.bind(this),
     })
@@ -380,17 +383,48 @@ export default class EditCellPlugin {
     // 需要微调是为了不遮挡
     this.resetEditDomPosition(x, y, w, h)
 
-    this.handleDomValue(this.editDom, originData);
+    this.handleDomValue(this.editDom, originData, cell);
     (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.editDom);
     setTimeout(() => {
       this.editDom?.focus();
     }, 0);
   }
 
-  private handleDomValue(dom: HTMLTextAreaElement, originData: cell) {
+  private handleDomValue(dom: HTMLTextAreaElement, originData: cell, cell: selectedCellType) {
     dom.value = originData.content;
+    let preValue = dom.value;
+    const setEventStack = debounce((newV: string) => {
+      const preCellData = this._this.getDataByScope({
+        leftTopCell: cell,
+        rightBottomCell: cell
+      })
+      const afterCellData: BaseDataType = deepClone(preCellData);
+
+      const spanCellKeys = Object.keys(preCellData.data.spanCells);
+      if (spanCellKeys.length > 0) {
+        preCellData.data.spanCells[spanCellKeys[0]].content = preValue;
+        afterCellData.data.spanCells[spanCellKeys[0]].content = newV;
+      } else {
+        preCellData.data.cells[0][0].content = preValue;
+        afterCellData.data.cells[0][0].content = newV;
+      }
+
+      this.EventStackPlugin.cellsChange({
+        scope: {
+          leftTopCell: cell,
+          rightBottomCell: cell
+        },
+        pre_data: preCellData.data,
+        after_data: afterCellData.data,
+        time_stamp: new Date()
+      })
+
+      preValue = newV;
+    }, 200)
+
     dom.oninput = () => {
       originData.content = dom.value;
+      setEventStack(dom.value)
     }
   }
 
@@ -456,22 +490,28 @@ export default class EditCellPlugin {
     }
     const sourceCells: CellScopeType = deepClone(this.startCopyCell);
     const targetCells = this.getCurrentScopeInCopy();
+
     const SourceData = this._this.getDataByScope({
       leftTopCell: sourceCells.startCell,
       rightBottomCell: sourceCells.endCell
     });
 
-
+    // 生成sourceData处的空数据
+    const SourceAfterCells: cell[][] = [];
     for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
+      const temp: cell[] = [];
       for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
-        this._this._data.cells[row][column] = createDefaultCell();
+        temp.push(createDefaultCell());
       }
+      SourceAfterCells.push(temp);
     }
 
-    const tempMap = {};
 
+    // 如果有新的 生成spanCell。
+    const tempMap = {};
+    const SourcePreSpanCells = deepClone(SourceData.data.spanCells);
     Object.keys(SourceData.data.spanCells).forEach(key => {
-      delete this._this._data.spanCells[key];
+      // delete this._this._data.spanCells[key];
       const newKey = key.split('_').map(Number);
       newKey[0] += targetCells.leftTopCell.row - SourceData.scope.leftTopCell.row;
       newKey[1] += targetCells.leftTopCell.column - SourceData.scope.leftTopCell.column;
@@ -479,17 +519,34 @@ export default class EditCellPlugin {
     })
     SourceData.data.spanCells = tempMap;
 
-    this._this._data.spanCells = {
-      ...this._this._data.spanCells,
-      ...SourceData.data.spanCells
-    }
-    this._this.setDataByScope({
-      scope: targetCells,
-      data: SourceData.data
-    });
+    const targetCellsPreData = this._this.getDataByScope(targetCells);
 
-    this.selectPlugin.selectCells(targetCells)
+    this.EventStackPlugin.cellsMove({
+      sourceData: {
+        scope: {
+          leftTopCell: sourceCells.startCell,
+          rightBottomCell: sourceCells.endCell
+        },
+        pre_data: {
+          ...SourceData.data,
+          spanCells: SourcePreSpanCells
+        },
+        after_data: {
+          cells: SourceAfterCells,
+          w: SourceData.data.w,
+          h: SourceData.data.h,
+          spanCells: {},
+        },
+      },
+      targetData: {
+        scope: targetCells,
+        pre_data: targetCellsPreData.data,
+        after_data: SourceData.data,
+      },
+      time_stamp: new Date()
+    })
 
+    this.SelectPlugin.selectCells(targetCells)
   }
   private handleRegularCB() {
 

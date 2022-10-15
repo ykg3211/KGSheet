@@ -1,11 +1,13 @@
 import { EventConstant } from "../../plugins/base/event";
 import Render from "./render";
-import Plugins from "../../plugins";
+import Plugins, { PluginTypeEnum } from "../../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventDispatch";
 import { deepClone, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, spanCell } from "../../interfaces";
+import EventStack from "../../plugins/EventStack";
+import { EventType } from "../../plugins/EventStack";
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -17,7 +19,7 @@ export interface selectedCellType {
   column: number
 }
 class Base extends Render {
-  protected pluginsInstance: Plugins;
+  public pluginsInstance: Plugins;
   public setEvent: setEventType;
   public clearEvent: clearEventType;
   public dispatchEvent: dispatchEventType;
@@ -268,10 +270,29 @@ class Base extends Render {
     } as BaseDataType;
   }
 
-  /**
-   * setDataByScope
-   */
   public setDataByScope(SourceData: BaseDataType) {
+    const EventStackPlugin = this[PluginTypeEnum.EventStack] as EventStack;
+    if (EventStackPlugin) {
+      const preData = this.getDataByScope(SourceData.scope);
+      EventStackPlugin.push([{
+        type: EventType.CELLS_CHANGE,
+        params: {
+          scope: SourceData.scope,
+          pre_data: preData.data,
+          after_data: SourceData.data,
+          time_stamp: new Date()
+        }
+      }])
+    } else {
+      this._setDataByScope(SourceData);
+    }
+  }
+
+  /**
+   * _setDataByScope
+   * 这是真正的用来设置单元格内内容的方法
+   */
+  public _setDataByScope(SourceData: BaseDataType) {
     if (!SourceData) {
       return;
     }
@@ -289,6 +310,12 @@ class Base extends Render {
       // 用来撑大单元格的
       this._data.h[row] = data.h[row - leftTopCell.row];
     }
+
+    this._data.spanCells = {
+      ...this._data.spanCells,
+      ...SourceData.data.spanCells
+    }
+    this._render();
   }
 }
 

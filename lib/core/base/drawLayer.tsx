@@ -155,9 +155,12 @@ export default class DrawLayer extends BaseEvent {
       return;
     }
     const renderFunc = this.components[props.cell.type];
-    renderFunc && renderFunc(this.ctx, props);
-
-    needBorder && this.drawBorder(props);
+    if (renderFunc) {
+      renderFunc(this.ctx, props);
+    }
+    if (needBorder) {
+      this.drawBorder(props);
+    }
   }
 
   protected drawLeftTopCell(props: renderCellProps | renderBarProps) {
@@ -165,7 +168,9 @@ export default class DrawLayer extends BaseEvent {
       return;
     }
     const renderFunc = this.components[props.cell.type];
-    renderFunc && renderFunc(this.ctx, props);
+    if (renderFunc) {
+      renderFunc(this.ctx, props);
+    }
 
     // 绘制左上角的小三角
     this.ctx.fillStyle = this.color('babfc3')

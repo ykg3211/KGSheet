@@ -86,7 +86,9 @@ export default class EventDispatch {
               eventStack.innerFunc(e, preData);
             });
           } else {
-            eventStack.outerFunc && outerFuncArr.push(eventStack.outerFunc);
+            if (eventStack.outerFunc) {
+              outerFuncArr.push(eventStack.outerFunc);
+            }
           }
         }
         return false;

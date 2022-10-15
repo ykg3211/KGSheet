@@ -1,11 +1,11 @@
-# `YTable`
+# `YSheet`
 
 
 
 ## Usage
 
 ```
-import Excel, { createDefaultData } from 'ytable';
+import Excel, { createDefaultData } from 'ysheet';
 
 function ExcelMain() {
   const container = useRef(null);

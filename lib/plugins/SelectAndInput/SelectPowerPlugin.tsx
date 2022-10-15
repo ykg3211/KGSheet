@@ -145,11 +145,11 @@ export default class SelectPowerPlugin {
       },
       innerFunc: mouseDownCB.bind(this),
       outerFunc: () => {
-        this.selectCell = null;
-        this._startCell = null;
-        this._endCell = null;
-        this._borderPosition = null;
-        this._this._render();
+        // this.selectCell = null;
+        // this._startCell = null;
+        // this._endCell = null;
+        // this._borderPosition = null;
+        // this._this._render();
       },
     })
 
@@ -325,6 +325,7 @@ export default class SelectPowerPlugin {
     ctx.fillRect(anchor[0] + w - this.fillRectWidth / 2, anchor[1] + h - this.fillRectWidth / 2, this.fillRectWidth, this.fillRectWidth);
     ctx.strokeRect(anchor[0] + w - this.strokeRectWidth / 2, anchor[1] + h - this.strokeRectWidth / 2, this.strokeRectWidth, this.strokeRectWidth);
   }
+
   public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
     this._startCell = leftTopCell;
     this._endCell = rightBottomCell;
