@@ -4,8 +4,10 @@
 import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../core/base/base";
 import { EventZIndex, RenderZIndex } from "../../core/base/constant";
-import { combineCell, combineRect, judgeCross } from "../../utils";
+import { combineCell, combineRect, deepClone, judgeCross } from "../../utils";
 import { EventConstant } from "../base/event";
+import KeyBoardPlugin from "../KeyBoardPlugin";
+import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import { CellCornerScopeType, CellScopeType } from "./EditCellPlugin";
 
 export interface borderType {
@@ -24,6 +26,7 @@ export type selectedCellsType = selectedCellType[][]
 export default class SelectPowerPlugin {
   public name: string;
   private _this: Base;
+  private KeyboardPlugin: KeyBoardPlugin;
 
   public selectedCells: null | selectedCellsType;
   public cornerCells: CellScopeType | undefined;
@@ -47,6 +50,8 @@ export default class SelectPowerPlugin {
     this.registerRenderFunc();
     this.fillRectWidth = 4;
     this.strokeRectWidth = 5;
+
+    this.registerKeyboardEvent();
   }
 
   public get isSelect() {
@@ -79,6 +84,132 @@ export default class SelectPowerPlugin {
         this.drawSideBarLine(ctx, this._borderPosition);
       }
     }])
+  }
+
+  private registerKeyboardEvent() {
+    if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
+      this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin]
+
+      this.initSingleArrow();
+      this.initCombineArrow();
+    }
+  }
+
+  private initSingleArrow() {
+    const selectCellMode = (type: OPERATE_KEYS_ENUM) => {
+      if (this.selectCell) {
+        switch (type) {
+          case OPERATE_KEYS_ENUM.ArrowDown:
+            this.selectCell.row += 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowRight:
+            this.selectCell.column += 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowLeft:
+            this.selectCell.column -= 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowUp:
+            this.selectCell.row -= 1;
+            break;
+          default: break;
+        }
+        this.selectCell.column = Math.max(this.selectCell.column, 0);
+        this.selectCell.row = Math.max(this.selectCell.row, 0);
+        this.selectCell.column = Math.min(this.selectCell.column, this._this._data.w.length - 1);
+        this.selectCell.row = Math.min(this.selectCell.row, this._this._data.h.length - 1);
+
+        this._startCell = deepClone(this.selectCell);
+        this._endCell = deepClone(this.selectCell);
+
+        this._this._render()
+      }
+    }
+
+    this.KeyboardPlugin.register({
+      baseKeys: [],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowDown,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowDown);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowRight,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowRight);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowLeft,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowLeft);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowUp,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowUp);
+      }]
+    })
+  }
+
+  private initCombineArrow() {
+    const selectCellMode = (type: OPERATE_KEYS_ENUM) => {
+      if (this._startCell && this._endCell) {
+        switch (type) {
+          case OPERATE_KEYS_ENUM.ArrowDown:
+            this._endCell.row += 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowRight:
+            this._endCell.column += 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowLeft:
+            this._startCell.column -= 1;
+            break;
+          case OPERATE_KEYS_ENUM.ArrowUp:
+            this._startCell.row -= 1;
+            break;
+          default: break;
+        }
+        this._startCell.column = Math.max(this._startCell.column, 0);
+        this._startCell.row = Math.max(this._startCell.row, 0);
+        this._endCell.column = Math.min(this._endCell.column, this._this._data.w.length - 1);
+        this._endCell.row = Math.min(this._endCell.row, this._this._data.h.length - 1);
+
+        this._this._render()
+      }
+    }
+
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Shift],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowDown,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowDown);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Shift],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowRight,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowRight);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Shift],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowLeft,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowLeft);
+      }]
+    })
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Shift],
+      mainKeys: OPERATE_KEYS_ENUM.ArrowUp,
+      callback: [() => {
+        selectCellMode(OPERATE_KEYS_ENUM.ArrowUp);
+      }]
+    })
   }
 
   private initCellClick() {

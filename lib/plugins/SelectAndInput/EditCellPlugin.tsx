@@ -7,8 +7,9 @@ import { cell } from "../../interfaces";
 import { combineCell, debounce, deepClone, judgeCross, judgeOver } from "../../utils";
 import { createDefaultCell } from "../../utils/defaultData";
 import { EventConstant } from "../base/event";
-import EventStack from "../EventStack";
-import { EventType } from "../EventStack";
+import ExcelBaseFunction from "../EventStack";
+import KeyBoardPlugin from "../KeyBoardPlugin";
+import { OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import SelectPowerPlugin from "./SelectPowerPlugin";
 
 export interface CellScopeType {
@@ -24,8 +25,9 @@ export interface CellCornerScopeType {
 export default class EditCellPlugin {
   public name: string;
   private _this: Base;
+  private KeyboardPlugin: KeyBoardPlugin;
   private SelectPlugin: SelectPowerPlugin;
-  private EventStackPlugin: EventStack;
+  private ExcelBaseFunction: ExcelBaseFunction;
   private editDom: null | HTMLTextAreaElement;
   private editCell: null | selectedCellType;
 
@@ -40,6 +42,7 @@ export default class EditCellPlugin {
     this._this = _this;
 
     this.initPlugin();
+    this.registerKeyboardEvent();
 
     this.initEvent();
     this.addRenderFunc();
@@ -52,10 +55,23 @@ export default class EditCellPlugin {
     } else {
       console.error('CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!');
     }
-    if (this._this[PluginTypeEnum.EventStack]) {
-      this.EventStackPlugin = this._this[PluginTypeEnum.EventStack]
+    if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
+      this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction]
     } else {
-      console.error('CommonInputPlugin 依赖于 EventStack, 请正确注册插件!');
+      console.error('CommonInputPlugin 依赖于 ExcelBaseFunction, 请正确注册插件!');
+    }
+  }
+
+  private registerKeyboardEvent() {
+    if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
+      this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin]
+
+      this.KeyboardPlugin.register({
+        mainKeys: OPERATE_KEYS_ENUM.Escape,
+        callback: [() => {
+          this.removeDom()
+        }]
+      })
     }
   }
 
@@ -409,7 +425,7 @@ export default class EditCellPlugin {
         afterCellData.data.cells[0][0].content = newV;
       }
 
-      this.EventStackPlugin.cellsChange({
+      this.ExcelBaseFunction.cellsChange({
         scope: {
           leftTopCell: cell,
           rightBottomCell: cell
@@ -417,10 +433,10 @@ export default class EditCellPlugin {
         pre_data: preCellData.data,
         after_data: afterCellData.data,
         time_stamp: new Date()
-      })
+      }, false)
 
       preValue = newV;
-    }, 200)
+    }, 300)
 
     dom.oninput = () => {
       originData.content = dom.value;
@@ -428,18 +444,24 @@ export default class EditCellPlugin {
     }
   }
 
-  private _stopPropagation(e: MouseEvent) {
+  private _stopPropagation(e: Event) {
     e.stopPropagation();
   }
 
   private stopPropagation(dom: HTMLTextAreaElement) {
     dom.addEventListener('mousedown', this._stopPropagation);
+    dom.addEventListener('mouseup', this._stopPropagation);
+    dom.addEventListener('keydown', this._stopPropagation);
+    dom.addEventListener('keyup', this._stopPropagation);
   }
 
   private removeDom() {
     if (this.editDom) {
       this.editDom.remove();
       this.editDom.removeEventListener('mousedown', this._stopPropagation);
+      this.editDom.removeEventListener('mouseup', this._stopPropagation);
+      this.editDom.removeEventListener('keydown', this._stopPropagation);
+      this.editDom.removeEventListener('keyup', this._stopPropagation);
       this.editDom = null;
       this._this._render();
     }
@@ -521,7 +543,7 @@ export default class EditCellPlugin {
 
     const targetCellsPreData = this._this.getDataByScope(targetCells);
 
-    this.EventStackPlugin.cellsMove({
+    this.ExcelBaseFunction.cellsMove({
       sourceData: {
         scope: {
           leftTopCell: sourceCells.startCell,

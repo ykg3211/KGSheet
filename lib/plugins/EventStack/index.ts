@@ -4,11 +4,6 @@ import { excelConfig } from "../../interfaces";
 import { CellCornerScopeType } from "../SelectAndInput/EditCellPlugin";
 import SelectPowerPlugin from "../SelectAndInput/SelectPowerPlugin";
 import BaseEventStack from "./base";
-export enum EventType {
-  CELLS_MOVE = 'cells_move',
-  CELLS_CHANGE = 'cells_change',
-  ADD_DELETE_ROW_COLUMN = 'add_delete_row_column',
-}
 
 export interface BaseCellChangeType {
   scope: CellCornerScopeType;
@@ -26,9 +21,20 @@ export interface BaseCellsMoveType {
   time_stamp: Date;
 }
 
-export default class EventStack extends BaseEventStack {
+export default class ExcelBaseFunction {
+  public _this: Base;
+  public name: string;
+  public EventStackPlugin: BaseEventStack;
+
   constructor(_this: Base) {
-    super(_this);
+    this._this = _this;
+    this.name = PluginTypeEnum.ExcelBaseFunction;
+
+    if (this._this[PluginTypeEnum.EventStack]) {
+      this.EventStackPlugin = this._this[PluginTypeEnum.EventStack]
+    } else {
+      console.error('ExcelBaseFunction 依赖于 EventStack, 请正确注册插件!');
+    }
   }
 
   public cells_change({
@@ -43,7 +49,7 @@ export default class EventStack extends BaseEventStack {
       delete this._this._data.spanCells[spanCell];
     })
 
-    this._this._setDataByScope({
+    this._this.setDataByScope({
       scope,
       data: after
     });
@@ -54,16 +60,16 @@ export default class EventStack extends BaseEventStack {
     scope,
     pre_data,
     after_data,
-  }: BaseCellsChangeEventStackType) {
-    this.push([{
-      type: EventType.CELLS_CHANGE,
+  }: BaseCellsChangeEventStackType, immediate = true) {
+    this.EventStackPlugin.push([{
       params: {
         scope,
         pre_data,
         after_data,
         time_stamp: new Date()
-      }
-    }])
+      },
+      func: this.cells_change.bind(this),
+    }], immediate)
   }
 
   public cellsMove({
@@ -71,18 +77,18 @@ export default class EventStack extends BaseEventStack {
     targetData,
     time_stamp,
   }: BaseCellsMoveType) {
-    this.push([{
-      type: EventType.CELLS_CHANGE,
+    this.EventStackPlugin.push([{
       params: {
         ...sourceData,
         time_stamp
-      }
+      },
+      func: this.cells_change.bind(this)
     }, {
-      type: EventType.CELLS_CHANGE,
       params: {
         ...targetData,
         time_stamp
-      }
+      },
+      func: this.cells_change.bind(this)
     }])
   }
 }

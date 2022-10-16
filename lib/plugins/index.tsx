@@ -1,17 +1,21 @@
 import Base from "../core/base/base";
 import ClickPlugin from "./MousePlugin/ClickPlugin";
 import EventDispatch from "./base/EventDispatch";
-import EventStack from "./EventStack";
+import ExcelBaseFunction from "./EventStack";
 import MouseMovePlugin from "./MousePlugin/MouseMovePlugin";
 import ScrollPlugin from "./MousePlugin/ScrollPlugin";
 import SideBarResizePlugin from "./SideBarResizePlugin";
 import SelectPowerPlugin from "./SelectAndInput/SelectPowerPlugin";
 import EditCellPlugin from "./SelectAndInput/EditCellPlugin";
 import RightClickPlugin from "./RightClickPlugin";
+import KeyBoardPlugin from "./KeyBoardPlugin";
+import BaseEventStack from "./EventStack/base";
 
 export enum PluginTypeEnum {
+  KeyBoardPlugin = 'KeyBoardPlugin',
   EventDispatch = 'EventDispatch',
   EventStack = 'EventStack',
+  ExcelBaseFunction = 'ExcelBaseFunction',
   MouseMovePlugin = 'MouseMovePlugin',
   ClickPlugin = 'ClickPlugin',
   ScrollPlugin = 'ScrollPlugin',
@@ -33,9 +37,13 @@ export default class Plugins {
   constructor(_this: Base) {
     this._this = _this;
     this.pluginsArr = {};
-    // 全局的事件收集派发插件， 必须在第一个
+    // 全局的交互事件收集派发插件， 必须在第一个
     this.register(EventDispatch);
-
+    // 全局的键盘事件派发插件
+    this.register(KeyBoardPlugin)
+    // 全局的编辑撤销翻撤销事件栈。
+    this.register(BaseEventStack);
+    this.register(ExcelBaseFunction);
 
     // 鼠标移动的插件， 
     this.register(MouseMovePlugin);
@@ -47,8 +55,6 @@ export default class Plugins {
     this.register(SideBarResizePlugin);
 
 
-    // 全局的编辑撤销翻撤销事件栈。
-    this.register(EventStack);
     // 选中单元格插件
     this.register(SelectPowerPlugin);
 

@@ -1,13 +1,11 @@
 import { EventConstant } from "../../plugins/base/event";
 import Render from "./render";
-import Plugins, { PluginTypeEnum } from "../../plugins";
+import Plugins from "../../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventDispatch";
 import { deepClone, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, spanCell } from "../../interfaces";
-import EventStack from "../../plugins/EventStack";
-import { EventType } from "../../plugins/EventStack";
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -270,29 +268,11 @@ class Base extends Render {
     } as BaseDataType;
   }
 
-  public setDataByScope(SourceData: BaseDataType) {
-    const EventStackPlugin = this[PluginTypeEnum.EventStack] as EventStack;
-    if (EventStackPlugin) {
-      const preData = this.getDataByScope(SourceData.scope);
-      EventStackPlugin.push([{
-        type: EventType.CELLS_CHANGE,
-        params: {
-          scope: SourceData.scope,
-          pre_data: preData.data,
-          after_data: SourceData.data,
-          time_stamp: new Date()
-        }
-      }])
-    } else {
-      this._setDataByScope(SourceData);
-    }
-  }
-
   /**
    * _setDataByScope
    * 这是真正的用来设置单元格内内容的方法
    */
-  public _setDataByScope(SourceData: BaseDataType) {
+  public setDataByScope(SourceData: BaseDataType) {
     if (!SourceData) {
       return;
     }
