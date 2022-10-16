@@ -143,8 +143,32 @@ export default class EditCellPlugin {
           if (!this.SelectPlugin.selectCell) {
             return;
           }
-          this._this._data.cells[this.SelectPlugin.selectCell.row][this.SelectPlugin.selectCell.column].content = v.mainKeys;
+          console.log(1)
+          const cell: typeof this.SelectPlugin.selectCell = deepClone(this.SelectPlugin.selectCell);
+          const preCellData = this._this.getDataByScope({
+            leftTopCell: cell,
+            rightBottomCell: cell
+          });
+          const afterCellData: typeof preCellData = deepClone(preCellData);
+          const preValue = preCellData.data.cells[0][0].content;
+          const spanCellKeys = Object.keys(preCellData.data.spanCells);
+          if (spanCellKeys.length > 0) {
+            preCellData.data.spanCells[spanCellKeys[0]].content = preValue;
+            afterCellData.data.spanCells[spanCellKeys[0]].content = v.mainKeys;
+          } else {
+            preCellData.data.cells[0][0].content = preValue;
+            afterCellData.data.cells[0][0].content = v.mainKeys;
+          }
 
+          this.ExcelBaseFunction.cellsChange({
+            scope: {
+              leftTopCell: cell,
+              rightBottomCell: cell
+            },
+            pre_data: preCellData.data,
+            after_data: afterCellData.data,
+            time_stamp: new Date()
+          })
           this.initEditBoxDom(this.SelectPlugin.selectCell)
         }]
       })
@@ -526,12 +550,13 @@ export default class EditCellPlugin {
   }
 
   private _stopPropagation_arrow(e: KeyboardEvent) {
-    const stopKeys = [
+    const stopKeys: string[] = [...[
       OPERATE_KEYS_ENUM.ArrowDown,
       OPERATE_KEYS_ENUM.ArrowLeft,
       OPERATE_KEYS_ENUM.ArrowRight,
       OPERATE_KEYS_ENUM.ArrowUp
-    ]
+    ], ...Object.keys(CONTENT_KEYS)]
+
     if (stopKeys.includes(e.key as any)) {
       e.stopPropagation();
     }
