@@ -143,33 +143,11 @@ export default class EditCellPlugin {
           if (!this.SelectPlugin.selectCell) {
             return;
           }
-          console.log(1)
-          const cell: typeof this.SelectPlugin.selectCell = deepClone(this.SelectPlugin.selectCell);
-          const preCellData = this._this.getDataByScope({
-            leftTopCell: cell,
-            rightBottomCell: cell
-          });
-          const afterCellData: typeof preCellData = deepClone(preCellData);
-          const preValue = preCellData.data.cells[0][0].content;
-          const spanCellKeys = Object.keys(preCellData.data.spanCells);
-          if (spanCellKeys.length > 0) {
-            preCellData.data.spanCells[spanCellKeys[0]].content = preValue;
-            afterCellData.data.spanCells[spanCellKeys[0]].content = v.mainKeys;
-          } else {
-            preCellData.data.cells[0][0].content = preValue;
-            afterCellData.data.cells[0][0].content = v.mainKeys;
+          const dom = this.initEditBoxDom(this.SelectPlugin.selectCell);
+          if (dom) {
+            // 比较hack， 在这个dom上绑定了oninput的方法，借助这个方法可以执行到定义的时候的上下文，
+            dom.oninput(v.mainKeys)
           }
-
-          this.ExcelBaseFunction.cellsChange({
-            scope: {
-              leftTopCell: cell,
-              rightBottomCell: cell
-            },
-            pre_data: preCellData.data,
-            after_data: afterCellData.data,
-            time_stamp: new Date()
-          })
-          this.initEditBoxDom(this.SelectPlugin.selectCell)
         }]
       })
     }
@@ -293,8 +271,9 @@ export default class EditCellPlugin {
       position[0] += this._this.canvasDom.offsetLeft;
       position[1] += this._this.canvasDom.offsetTop;
 
-      this.createEditBox(this.editCell, position);
+      return this.createEditBox(this.editCell, position);
     }
+    return null
   }
 
   private handleDBClick() {
@@ -505,6 +484,7 @@ export default class EditCellPlugin {
     setTimeout(() => {
       this.editDom?.focus();
     }, 0);
+    return this.editDom;
   }
 
   private handleDomValue(dom: HTMLTextAreaElement, originData: cell, cell: selectedCellType) {
@@ -539,9 +519,15 @@ export default class EditCellPlugin {
       preValue = newV;
     }, 300)
 
-    dom.oninput = () => {
-      originData.content = dom.value;
-      setEventStack(dom.value)
+    dom.oninput = (newV) => {
+      if (typeof newV === 'string') {
+        dom.value = newV;
+        originData.content = newV;
+        setEventStack(dom.value)
+      } else {
+        originData.content = dom.value;
+        setEventStack(dom.value)
+      }
     }
   }
 
