@@ -2,9 +2,9 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import { PluginTypeEnum } from "..";
-import Base, { selectedCellType } from "../../core/base/base";
-import { EventZIndex, RenderZIndex } from "../../core/base/constant";
-import { combineCell, combineRect, deepClone, judgeCross } from "../../utils";
+import Base, { selectedCellType } from "../../base/base";
+import { EventZIndex, RenderZIndex } from "../../base/constant";
+import { combineCell, combineRect, deepClone, judgeCross } from "../../../utils";
 import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";

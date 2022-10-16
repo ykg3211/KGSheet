@@ -1,10 +1,10 @@
-import { EventConstant } from "../../plugins/base/event";
+import { EventConstant } from "../plugins/base/event";
 import Render from "./render";
-import Plugins from "../../plugins";
-import { dispatchEventType, setEventType, clearEventType } from "../../plugins/base/EventDispatch";
+import Plugins from "../plugins";
+import { dispatchEventType, setEventType, clearEventType } from "../plugins/base/EventDispatch";
 import { deepClone, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
-import { CellCornerScopeType } from "../../plugins/SelectAndInput/EditCellPlugin";
+import { CellCornerScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, spanCell } from "../../interfaces";
 
 export interface BaseDataType {

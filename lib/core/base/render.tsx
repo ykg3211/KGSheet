@@ -4,8 +4,8 @@ import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
 import { _throttleByRequestAnimationFrame } from '../../utils'
-import { EventConstant } from '../../plugins/base/event';
-import { PluginTypeEnum } from '../../plugins';
+import { EventConstant } from '../plugins/base/event';
+import { PluginTypeEnum } from '../plugins';
 
 
 export default class Render extends DrawLayer {

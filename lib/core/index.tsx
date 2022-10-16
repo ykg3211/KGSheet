@@ -1,6 +1,5 @@
-import { EventConstant } from "../plugins/base/event";
+import { EventConstant } from "./plugins/base/event";
 import Base from "./base/base";
-import createDefaultData from "../utils/defaultData";
 import { excelConfig } from "../interfaces";
 
 class Excel extends Base {

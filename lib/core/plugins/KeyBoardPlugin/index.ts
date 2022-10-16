@@ -1,6 +1,6 @@
 import { PluginTypeEnum } from "..";
-import Base from "../../core/base/base";
-import { deepClone } from "../../utils";
+import Base from "../../base/base";
+import { deepClone } from "../../../utils";
 import { OPERATE_KEYS, OPERATE_KEYS_ENUM, CONTENT_KEYS, BASE_KEYS } from './constant';
 
 interface KeyBoardEvent {

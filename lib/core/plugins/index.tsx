@@ -1,4 +1,4 @@
-import Base from "../core/base/base";
+import Base from "../base/base";
 import ClickPlugin from "./MousePlugin/ClickPlugin";
 import EventDispatch from "./base/EventDispatch";
 import ExcelBaseFunction from "./EventStack";

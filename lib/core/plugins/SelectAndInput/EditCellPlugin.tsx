@@ -1,11 +1,11 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 import { PluginTypeEnum } from "..";
-import Base, { BaseDataType, selectedCellType } from "../../core/base/base";
-import { EventZIndex, RenderZIndex } from "../../core/base/constant";
-import { rectType } from "../../core/base/drawLayer";
-import { cell } from "../../interfaces";
-import { combineCell, debounce, deepClone, judgeCross, judgeOver } from "../../utils";
-import { createDefaultCell } from "../../utils/defaultData";
+import Base, { BaseDataType, selectedCellType } from "../../base/base";
+import { EventZIndex, RenderZIndex } from "../../base/constant";
+import { rectType } from "../../base/drawLayer";
+import { cell } from "../../../interfaces";
+import { combineCell, debounce, deepClone, judgeCross, judgeOver } from "../../../utils";
+import { createDefaultCell } from "../../../utils/defaultData";
 import { EventConstant } from "../base/event";
 import ExcelBaseFunction from "../EventStack";
 import KeyBoardPlugin from "../KeyBoardPlugin";

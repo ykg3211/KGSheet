@@ -2,8 +2,8 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
 import { PluginTypeEnum } from "..";
-import Base from "../../core/base/base";
-import { EventZIndex } from "../../core/base/constant";
+import Base from "../../base/base";
+import { EventZIndex } from "../../base/constant";
 import { EventConstant } from "./event";
 
 // preData 是为了服用judge得到的值
