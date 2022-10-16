@@ -157,7 +157,7 @@ export default class SelectPowerPlugin {
 
   private initCombineArrow() {
     const selectCellMode = (type: OPERATE_KEYS_ENUM) => {
-      if (this._startCell && this._endCell) {
+      if (this._endCell) {
         switch (type) {
           case OPERATE_KEYS_ENUM.ArrowDown:
             this._endCell.row += 1;
@@ -166,15 +166,15 @@ export default class SelectPowerPlugin {
             this._endCell.column += 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowLeft:
-            this._startCell.column -= 1;
+            this._endCell.column -= 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowUp:
-            this._startCell.row -= 1;
+            this._endCell.row -= 1;
             break;
           default: break;
         }
-        this._startCell.column = Math.max(this._startCell.column, 0);
-        this._startCell.row = Math.max(this._startCell.row, 0);
+        this._endCell.column = Math.max(this._endCell.column, 0);
+        this._endCell.row = Math.max(this._endCell.row, 0);
         this._endCell.column = Math.min(this._endCell.column, this._this._data.w.length - 1);
         this._endCell.row = Math.min(this._endCell.row, this._this._data.h.length - 1);
 

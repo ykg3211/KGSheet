@@ -9,7 +9,7 @@ import { createDefaultCell } from "../../utils/defaultData";
 import { EventConstant } from "../base/event";
 import ExcelBaseFunction from "../EventStack";
 import KeyBoardPlugin from "../KeyBoardPlugin";
-import { OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
+import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import SelectPowerPlugin from "./SelectPowerPlugin";
 
 export interface CellScopeType {
@@ -68,8 +68,84 @@ export default class EditCellPlugin {
 
       this.KeyboardPlugin.register({
         mainKeys: OPERATE_KEYS_ENUM.Escape,
-        callback: [() => {
+        callback: [(e) => {
+          e.preventDefault();
           this.removeDom()
+        }]
+      })
+
+
+      // tab处理
+      const tabCB = (isLeft: boolean) => {
+        this.removeDom();
+        if (this.SelectPlugin.selectCell) {
+          this.SelectPlugin.selectCell.column += (isLeft ? 1 : -1);
+          this.SelectPlugin.selectCell.column = Math.max(this.SelectPlugin.selectCell.column, 0);
+          this.SelectPlugin.selectCell.column = Math.min(this.SelectPlugin.selectCell.column, this._this._data.w.length - 1);
+
+          this.SelectPlugin._startCell = deepClone(this.SelectPlugin.selectCell);
+          this.SelectPlugin._endCell = deepClone(this.SelectPlugin.selectCell);
+          this._this._render()
+        }
+      }
+      this.KeyboardPlugin.register({
+        baseKeys: [],
+        mainKeys: OPERATE_KEYS_ENUM.Tab,
+        callback: [(e) => {
+          e.preventDefault();
+          tabCB(true);
+        }]
+      })
+      this.KeyboardPlugin.register({
+        baseKeys: [BASE_KEYS_ENUM.Shift],
+        mainKeys: OPERATE_KEYS_ENUM.Tab,
+        callback: [(e) => {
+          e.preventDefault();
+          tabCB(false);
+        }]
+      })
+
+      // 回车处理
+      const enterCB = (isUp: boolean) => {
+        this.removeDom();
+        if (this.SelectPlugin.selectCell) {
+          this.SelectPlugin.selectCell.row += (isUp ? 1 : -1);
+          this.SelectPlugin.selectCell.row = Math.max(this.SelectPlugin.selectCell.row, 0);
+          this.SelectPlugin.selectCell.row = Math.min(this.SelectPlugin.selectCell.row, this._this._data.h.length - 1);
+
+          this.SelectPlugin._startCell = deepClone(this.SelectPlugin.selectCell);
+          this.SelectPlugin._endCell = deepClone(this.SelectPlugin.selectCell);
+          this._this._render()
+        }
+      }
+      this.KeyboardPlugin.register({
+        baseKeys: [],
+        mainKeys: OPERATE_KEYS_ENUM.Enter,
+        callback: [(e) => {
+          e.preventDefault();
+          enterCB(true);
+        }]
+      })
+
+      this.KeyboardPlugin.register({
+        baseKeys: [BASE_KEYS_ENUM.Shift],
+        mainKeys: OPERATE_KEYS_ENUM.Enter,
+        callback: [(e) => {
+          e.preventDefault();
+          enterCB(false);
+        }]
+      })
+
+
+      this.KeyboardPlugin.register({
+        mainKeys: Object.keys(CONTENT_KEYS),
+        callback: [(e, v) => {
+          if (!this.SelectPlugin.selectCell) {
+            return;
+          }
+          this._this._data.cells[this.SelectPlugin.selectCell.row][this.SelectPlugin.selectCell.column].content = v.mainKeys;
+
+          this.initEditBoxDom(this.SelectPlugin.selectCell)
         }]
       })
     }
@@ -184,21 +260,22 @@ export default class EditCellPlugin {
     this.handleMouseUp();
   }
 
+  private initEditBoxDom(cell: selectedCellType) {
+    if (this._this.canvasDom) {
+      this.editCell = cell;
+
+      const position = this._this.getRectByCell(this.editCell);
+
+      position[0] += this._this.canvasDom.offsetLeft;
+      position[1] += this._this.canvasDom.offsetTop;
+
+      this.createEditBox(this.editCell, position);
+    }
+  }
+
   private handleDBClick() {
-    const dbClickCB = (e, cell: {
-      row: number,
-      column: number
-    }) => {
-      if (this._this.canvasDom) {
-        this.editCell = cell;
-
-        const position = this._this.getRectByCell(this.editCell);
-
-        position[0] += this._this.canvasDom.offsetLeft;
-        position[1] += this._this.canvasDom.offsetTop;
-
-        this.createEditBox(this.editCell, position);
-      }
+    const dbClickCB = (e, cell: selectedCellType) => {
+      this.initEditBoxDom(cell);
     }
     this._this.setEvent(EventConstant.DB_CLICK, {
       type: EventZIndex.TABLE_CELLS,
@@ -448,11 +525,23 @@ export default class EditCellPlugin {
     e.stopPropagation();
   }
 
+  private _stopPropagation_arrow(e: KeyboardEvent) {
+    const stopKeys = [
+      OPERATE_KEYS_ENUM.ArrowDown,
+      OPERATE_KEYS_ENUM.ArrowLeft,
+      OPERATE_KEYS_ENUM.ArrowRight,
+      OPERATE_KEYS_ENUM.ArrowUp
+    ]
+    if (stopKeys.includes(e.key as any)) {
+      e.stopPropagation();
+    }
+  }
+
   private stopPropagation(dom: HTMLTextAreaElement) {
     dom.addEventListener('mousedown', this._stopPropagation);
     dom.addEventListener('mouseup', this._stopPropagation);
-    dom.addEventListener('keydown', this._stopPropagation);
-    dom.addEventListener('keyup', this._stopPropagation);
+    dom.addEventListener('keydown', this._stopPropagation_arrow);
+    dom.addEventListener('keyup', this._stopPropagation_arrow);
   }
 
   private removeDom() {
@@ -460,8 +549,8 @@ export default class EditCellPlugin {
       this.editDom.remove();
       this.editDom.removeEventListener('mousedown', this._stopPropagation);
       this.editDom.removeEventListener('mouseup', this._stopPropagation);
-      this.editDom.removeEventListener('keydown', this._stopPropagation);
-      this.editDom.removeEventListener('keyup', this._stopPropagation);
+      this.editDom.removeEventListener('keydown', this._stopPropagation_arrow);
+      this.editDom.removeEventListener('keyup', this._stopPropagation_arrow);
       this.editDom = null;
       this._this._render();
     }

@@ -6,14 +6,14 @@ import { OPERATE_KEYS, OPERATE_KEYS_ENUM, CONTENT_KEYS, BASE_KEYS } from './cons
 interface KeyBoardEvent {
   baseKeys?: string[],
   mainKeys: string | string[],
-  callback: Array<(v: Omit<KeyBoardEventDev, 'callback'>) => void>
+  callback: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
 }
 
 
 interface KeyBoardEventDev {
   baseKeys: string[],
   mainKeys: string,
-  callback: Array<(v: Omit<KeyBoardEventDev, 'callback'>) => void>
+  callback: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
 }
 
 
@@ -73,7 +73,8 @@ export default class KeyBoardPlugin {
     })
   }
 
-  private dispatch(key: string) {
+  private dispatch(e: KeyboardEvent) {
+    const key = e.key;
     const states: string[] = [];
     Object.keys(this.OperateState).forEach(k => {
       if (this.OperateState[k]) {
@@ -83,7 +84,7 @@ export default class KeyBoardPlugin {
     const baseKey = states.length === 0 ? '.' : states.sort().join('_');
     if (this.devs[baseKey] && this.devs[baseKey][key]) {
       this.devs[baseKey][key].callback.forEach(cb => {
-        cb({
+        cb(e, {
           baseKeys: states,
           mainKeys: key,
         });
@@ -95,7 +96,7 @@ export default class KeyBoardPlugin {
     if (BASE_KEYS[e.key]) {
       this.OperateState[e.key] = true;
     } else {
-      this.dispatch(e.key);
+      this.dispatch(e);
     }
   }
 
