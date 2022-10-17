@@ -31,10 +31,12 @@ export default class SelectPowerPlugin {
   public selectedCells: null | selectedCellsType;
   public cornerCells: CellScopeType | undefined;
 
-  public selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
+  public _selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
   public _startCell: cellPositionType | null; // 选择 一开始的格子
   public _endCell: cellPositionType | null; // 选择 结尾的格子
   public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
+
+  private selectCellMoveHandleSpanCell: (cell: cellPositionType | null) => cellPositionType | null
 
   private fillRectWidth: number;
   private strokeRectWidth: number;
@@ -52,10 +54,41 @@ export default class SelectPowerPlugin {
     this.strokeRectWidth = 5;
 
     this.registerKeyboardEvent();
+
+    this.selectCellMoveHandleSpanCell = this._selectCellMoveHandleSpanCell();
   }
 
   public get isSelect() {
     return this._startCell && this._endCell;
+  }
+  public get selectCell() {
+    return this._selectCell;
+  }
+  public set selectCell(v: cellPositionType | null) {
+    this._selectCell = this.selectCellMoveHandleSpanCell(v);
+  }
+
+  private _selectCellMoveHandleSpanCell() {
+    let preCell = this._selectCell;
+    return (cell: cellPositionType | null) => {
+      if (!cell) {
+        return cell;
+      }
+      const spanCells = this._this._data.spanCells;
+      Object.keys(this._this._data.spanCells).some(spanKey => {
+        const spanCell = spanCells[spanKey];
+        const [x, y] = spanKey.split('_').map(Number);
+        console.log(x, y)
+        if (judgeCross([x, y, spanCell.span[1], spanCell.span[0]], [cell.row, cell.column, 1, 1])) {
+          cell.row = x;
+          cell.column = y;
+          return true;
+        }
+        return false;
+      })
+      preCell = cell;
+      return cell;
+    }
   }
 
   public remove() {
@@ -98,29 +131,30 @@ export default class SelectPowerPlugin {
   private initSingleArrow() {
     const selectCellMode = (type: OPERATE_KEYS_ENUM) => {
       if (this.selectCell) {
+        const mirror = deepClone(this.selectCell);
         switch (type) {
           case OPERATE_KEYS_ENUM.ArrowDown:
-            this.selectCell.row += 1;
+            mirror.row += 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowRight:
-            this.selectCell.column += 1;
+            mirror.column += 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowLeft:
-            this.selectCell.column -= 1;
+            mirror.column -= 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowUp:
-            this.selectCell.row -= 1;
+            mirror.row -= 1;
             break;
           default: break;
         }
-        this.selectCell.column = Math.max(this.selectCell.column, 0);
-        this.selectCell.row = Math.max(this.selectCell.row, 0);
-        this.selectCell.column = Math.min(this.selectCell.column, this._this._data.w.length - 1);
-        this.selectCell.row = Math.min(this.selectCell.row, this._this._data.h.length - 1);
+        mirror.column = Math.max(mirror.column, 0);
+        mirror.row = Math.max(mirror.row, 0);
+        mirror.column = Math.min(mirror.column, this._this._data.w.length - 1);
+        mirror.row = Math.min(mirror.row, this._this._data.h.length - 1);
 
-        this._startCell = deepClone(this.selectCell);
-        this._endCell = deepClone(this.selectCell);
-
+        this._startCell = deepClone(mirror);
+        this._endCell = deepClone(mirror);
+        this.selectCell = mirror;
         this._this._render()
       }
     }
@@ -458,6 +492,7 @@ export default class SelectPowerPlugin {
   }
 
   public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
+    this.selectCell = leftTopCell;
     this._startCell = leftTopCell;
     this._endCell = rightBottomCell;
   }

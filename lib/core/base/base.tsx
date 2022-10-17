@@ -6,6 +6,7 @@ import { deepClone, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, spanCell } from "../../interfaces";
+import { cellPositionType } from "../plugins/SelectAndInput/SelectPowerPlugin";
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -187,10 +188,7 @@ class Base extends Render {
   /**
    * getRectByCell
    */
-  public getRectByCell(cell: {
-    row: number;
-    column: number
-  }) {
+  public getRectByCell(cell: cellPositionType) {
     const { _data, paddingLeft, scrollTop, scrollLeft, paddingTop } = this;
     // 手动深拷贝
     const startCell = {
@@ -216,10 +214,7 @@ class Base extends Render {
   /**
    * getRealCell
    */
-  public getRealCell(cell: {
-    row: number;
-    column: number
-  }) {
+  public getRealCell(cell: cellPositionType) {
     if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
       return this._data.spanCells[cell.row + '_' + cell.column];
     }

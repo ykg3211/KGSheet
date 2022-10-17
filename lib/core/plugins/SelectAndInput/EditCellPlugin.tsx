@@ -79,12 +79,14 @@ export default class EditCellPlugin {
       const tabCB = (isLeft: boolean) => {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
-          this.SelectPlugin.selectCell.column += (isLeft ? 1 : -1);
-          this.SelectPlugin.selectCell.column = Math.max(this.SelectPlugin.selectCell.column, 0);
-          this.SelectPlugin.selectCell.column = Math.min(this.SelectPlugin.selectCell.column, this._this._data.w.length - 1);
+          const mirror = deepClone(this.SelectPlugin.selectCell);
+          mirror.column += (isLeft ? 1 : -1);
+          mirror.column = Math.max(mirror.column, 0);
+          mirror.column = Math.min(mirror.column, this._this._data.w.length - 1);
 
-          this.SelectPlugin._startCell = deepClone(this.SelectPlugin.selectCell);
-          this.SelectPlugin._endCell = deepClone(this.SelectPlugin.selectCell);
+          this.SelectPlugin._startCell = deepClone(mirror);
+          this.SelectPlugin._endCell = deepClone(mirror);
+          this.SelectPlugin.selectCell = mirror;
           this._this._render()
         }
       }
@@ -109,12 +111,14 @@ export default class EditCellPlugin {
       const enterCB = (isUp: boolean) => {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
-          this.SelectPlugin.selectCell.row += (isUp ? 1 : -1);
-          this.SelectPlugin.selectCell.row = Math.max(this.SelectPlugin.selectCell.row, 0);
-          this.SelectPlugin.selectCell.row = Math.min(this.SelectPlugin.selectCell.row, this._this._data.h.length - 1);
+          const mirror = deepClone(this.SelectPlugin.selectCell);
+          mirror.row += (isUp ? 1 : -1);
+          mirror.row = Math.max(mirror.row, 0);
+          mirror.row = Math.min(mirror.row, this._this._data.h.length - 1);
 
-          this.SelectPlugin._startCell = deepClone(this.SelectPlugin.selectCell);
-          this.SelectPlugin._endCell = deepClone(this.SelectPlugin.selectCell);
+          this.SelectPlugin._startCell = deepClone(mirror);
+          this.SelectPlugin._endCell = deepClone(mirror);
+          this.SelectPlugin.selectCell = mirror;
           this._this._render()
         }
       }
