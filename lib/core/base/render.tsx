@@ -272,7 +272,7 @@ export default class Render extends DrawLayer {
       let point = [startX, startY]; // 锚点
 
       const cell = this.data.spanCells[key];
-      const [y, x] = key.split('_').map(i => +i);
+      const [y, x] = key.split('_').map(Number);
       point[0] += this.data.w.slice(0, x).reduce((a, b) => a + b, 0);
       point[1] += this.data.h.slice(0, y).reduce((a, b) => a + b, 0);
       const _w = this.data.w.slice(x, x + cell.span[0]).reduce((a, b) => a + b, 0);

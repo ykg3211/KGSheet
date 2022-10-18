@@ -1,7 +1,7 @@
 import { PluginTypeEnum } from "..";
 import Base from "../../base/base";
 import { deepClone } from "../../../utils";
-import { OPERATE_KEYS, OPERATE_KEYS_ENUM, CONTENT_KEYS, BASE_KEYS } from './constant';
+import { BASE_KEYS, BASE_KEYS_ENUM } from './constant';
 
 interface KeyBoardEvent {
   baseKeys?: string[],
@@ -23,7 +23,7 @@ export default class KeyBoardPlugin {
   private baseKeyDownListener: (e: KeyboardEvent) => void;
   private baseKeyUpListener: (e: KeyboardEvent) => void;
   private devs: Record<string, Record<string, KeyBoardEventDev>>;
-  private OperateState: Record<OPERATE_KEYS_ENUM, boolean>;
+  private OperateState: Record<BASE_KEYS_ENUM, boolean>;
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.KeyBoardPlugin;
@@ -35,7 +35,17 @@ export default class KeyBoardPlugin {
     this.baseKeyUpListener = this._baseKeyUpListener.bind(this);
     document.body.addEventListener('keydown', this.baseKeyDownListener)
     document.body.addEventListener('keyup', this.baseKeyUpListener)
+    this.windowBlur();
   }
+
+  private windowBlur() {
+    window.onblur = () => {
+      Object.keys(this.OperateState).forEach(key => {
+        this.OperateState[key] = false;
+      })
+    }
+  }
+
   private initState() {
     this.OperateState = deepClone(BASE_KEYS);
     Object.keys(this.OperateState).forEach(key => {

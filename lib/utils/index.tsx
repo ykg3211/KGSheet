@@ -55,8 +55,8 @@ export function _throttleByRequestAnimationFrame(fn: Function) {
   }
 }
 
-export function deepClone(v: any) {
-  return JSON.parse(JSON.stringify(v));
+export const deepClone: <T>(raw: T) => T = (v: any) => {
+  return v ? JSON.parse(JSON.stringify(v)) : v;
 }
 
 export function debounce(func: any, t: number) {

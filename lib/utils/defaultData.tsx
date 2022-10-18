@@ -4,6 +4,7 @@ const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
 const createDefaultStyle = () => {
   const result: cellStyle = {
+    fontColor: 'lightgray',
     align: 'right',
     fontSize: 18,
   }
@@ -12,7 +13,7 @@ const createDefaultStyle = () => {
 export const createDefaultCell = (content = '', _h?: number, _w?: number) => {
   const result: cell = {
     style: createDefaultStyle(),
-    content: '',
+    content: content || (_h + '_' + _w),
     type: CellTypeEnum.string,
   }
   return result;
@@ -26,7 +27,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     spanCells: {
       '2_3': {
         span: [2, 4],
-        ...createDefaultCell('', 10, 10)
+        ...createDefaultCell('', 2, 3)
       },
     }
   }
