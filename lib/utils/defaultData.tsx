@@ -29,6 +29,14 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
         span: [2, 4],
         ...createDefaultCell('', 2, 3)
       },
+      '6_3': {
+        span: [2, 4],
+        ...createDefaultCell('', 6, 3)
+      },
+      '2_5': {
+        span: [2, 4],
+        ...createDefaultCell('', 2, 5)
+      },
     }
   }
 

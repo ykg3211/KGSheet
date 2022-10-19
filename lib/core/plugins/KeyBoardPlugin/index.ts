@@ -44,6 +44,11 @@ export default class KeyBoardPlugin {
         this.OperateState[key] = false;
       })
     }
+    window.onfocus = () => {
+      Object.keys(this.OperateState).forEach(key => {
+        this.OperateState[key] = false;
+      })
+    }
   }
 
   private initState() {

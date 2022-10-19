@@ -80,13 +80,11 @@ export default class EditCellPlugin {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
           const mirror = deepClone(this.SelectPlugin.selectCell);
-          mirror.column += (isLeft ? 1 : -1);
-          mirror.column = Math.max(mirror.column, 0);
-          mirror.column = Math.min(mirror.column, this._this._data.w.length - 1);
+          const nextCell = this.SelectPlugin.getNextCellByMove(mirror, isLeft ? OPERATE_KEYS_ENUM.ArrowLeft : OPERATE_KEYS_ENUM.ArrowRight);
 
-          this.SelectPlugin._startCell = deepClone(mirror);
-          this.SelectPlugin._endCell = deepClone(mirror);
-          this.SelectPlugin.selectCell = mirror;
+          this.SelectPlugin._startCell = deepClone(nextCell);
+          this.SelectPlugin._endCell = deepClone(nextCell);
+          this.SelectPlugin.selectCell = nextCell;
           this._this._render()
         }
       }
@@ -95,7 +93,7 @@ export default class EditCellPlugin {
         mainKeys: OPERATE_KEYS_ENUM.Tab,
         callback: [(e) => {
           e.preventDefault();
-          tabCB(true);
+          tabCB(false);
         }]
       })
       this.KeyboardPlugin.register({
@@ -103,7 +101,7 @@ export default class EditCellPlugin {
         mainKeys: OPERATE_KEYS_ENUM.Tab,
         callback: [(e) => {
           e.preventDefault();
-          tabCB(false);
+          tabCB(true);
         }]
       })
 
@@ -112,13 +110,11 @@ export default class EditCellPlugin {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
           const mirror = deepClone(this.SelectPlugin.selectCell);
-          mirror.row += (isUp ? 1 : -1);
-          mirror.row = Math.max(mirror.row, 0);
-          mirror.row = Math.min(mirror.row, this._this._data.h.length - 1);
+          const nextCell = this.SelectPlugin.getNextCellByMove(mirror, isUp ? OPERATE_KEYS_ENUM.ArrowUp : OPERATE_KEYS_ENUM.ArrowDown);
 
-          this.SelectPlugin._startCell = deepClone(mirror);
-          this.SelectPlugin._endCell = deepClone(mirror);
-          this.SelectPlugin.selectCell = mirror;
+          this.SelectPlugin._startCell = deepClone(nextCell);
+          this.SelectPlugin._endCell = deepClone(nextCell);
+          this.SelectPlugin.selectCell = nextCell;
           this._this._render()
         }
       }
@@ -127,7 +123,7 @@ export default class EditCellPlugin {
         mainKeys: OPERATE_KEYS_ENUM.Enter,
         callback: [(e) => {
           e.preventDefault();
-          enterCB(true);
+          enterCB(false);
         }]
       })
 
@@ -136,7 +132,7 @@ export default class EditCellPlugin {
         mainKeys: OPERATE_KEYS_ENUM.Enter,
         callback: [(e) => {
           e.preventDefault();
-          enterCB(false);
+          enterCB(true);
         }]
       })
 

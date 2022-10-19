@@ -199,9 +199,10 @@ class Base extends Render {
       row: cell.row,
       column: cell.column,
     };
-    if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
-      endCell.row += this._data.spanCells[cell.row + '_' + cell.column].span[1] - 1
-      endCell.column += this._data.spanCells[cell.row + '_' + cell.column].span[0] - 1;
+    const spanCell = this.getSpanCell(cell);
+    if (this._data.spanCells && spanCell) {
+      endCell.row += spanCell.span[1] - 1
+      endCell.column += spanCell.span[0] - 1;
     }
     return [
       _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
@@ -215,8 +216,9 @@ class Base extends Render {
    * getRealCell
    */
   public getRealCell(cell: cellPositionType) {
-    if (this._data.spanCells && this._data.spanCells[cell.row + '_' + cell.column]) {
-      return this._data.spanCells[cell.row + '_' + cell.column];
+    const spanCell = this.getSpanCell(cell);
+    if (this._data.spanCells && spanCell) {
+      return spanCell;
     }
     return this._data.cells[cell.row][cell.column];
   }
@@ -291,6 +293,13 @@ class Base extends Render {
       ...SourceData.data.spanCells
     }
     this._render();
+  }
+
+  /**
+   * getSpanCell
+   */
+  public getSpanCell(cell: selectedCellType) {
+    return this._data.spanCells[cell.row + '_' + cell.column] as spanCell | undefined;
   }
 }
 
