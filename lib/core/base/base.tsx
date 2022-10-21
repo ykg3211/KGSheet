@@ -2,11 +2,10 @@ import { EventConstant } from "../plugins/base/event";
 import Render from "./render";
 import Plugins from "../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../plugins/base/EventDispatch";
-import { deepClone, judgeOver } from "../../utils";
+import { deepClone, judgeCross, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
-import { excelConfig, spanCell } from "../../interfaces";
-import { cellPositionType } from "../plugins/SelectAndInput/SelectPowerPlugin";
+import { excelConfig, renderCellProps, spanCell } from "../../interfaces";
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -114,6 +113,58 @@ class Base extends Render {
   }
 
   /**
+   * 判断cell来是不是一个spanCell内部的，并且返回spanCell
+   * 默认是在当前视图内的。
+   */
+  public getSpanCellByCell(cell: selectedCellType | null, isInView = true) {
+    if (!cell) {
+      return {
+        isSpan: false,
+        cell
+      };;
+    }
+    let source: (spanCell & {
+      location: selectedCellType
+    })[] = [];
+    if (isInView) {
+      source = this.renderSpanCellsArr.map(spanCell => ({
+        location: spanCell.location,
+        ...spanCell.cell
+      }));
+    } else {
+      Object.keys(this._data.spanCells).forEach(key => {
+        const [x, y] = key.split('_').map(Number)
+        source.push({
+          location: {
+            row: x,
+            column: y
+          },
+          ...this._data.spanCells[key]
+        })
+      })
+    }
+    let isSpan = false;
+    let result: null | selectedCellType = cell;
+    source.forEach(c => {
+      if (judgeCross(
+        [c.location.column, c.location.row, c.span[0], c.span[1]],
+        [cell.column, cell.row, 1, 1]
+      )) {
+        isSpan = true;
+        result = {
+          row: c.location.row,
+          column: c.location.column
+        }
+      }
+    })
+
+    return {
+      isSpan,
+      cell: result
+    };
+  }
+
+  /**
    * getCellByPoint
    * 通过相对于视图的坐标获取当前点击的单元格
    */
@@ -151,17 +202,19 @@ class Base extends Render {
         return false
       })
     } else {  // 计算中间的常规cell
-      renderSpanCellsArr.forEach(item => {
-        if (judgeOver(point, [item.point[0], item.point[1], item.w, item.h])) {
-          selectedCell = {
-            row: item.location.row,
-            column: item.location.column,
-          };
-        }
-      })
-      if (selectedCell) {
-        return selectedCell;
-      }
+
+      // renderSpanCellsArr.forEach(item => {
+      //   if (judgeOver(point, [item.point[0], item.point[1], item.w, item.h])) {
+      //     selectedCell = {
+      //       row: item.location.row,
+      //       column: item.location.column,
+      //     };
+      //   }
+      // })
+      // if (selectedCell) {
+      //   return selectedCell;
+      // }
+
       renderCellsArr.some(row => {
         if (row.length > 0) {
           if (point[1] >= row[0].point[1] && point[1] < (row[0].point[1] + row[0].h)) {
@@ -188,7 +241,7 @@ class Base extends Render {
   /**
    * getRectByCell
    */
-  public getRectByCell(cell: cellPositionType) {
+  public getRectByCell(cell: selectedCellType) {
     const { _data, paddingLeft, scrollTop, scrollLeft, paddingTop } = this;
     // 手动深拷贝
     const startCell = {
@@ -215,7 +268,7 @@ class Base extends Render {
   /**
    * getRealCell
    */
-  public getRealCell(cell: cellPositionType) {
+  public getRealCell(cell: selectedCellType) {
     const spanCell = this.getSpanCell(cell);
     if (this._data.spanCells && spanCell) {
       return spanCell;
@@ -227,11 +280,20 @@ class Base extends Render {
    * getDataByScope
    */
   public getDataByScope({
-    leftTopCell,
-    rightBottomCell
+    leftTopCell: _leftTopCell,
+    rightBottomCell: _rightBottomCell
   }: CellCornerScopeType) {
-    leftTopCell = deepClone(leftTopCell);
-    rightBottomCell = deepClone(rightBottomCell);
+    _leftTopCell = deepClone(_leftTopCell);
+    _rightBottomCell = deepClone(_rightBottomCell);
+
+    let leftTopCell: selectedCellType = {
+      row: Math.min(_leftTopCell.row, _rightBottomCell.row),
+      column: Math.min(_leftTopCell.column, _rightBottomCell.column),
+    };
+    let rightBottomCell: selectedCellType = {
+      row: Math.max(_leftTopCell.row, _rightBottomCell.row),
+      column: Math.max(_leftTopCell.column, _rightBottomCell.column),
+    };
 
     const cells = this._data.cells.slice(leftTopCell.row, rightBottomCell.row + 1).map(row => {
       return row.slice(leftTopCell.column, rightBottomCell.column + 1);

@@ -263,8 +263,12 @@ export default class EditCellPlugin {
   }
 
   private initEditBoxDom(cell: selectedCellType) {
+    const { cell: realCell } = this._this.getSpanCellByCell(cell);
+    if (!realCell) {
+      return;
+    }
     if (this._this.canvasDom) {
-      this.editCell = cell;
+      this.editCell = realCell;
 
       const position = this._this.getRectByCell(this.editCell);
 

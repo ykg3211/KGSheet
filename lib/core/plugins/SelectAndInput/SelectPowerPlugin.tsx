@@ -7,7 +7,7 @@ import { EventZIndex, RenderZIndex } from "../../base/constant";
 import { combineCell, combineRect, deepClone, judgeCross } from "../../../utils";
 import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
+import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import { CellCornerScopeType, CellScopeType } from "./EditCellPlugin";
 import { spanCell } from "../../../interfaces";
 
@@ -17,11 +17,6 @@ export interface borderType {
   anchor: [number, number],
   w: number,
   h: number
-}
-
-export interface cellPositionType {
-  row: number;
-  column: number;
 }
 
 export type selectedCellsType = selectedCellType[][]
@@ -34,14 +29,13 @@ export default class SelectPowerPlugin {
   public selectedCells: null | selectedCellsType;
   public cornerCells: CellScopeType | undefined;
 
-  public _selectCell: cellPositionType | null; // 真正选中的格子， 下面的是用来画框框的
-  public _startCell: cellPositionType | null; // 选择 一开始的格子
-  public _endCell: cellPositionType | null; // 选择 结尾的格子
+  public _selectCell: selectedCellType | null; // 真正选中的格子
+  public _startCell: selectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
+  public _endCell: selectedCellType | null; // 下面的是用来画框框的 选择 结尾的格子
   public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
 
   private fillRectWidth: number;
   private strokeRectWidth: number;
-  private selectCellsStack: Record<'preCell' | 'currentCell', cellPositionType | null>
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.SelectPowerPlugin;
@@ -56,19 +50,13 @@ export default class SelectPowerPlugin {
     this.strokeRectWidth = 5;
 
     this.registerKeyboardEvent();
-
-    this.selectCellsStack = {
-      preCell: deepClone(this.selectCell),
-      currentCell: deepClone(this.selectCell),
-    }
   }
 
+  // 计算时选中的格子。主要是为了解决spanCell的。
   public get selectCell() {
     return this._selectCell;
   }
   public set selectCell(v) {
-    this.selectCellsStack.preCell = deepClone(this.selectCellsStack.currentCell);
-    this.selectCellsStack.currentCell = deepClone(v);
     this._selectCell = v;
   }
 
@@ -104,31 +92,29 @@ export default class SelectPowerPlugin {
     }])
   }
 
-  public getNextCellByMove(cell: cellPositionType | null, arrow: ArrowType) {
-    const { currentCell, preCell } = this.selectCellsStack;
-
-    if (cell) {
-      if (currentCell && this._this.getSpanCell(currentCell)) {
-        const { row, column } = preCell || cell;
-        const { span, content } = this._this.getSpanCell(currentCell) as spanCell;
+  public getNextCellByMove(_cell: selectedCellType | null, arrow: ArrowType) {
+    const { cell, isSpan } = this._this.getSpanCellByCell(_cell);
+    if (cell && _cell) {
+      if (isSpan) {
+        const { span, content } = this._this.getSpanCell(cell) as spanCell;
         const [r, c] = content.split('_').map(Number);
 
         switch (arrow) {
           case OPERATE_KEYS_ENUM.ArrowDown:
-            cell.column = column;
-            cell.row = r + span[1];
+            cell.column = _cell.column;
+            cell.row = cell.row + span[1];
             break;
           case OPERATE_KEYS_ENUM.ArrowRight:
-            cell.row = row;
-            cell.column = c + span[0];
+            cell.row = _cell.row;
+            cell.column = cell.column + span[0];
             break;
           case OPERATE_KEYS_ENUM.ArrowLeft:
-            cell.row = row;
-            cell.column = c - 1;
+            cell.row = _cell.row;
+            cell.column = cell.column - 1;
             break;
           case OPERATE_KEYS_ENUM.ArrowUp:
-            cell.column = column;
-            cell.row = r - 1;
+            cell.column = _cell.column;
+            cell.row = cell.row - 1;
             break;
           default: break;
         }
@@ -153,18 +139,6 @@ export default class SelectPowerPlugin {
       cell.row = Math.max(cell.row, 0);
       cell.column = Math.min(cell.column, this._this._data.w.length - 1);
       cell.row = Math.min(cell.row, this._this._data.h.length - 1);
-
-      const spanCells = this._this._data.spanCells;
-      Object.keys(spanCells).some(spanKey => {
-        const spanCell = spanCells[spanKey];
-        const [x, y] = spanKey.split('_').map(Number);
-        if (judgeCross([x, y, spanCell.span[1], spanCell.span[0]], [cell.row, cell.column, 1, 1])) {
-          cell.row = x;
-          cell.column = y;
-          return true;
-        }
-        return false;
-      })
     }
     return cell;
   }
@@ -176,7 +150,50 @@ export default class SelectPowerPlugin {
 
       this.initSingleArrow();
       this.initCombineArrow();
+      this.initSelectAll();
+      this.initCopy();
     }
+  }
+  private initCopy() {
+    const copy = () => {
+      if (this._startCell && this._endCell) {
+        const data = this._this.getDataByScope({
+          leftTopCell: this._startCell,
+          rightBottomCell: this._endCell
+        })
+        console.log(data);
+      }
+    }
+
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.c],
+      callback: [() => {
+        copy();
+      }]
+    })
+  }
+
+  private initSelectAll() {
+    const selectAll = () => {
+      this._startCell = {
+        row: 0,
+        column: 0
+      }
+      this._endCell = {
+        row: this._this.data.h.length - 1,
+        column: this._this.data.w.length - 1
+      }
+      this._this._render();
+    }
+
+    this.KeyboardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.a],
+      callback: [() => {
+        selectAll();
+      }]
+    })
   }
 
   private initSingleArrow() {
@@ -426,11 +443,11 @@ export default class SelectPowerPlugin {
     if (!(this._startCell && this._endCell)) {
       return;
     }
-    let startCell: cellPositionType = {
+    let startCell: selectedCellType = {
       row: Math.min(this._startCell.row, this._endCell.row),
       column: Math.min(this._startCell.column, this._endCell.column),
     };
-    let endCell: cellPositionType = {
+    let endCell: selectedCellType = {
       row: Math.max(this._startCell.row, this._endCell.row),
       column: Math.max(this._startCell.column, this._endCell.column),
     };
