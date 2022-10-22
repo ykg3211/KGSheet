@@ -74,8 +74,11 @@ export default class SelectPowerPlugin {
         return;
       }
       const border = this.calcBorder();
-      this._borderPosition = border?.cellPosition;
-      this.cornerCells = border?.cellScope;
+      if (!border) {
+        return;
+      }
+      this._borderPosition = border.cellPosition;
+      this.cornerCells = border.cellScope;
       if (this._borderPosition) {
         this.drawSelectedBorder(ctx, this._borderPosition);
       }
@@ -151,29 +154,8 @@ export default class SelectPowerPlugin {
       this.initSingleArrow();
       this.initCombineArrow();
       this.initSelectAll();
-      this.initCopy();
     }
   }
-  private initCopy() {
-    const copy = () => {
-      if (this._startCell && this._endCell) {
-        const data = this._this.getDataByScope({
-          leftTopCell: this._startCell,
-          rightBottomCell: this._endCell
-        })
-        console.log(data);
-      }
-    }
-
-    this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
-      mainKeys: [OPERATE_KEYS_ENUM.c],
-      callback: [() => {
-        copy();
-      }]
-    })
-  }
-
   private initSelectAll() {
     const selectAll = () => {
       this._startCell = {
@@ -239,30 +221,11 @@ export default class SelectPowerPlugin {
   }
 
   private initCombineArrow() {
-    const selectCellMode = (type: OPERATE_KEYS_ENUM) => {
-      if (this._endCell) {
-        switch (type) {
-          case OPERATE_KEYS_ENUM.ArrowDown:
-            this._endCell.row += 1;
-            break;
-          case OPERATE_KEYS_ENUM.ArrowRight:
-            this._endCell.column += 1;
-            break;
-          case OPERATE_KEYS_ENUM.ArrowLeft:
-            this._endCell.column -= 1;
-            break;
-          case OPERATE_KEYS_ENUM.ArrowUp:
-            this._endCell.row -= 1;
-            break;
-          default: break;
-        }
-        this._endCell.column = Math.max(this._endCell.column, 0);
-        this._endCell.row = Math.max(this._endCell.row, 0);
-        this._endCell.column = Math.min(this._endCell.column, this._this._data.w.length - 1);
-        this._endCell.row = Math.min(this._endCell.row, this._this._data.h.length - 1);
-
-        this._this._render()
-      }
+    const selectCellMode = (type: ArrowType) => {
+      const mirror = deepClone(this._endCell);
+      const nextCell = this.getNextCellByMove(mirror, type)
+      this._endCell = nextCell;
+      this._this._render()
     }
 
     this.KeyboardPlugin.register({
@@ -439,10 +402,11 @@ export default class SelectPowerPlugin {
 
   }
 
-  private calcBorder() {
+  public calcBorder() {
     if (!(this._startCell && this._endCell)) {
-      return;
+      return null;
     }
+
     let startCell: selectedCellType = {
       row: Math.min(this._startCell.row, this._endCell.row),
       column: Math.min(this._startCell.column, this._endCell.column),
@@ -451,7 +415,6 @@ export default class SelectPowerPlugin {
       row: Math.max(this._startCell.row, this._endCell.row),
       column: Math.max(this._startCell.column, this._endCell.column),
     };
-
     const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop, renderSpanCellsArr } = this._this;
 
     const cellPosition: borderType = {

@@ -10,6 +10,7 @@ import EditCellPlugin from "./SelectAndInput/EditCellPlugin";
 import RightClickPlugin from "./RightClickPlugin";
 import KeyBoardPlugin from "./KeyBoardPlugin";
 import BaseEventStack from "./EventStack/base";
+import CopyAndPaste from "./CopyAndPaste/CopyAndPaste";
 
 export enum PluginTypeEnum {
   KeyBoardPlugin = 'KeyBoardPlugin',
@@ -22,6 +23,7 @@ export enum PluginTypeEnum {
   SideBarResizePlugin = 'SideBarResizePlugin',
   SelectPowerPlugin = 'SelectPowerPlugin',
   CommonInputPowerPlugin = 'CommonInputPowerPlugin',
+  CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
 }
 
@@ -57,6 +59,7 @@ export default class Plugins {
 
     // 选中单元格插件
     this.register(SelectPowerPlugin);
+    this.register(CopyAndPaste);
 
     // 选中之后输入单元格的插件
     this.register(EditCellPlugin);
