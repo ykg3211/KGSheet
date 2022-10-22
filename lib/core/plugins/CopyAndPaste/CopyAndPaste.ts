@@ -52,16 +52,33 @@ export default class CopyAndPaste {
         copy();
       }]
     })
+
+
+    this.KeyBoardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.v],
+      callback: [() => {
+        this.paste();
+      }]
+    })
+  }
+
+  // "text/plain"
+  // 1
+  // : 
+  // "text/html"
+  // 2
+  // : 
+  // "image/png"
+  public async paste() {
+    const ClipboardItems = await navigator.clipboard.read();
+    const blob = await ClipboardItems[0].getType('text/html');
+    const text = await blob.text();
+    console.log(text)
   }
 
   public copy(data: BaseDataType) {
-    // navigator.clipboard.read().then(res => {
-    //   console.log(res)
-    // })
     try {
-      const newClipboardItem = new ClipboardItem({
-        data: JSON.stringify(data.data)
-      })
       Object.keys(data.data.spanCells).forEach(key => {
         let [row, column] = key.split('_').map(Number);
         row -= data.scope.leftTopCell.row;
@@ -74,7 +91,12 @@ export default class CopyAndPaste {
         data.data.cells[row][column].content = data.data.spanCells[key].content;
       })
       const textContent = data.data.cells.map(row => row.map(cell => cell.content).join('\t')).join('\n');
-      // navigator.clipboard.write([newClipboardItem]);
+
+
+      const type = "text/plain";
+      const blob = new Blob([JSON.stringify(data)], { type });
+      const _data = [new ClipboardItem({ [type]: blob })];
+      navigator.clipboard.write(_data);
       navigator.clipboard.writeText(textContent);
       this.registeOnceDashBorder(data);
     } catch (e) { }
