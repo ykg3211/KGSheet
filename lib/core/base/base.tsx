@@ -67,6 +67,24 @@ class Base extends Render {
     });
   }
 
+  // 计算边框
+  public calBorder(startCell: selectedCellType, endCell: selectedCellType) {
+    const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop } = this;
+
+    startCell.column = Math.max(0, startCell.column);
+    startCell.row = Math.max(0, startCell.row);
+    endCell.column = Math.max(0, endCell.column);
+    endCell.row = Math.max(0, endCell.row);
+
+    const cellPosition: rectType = [
+      _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
+      _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
+      _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
+      _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
+    ]
+
+    return cellPosition;
+  }
 
   /**
    * 处理高分屏的比例

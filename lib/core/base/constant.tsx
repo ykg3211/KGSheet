@@ -6,6 +6,7 @@ export enum RenderZIndex {
   TABLE_LINE, // 表格线
   TABLE_SPAN_CELLS, // 跨行单元格
   SELECT_CELLS, // 选中的单元格
+  COPY_SELLS_BORDER, // 复制剪切的单元格边框
   // SHADOW, // shadow
   SIDE_BAR, // 表格X轴Y轴
   SELECT_CELLS_SIDEBAR_LINE, // 选中的单元格 对应的sidebar中的横线

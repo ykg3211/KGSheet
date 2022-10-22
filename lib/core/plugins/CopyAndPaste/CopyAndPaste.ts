@@ -1,8 +1,10 @@
 import { PluginTypeEnum } from "..";
 import Base, { BaseDataType } from "../../base/base";
+import { RenderZIndex } from "../../base/constant";
+import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
-import SelectPowerPlugin from "../SelectAndInput/SelectPowerPlugin";
+import SelectPowerPlugin, { borderType } from "../SelectAndInput/SelectPowerPlugin";
 
 export default class CopyAndPaste {
   public name: string;
@@ -53,11 +55,13 @@ export default class CopyAndPaste {
   }
 
   public copy(data: BaseDataType) {
+    // navigator.clipboard.read().then(res => {
+    //   console.log(res)
+    // })
     try {
       const newClipboardItem = new ClipboardItem({
         data: JSON.stringify(data.data)
       })
-
       Object.keys(data.data.spanCells).forEach(key => {
         let [row, column] = key.split('_').map(Number);
         row -= data.scope.leftTopCell.row;
@@ -70,8 +74,28 @@ export default class CopyAndPaste {
         data.data.cells[row][column].content = data.data.spanCells[key].content;
       })
       const textContent = data.data.cells.map(row => row.map(cell => cell.content).join('\t')).join('\n');
-      navigator.clipboard.write([newClipboardItem]);
+      // navigator.clipboard.write([newClipboardItem]);
       navigator.clipboard.writeText(textContent);
+      this.registeOnceDashBorder(data);
     } catch (e) { }
+  }
+
+  private registeOnceDashBorder(data: BaseDataType) {
+    this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER)
+    this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [((ctx) => {
+      ctx.save();
+      const [x, y, w, h] = this._this.calBorder(data.scope.leftTopCell, data.scope.rightBottomCell);
+      this._this._data.h
+      ctx.strokeStyle = '#4a89fe'
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.setLineDash([5]);
+      ctx.strokeRect(x, y, w, h);
+      ctx.restore();
+    }).bind(this)])
+    this._this._render();
+    this._this.once(EventConstant.EXCEL_CHANGE, () => {
+      this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER)
+    })
   }
 }

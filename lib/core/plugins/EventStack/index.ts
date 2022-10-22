@@ -4,6 +4,7 @@ import { excelConfig } from "../../../interfaces";
 import { CellCornerScopeType } from "../SelectAndInput/EditCellPlugin";
 import SelectPowerPlugin from "../SelectAndInput/SelectPowerPlugin";
 import BaseEventStack from "./base";
+import { EventConstant } from "../base/event";
 
 export interface BaseCellChangeType {
   scope: CellCornerScopeType;
@@ -54,6 +55,11 @@ export default class ExcelBaseFunction {
       data: after
     });
     (this._this[PluginTypeEnum.SelectPowerPlugin] as SelectPowerPlugin)?.selectCells(scope);
+    this._this.emit(EventConstant.EXCEL_CHANGE, {
+      scope,
+      pre_data,
+      after_data,
+    })
   }
 
   public cellsChange({

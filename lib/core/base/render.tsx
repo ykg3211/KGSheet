@@ -303,7 +303,7 @@ export default class Render extends DrawLayer {
     }))
   }
 
-  public resetRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
+  public resetRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[] = []) {
     this.renderFuncArr[index] = funcs;
   }
   public addRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {

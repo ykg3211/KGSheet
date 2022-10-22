@@ -163,7 +163,7 @@ export default class EditCellPlugin {
         const { currentCell } = this;
         const { leftTopCell, rightBottomCell } = combineCell([startCell, endCell, currentCell]);
 
-        this.drawDashBorder(ctx, this.calBorder(leftTopCell, rightBottomCell))
+        this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell))
 
         return;
       }
@@ -171,27 +171,9 @@ export default class EditCellPlugin {
       if (this.startCopyCell && this.pointDownCell) {
         const { leftTopCell, rightBottomCell } = this.getCurrentScopeInCopy();
 
-        this.drawDashBorder(ctx, this.calBorder(leftTopCell, rightBottomCell))
+        this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell))
       }
     }])
-  }
-
-  private calBorder(startCell: selectedCellType, endCell: selectedCellType) {
-    const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop } = this._this;
-
-    startCell.column = Math.max(0, startCell.column);
-    startCell.row = Math.max(0, startCell.row);
-    endCell.column = Math.max(0, endCell.column);
-    endCell.row = Math.max(0, endCell.row);
-
-    const cellPosition: rectType = [
-      _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
-      _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
-      _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
-      _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
-    ]
-
-    return cellPosition;
   }
 
   private drawDashBorder(ctx: CanvasRenderingContext2D, rect: rectType) {
@@ -510,6 +492,7 @@ export default class EditCellPlugin {
         afterCellData.data.cells[0][0].content = newV;
       }
 
+      this._this.emit(EventConstant.EXCEL_CHANGE)
       this.ExcelBaseFunction.cellsChange({
         scope: {
           leftTopCell: cell,
