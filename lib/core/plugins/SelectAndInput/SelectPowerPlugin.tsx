@@ -7,7 +7,7 @@ import { EventZIndex, RenderZIndex } from "../../base/constant";
 import { combineCell, combineRect, deepClone, judgeCross } from "../../../utils";
 import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
-import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
+import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import { CellCornerScopeType, CellScopeType } from "./EditCellPlugin";
 import { spanCell } from "../../../interfaces";
 
@@ -96,7 +96,7 @@ export default class SelectPowerPlugin {
   }
 
   public getNextCellByMove(_cell: selectedCellType | null, arrow: ArrowType) {
-    const { cell, isSpan } = this._this.getSpanCellByCell(_cell);
+    const { cell, isSpan } = this._this.getSpanCellByCell({ cell: _cell });
     if (cell && _cell) {
       if (isSpan) {
         const { span, content } = this._this.getSpanCell(cell) as spanCell;
@@ -267,9 +267,13 @@ export default class SelectPowerPlugin {
       if (!cell) {
         return;
       }
+
       this.selectCell = cell;
       if (cell.row !== -1 && cell.column !== -1) { // 正常开局，点的是中间的单元格
-        this._startCell = cell;
+
+        if (!this.KeyboardPlugin.OperateState[BASE_KEYS_ENUM.Shift]) {
+          this._startCell = cell;
+        }
         this._endCell = cell;
 
         isMouseDown_normalCell = true;

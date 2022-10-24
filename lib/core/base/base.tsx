@@ -4,7 +4,7 @@ import Plugins from "../plugins";
 import { dispatchEventType, setEventType, clearEventType } from "../plugins/base/EventDispatch";
 import { deepClone, judgeCross, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
-import { CellCornerScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
+import { CellCornerScopeType, CellScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, renderCellProps, spanCell } from "../../interfaces";
 
 export interface BaseDataType {
@@ -134,12 +134,28 @@ class Base extends Render {
    * 判断cell来是不是一个spanCell内部的，并且返回spanCell
    * 默认是在当前视图内的。
    */
-  public getSpanCellByCell(cell: selectedCellType | null, isInView = true) {
-    if (!cell) {
+  public getSpanCellByCell({
+    cell,
+    cellScope,
+    isInView = true
+  }: {
+    cell?: selectedCellType | null,
+    cellScope?: CellScopeType,
+    isInView?: boolean
+  }) {
+    cellScope = deepClone(cellScope);
+    if (!cell && !cellScope) {
       return {
         isSpan: false,
-        cell
-      };;
+        cell: cell || null
+      };
+    }
+    let w = 1;
+    let h = 1;
+    if (!cell && cellScope) {
+      cell = cellScope.startCell;
+      w = cellScope.endCell.column - cellScope.startCell.column + 1;
+      h = cellScope.endCell.row - cellScope.startCell.row + 1;
     }
     let source: (spanCell & {
       location: selectedCellType
@@ -162,11 +178,11 @@ class Base extends Render {
       })
     }
     let isSpan = false;
-    let result: null | selectedCellType = cell;
+    let result: null | selectedCellType = cell as selectedCellType;
     source.forEach(c => {
       if (judgeCross(
         [c.location.column, c.location.row, c.span[0], c.span[1]],
-        [cell.column, cell.row, 1, 1]
+        [(cell as selectedCellType).column, (cell as selectedCellType).row, w, h]
       )) {
         isSpan = true;
         result = {

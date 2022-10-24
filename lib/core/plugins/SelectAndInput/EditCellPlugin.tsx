@@ -11,6 +11,7 @@ import ExcelBaseFunction from "../EventStack";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import SelectPowerPlugin from "./SelectPowerPlugin";
+import { BusinessEventConstant } from "../base/businessEvent";
 
 export interface CellScopeType {
   startCell: selectedCellType;
@@ -169,9 +170,10 @@ export default class EditCellPlugin {
       }
 
       if (this.startCopyCell && this.pointDownCell) {
-        const { leftTopCell, rightBottomCell } = this.getCurrentScopeInCopy();
-
-        this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell))
+        const { leftTopCell, rightBottomCell } = this.getCurrentScopeInCopy() || {};
+        if (leftTopCell && rightBottomCell) {
+          this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell))
+        }
       }
     }])
   }
@@ -245,7 +247,7 @@ export default class EditCellPlugin {
   }
 
   private initEditBoxDom(cell: selectedCellType) {
-    const { cell: realCell } = this._this.getSpanCellByCell(cell);
+    const { cell: realCell } = this._this.getSpanCellByCell({ cell });
     if (!realCell) {
       return;
     }
@@ -574,6 +576,9 @@ export default class EditCellPlugin {
   }
 
   private getCurrentScopeInCopy() {
+    if (!this.startCopyCell) {
+      return null;
+    }
     const { startCell: leftTopCell, endCell: rightBottomCell } = deepClone(this.startCopyCell);
     if (this.currentCell && this.pointDownCell) {
       let columnGap = this.currentCell.column - this.pointDownCell.column;
@@ -593,12 +598,40 @@ export default class EditCellPlugin {
     }
     return { leftTopCell, rightBottomCell } as CellCornerScopeType
   }
+
+  private judgeTargetIncludeSpanCell(targetCells: CellCornerScopeType) {
+
+    return false;
+  }
+
   private handleCopyCB() {
     if (!this.startCopyCell) {
       return;
     }
+
+
     const sourceCells: CellScopeType = deepClone(this.startCopyCell);
     const targetCells = this.getCurrentScopeInCopy();
+
+    if (!targetCells) {
+      return;
+    }
+
+    if (this._this.getSpanCellByCell({
+      cellScope: {
+        startCell: targetCells.leftTopCell,
+        endCell: targetCells.rightBottomCell
+      },
+      isInView: false
+    }).isSpan) {
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: '123'
+      });
+      console.log('spancell')
+      return;
+    }
+
 
     const SourceData = this._this.getDataByScope({
       leftTopCell: sourceCells.startCell,

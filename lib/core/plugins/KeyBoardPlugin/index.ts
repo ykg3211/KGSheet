@@ -23,7 +23,7 @@ export default class KeyBoardPlugin {
   private baseKeyDownListener: (e: KeyboardEvent) => void;
   private baseKeyUpListener: (e: KeyboardEvent) => void;
   private devs: Record<string, Record<string, KeyBoardEventDev>>;
-  private OperateState: Record<BASE_KEYS_ENUM, boolean>;
+  public OperateState: Record<BASE_KEYS_ENUM, boolean>;
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.KeyBoardPlugin;
