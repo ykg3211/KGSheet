@@ -112,11 +112,11 @@ export default class CopyAndPaste {
         'text/plain': new Blob([textContent], { type: 'text/plain' })
       })];
       navigator.clipboard.write(_data);
-      this.registeOnceDashBorder(data);
+      this.registerOnceDashBorder(data);
     } catch (e) { }
   }
 
-  private registeOnceDashBorder(data: BaseDataType) {
+  private registerOnceDashBorder(data: BaseDataType) {
     this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER)
     this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [((ctx) => {
       ctx.save();

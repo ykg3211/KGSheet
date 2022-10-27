@@ -32,7 +32,7 @@ export default class ExcelBaseFunction {
     this.name = PluginTypeEnum.ExcelBaseFunction;
 
     if (this._this[PluginTypeEnum.EventStack]) {
-      this.EventStackPlugin = this._this[PluginTypeEnum.EventStack]
+      this.EventStackPlugin = this._this[PluginTypeEnum.EventStack];
     } else {
       console.error('ExcelBaseFunction 依赖于 EventStack, 请正确注册插件!');
     }

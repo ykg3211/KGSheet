@@ -12,6 +12,7 @@ import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import SelectPowerPlugin, { selectTypeEnum } from "./SelectPowerPlugin";
 import { BusinessEventConstant } from "../base/businessEvent";
+import { InputDom } from "./InputDom";
 
 export interface CellScopeType {
   startCell: selectedCellType;
@@ -29,7 +30,7 @@ export default class EditCellPlugin {
   private KeyboardPlugin: KeyBoardPlugin;
   private SelectPlugin: SelectPowerPlugin;
   private ExcelBaseFunction: ExcelBaseFunction;
-  private editDom: null | HTMLTextAreaElement;
+  private editDomInstance: null | InputDom;
   private editCell: null | selectedCellType;
 
 
@@ -190,13 +191,13 @@ export default class EditCellPlugin {
 
   private transformEditDom() {
     this._this.addRenderFunction(RenderZIndex.SCROLL_BAR, [() => {
-      if (this.editCell && this.editDom && this._this.canvasDom) {
+      if (this.editCell && this.editDomInstance && this._this.canvasDom) {
         const position = this._this.getRectByCell(this.editCell);
 
         position[0] += this._this.canvasDom.offsetLeft;
         position[1] += this._this.canvasDom.offsetTop;
 
-        this.resetEditDomPosition(...position);
+        this.editDomInstance.resetEditDomPosition(...position);
       }
     }])
   }
@@ -244,7 +245,7 @@ export default class EditCellPlugin {
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
-        if (this.editDom && !(e as any).path.includes(this.editDom)) {
+        if (this.editDomInstance && !(e as any).path.includes(this.editDomInstance)) {
           this.removeDom();
         }
         return false;
@@ -438,132 +439,22 @@ export default class EditCellPlugin {
     })
   }
 
-  private resetEditDomPosition(x: number, y: number, w: number, h: number) {
-    if (!this.editDom || !this._this.canvasDom) {
-      return;
-    }
-    const { paddingLeft, paddingTop, width, height } = this._this;
-    const { _scrollBarWidth = 10 } = this._this[PluginTypeEnum.ScrollPlugin]
-    const contentX = paddingLeft + (this._this.canvasDom?.offsetLeft || 0);
-    const contentY = paddingTop + (this._this.canvasDom?.offsetTop || 0);
-
-    const display = judgeCross([x, y, w, h], [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth]);
-
-    x += 1;
-    y += 1;
-    x = Math.max(contentX, x)
-    y = Math.max(contentY, y)
-
-    x = Math.min(this._this.canvasDom.offsetLeft + width - _scrollBarWidth - w + 3, x)
-    y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y)
-
-
-    this.editDom.style.width = (w - 2) * this._this.scale + 'px';
-    this.editDom.style.height = (h - 2) * this._this.scale + 'px';
-
-    this.editDom.style.display = display ? 'block' : 'none'
-
-    this.editDom.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
   private createEditBox(cell: selectedCellType, [x, y, w, h]: rectType) {
-    if (this.editDom) {
+    if (this.editDomInstance) {
       return;
     }
     const originData = this._this.getRealCell(cell);
-
-    this.editDom = document.createElement('textarea');
-    this.setCommonStyle(this.editDom, originData);
-    this.stopPropagation(this.editDom);
-
+    // this.editDom = document.createElement('textarea');
+    this.editDomInstance = new InputDom(this._this, originData, cell);
     // 需要微调是为了不遮挡
-    this.resetEditDomPosition(x, y, w, h)
-
-    this.handleDomValue(this.editDom, originData, cell);
-    (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.editDom);
-    setTimeout(() => {
-      this.editDom?.focus();
-    }, 0);
-    return this.editDom;
-  }
-
-  private handleDomValue(dom: HTMLTextAreaElement, originData: cell, cell: selectedCellType) {
-    dom.value = originData.content;
-    let preValue = dom.value;
-    const setEventStack = debounce((newV: string) => {
-      const preCellData = this._this.getDataByScope({
-        leftTopCell: cell,
-        rightBottomCell: cell
-      })
-      const afterCellData: BaseDataType = deepClone(preCellData);
-
-      const spanCellKeys = Object.keys(preCellData.data.spanCells);
-      if (spanCellKeys.length > 0) {
-        preCellData.data.spanCells[spanCellKeys[0]].content = preValue;
-        afterCellData.data.spanCells[spanCellKeys[0]].content = newV;
-      } else {
-        preCellData.data.cells[0][0].content = preValue;
-        afterCellData.data.cells[0][0].content = newV;
-      }
-
-      this._this.emit(EventConstant.EXCEL_CHANGE)
-      this.ExcelBaseFunction.cellsChange({
-        scope: {
-          leftTopCell: cell,
-          rightBottomCell: cell
-        },
-        pre_data: preCellData.data,
-        after_data: afterCellData.data,
-        time_stamp: new Date()
-      }, false)
-
-      preValue = newV;
-    }, 300)
-
-    dom.oninput = (newV) => {
-      if (typeof newV === 'string') {
-        dom.value = newV;
-        originData.content = newV;
-        setEventStack(dom.value)
-      } else {
-        originData.content = dom.value;
-        setEventStack(dom.value)
-      }
-    }
-  }
-
-  private _stopPropagation(e: Event) {
-    e.stopPropagation();
-  }
-
-  private _stopPropagation_arrow(e: KeyboardEvent) {
-    const stopKeys: string[] = [...[
-      OPERATE_KEYS_ENUM.ArrowDown,
-      OPERATE_KEYS_ENUM.ArrowLeft,
-      OPERATE_KEYS_ENUM.ArrowRight,
-      OPERATE_KEYS_ENUM.ArrowUp
-    ], ...Object.keys(CONTENT_KEYS)]
-
-    if (stopKeys.includes(e.key as any)) {
-      e.stopPropagation();
-    }
-  }
-
-  private stopPropagation(dom: HTMLTextAreaElement) {
-    dom.addEventListener('mousedown', this._stopPropagation);
-    dom.addEventListener('mouseup', this._stopPropagation);
-    dom.addEventListener('keydown', this._stopPropagation_arrow);
-    dom.addEventListener('keyup', this._stopPropagation_arrow);
+    this.editDomInstance.resetEditDomPosition(x, y, w, h)
+    return this.editDomInstance;
   }
 
   private removeDom() {
-    if (this.editDom) {
-      this.editDom.remove();
-      this.editDom.removeEventListener('mousedown', this._stopPropagation);
-      this.editDom.removeEventListener('mouseup', this._stopPropagation);
-      this.editDom.removeEventListener('keydown', this._stopPropagation_arrow);
-      this.editDom.removeEventListener('keyup', this._stopPropagation_arrow);
-      this.editDom = null;
+    if (this.editDomInstance) {
+      this.editDomInstance.remove();
+      this.editDomInstance = null;
       this._this._render();
     }
   }
