@@ -19,6 +19,12 @@ export interface borderType {
   h: number
 }
 
+export enum selectTypeEnum {
+  row = 'row',
+  normal = 'normal',
+  column = 'column',
+}
+
 export type selectedCellsType = selectedCellType[][]
 
 export default class SelectPowerPlugin {
@@ -34,6 +40,9 @@ export default class SelectPowerPlugin {
   public _endCell: selectedCellType | null; // 下面的是用来画框框的 选择 结尾的格子
   public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
 
+  // 用来标记是不是点击边框选中的一行或者一列
+  public selectType: null | selectTypeEnum;
+
   private fillRectWidth: number;
   private strokeRectWidth: number;
 
@@ -42,7 +51,7 @@ export default class SelectPowerPlugin {
     this._this = _this;
     this._startCell = null;
     this._endCell = null;
-
+    this.selectType = null;
     this._borderPosition = null;
     this.initCellClick();
     this.registerRenderFunc();
@@ -277,7 +286,7 @@ export default class SelectPowerPlugin {
         this._endCell = cell;
 
         isMouseDown_normalCell = true;
-
+        this.selectType = selectTypeEnum.normal;
         this._this._render();
       } else if (cell.row === -1 && cell.column === -1) {  //点击了最左上角 全选
         this._startCell = {
@@ -288,6 +297,7 @@ export default class SelectPowerPlugin {
           row: this._this.data.h.length - 1,
           column: this._this.data.w.length - 1
         }
+        this.selectType = selectTypeEnum.normal;
         this._this._render();
       } else if (cell.row === -1) {  //点击了上边框， 则选中一列
         this._startCell = {
@@ -299,6 +309,7 @@ export default class SelectPowerPlugin {
           column: cell.column
         }
         isMouseDown_top_Cell = true;
+        this.selectType = selectTypeEnum.column;
         this._this._render();
       } else if (cell.column === -1) {  //点击了左边框， 则选中一行
         this._startCell = {
@@ -310,6 +321,7 @@ export default class SelectPowerPlugin {
           column: this._this.data.w.length - 1
         }
         isMouseDown_left_Cell = true;
+        this.selectType = selectTypeEnum.row;
         this._this._render();
       }
     }

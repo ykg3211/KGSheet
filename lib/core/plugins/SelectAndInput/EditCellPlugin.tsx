@@ -10,7 +10,7 @@ import { EventConstant } from "../base/event";
 import ExcelBaseFunction from "../EventStack";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
-import SelectPowerPlugin from "./SelectPowerPlugin";
+import SelectPowerPlugin, { selectTypeEnum } from "./SelectPowerPlugin";
 import { BusinessEventConstant } from "../base/businessEvent";
 
 export interface CellScopeType {
@@ -210,12 +210,24 @@ export default class EditCellPlugin {
     }
     const { anchor, w, h } = this.SelectPlugin._borderPosition;
     const strokeRectWidth = 8;
+
+    // 判断选择一行或者一列的情况
+    if (this.SelectPlugin.selectType === selectTypeEnum.column) {
+      if (judgeOver(point, [anchor[0], 0, w, this._this.paddingTop])) {
+        return ['cell', point];
+      }
+    } else if (this.SelectPlugin.selectType === selectTypeEnum.row) {
+      if (judgeOver(point, [0, anchor[1], this._this.paddingLeft, h])) {
+        return ['cell', point];
+      }
+    }
+
     // 判断是不是单元格内部
-    if (judgeOver(point, [anchor[0] + strokeRectWidth / 2, anchor[1] + strokeRectWidth / 2, w - strokeRectWidth, + h - strokeRectWidth])) {
+    if (judgeOver(point, [anchor[0] + strokeRectWidth / 2, anchor[1] + strokeRectWidth / 2, w - strokeRectWidth, h - strokeRectWidth])) {
       return false;
     }
     // 判断是不是单元格外部
-    if (!judgeOver(point, [anchor[0] - strokeRectWidth / 2, anchor[1] - strokeRectWidth / 2, w + strokeRectWidth, + h + strokeRectWidth])) {
+    if (!judgeOver(point, [anchor[0] - strokeRectWidth / 2, anchor[1] - strokeRectWidth / 2, w + strokeRectWidth, h + strokeRectWidth])) {
       return false;
     }
     // 判断是不是右下角的小框
