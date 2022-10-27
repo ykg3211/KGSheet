@@ -4,13 +4,18 @@ import { debounce, deepClone, judgeCross } from "../../../utils";
 import Base, { BaseDataType, selectedCellType } from "../../base/base";
 import { EventConstant } from "../base/event";
 import ExcelBaseFunction from "../EventStack";
-import { CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
+import KeyBoardPlugin from "../KeyBoardPlugin";
+import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 
 export class InputDom {
   private DOM: HTMLTextAreaElement;
   private _this: Base;
   private cell: selectedCellType;
   private ExcelBaseFunction: ExcelBaseFunction;
+  private KeyBoardPlugin: KeyBoardPlugin;
+  private minHeight: number;
+  private minWidth: number;
+  private enterEvent: () => void;
 
   constructor(_this: Base, data: cell, cell: selectedCellType) {
     this._this = _this;
@@ -23,6 +28,8 @@ export class InputDom {
 
     (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.DOM);
 
+    this.registerKeyboardEvent();
+
     setTimeout(() => {
       this.DOM?.focus();
     }, 0);
@@ -34,6 +41,26 @@ export class InputDom {
     } else {
       console.error('InputDom 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
+
+    if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
+      this.KeyBoardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
+      this.enterEvent = this._enterEvent.bind(this);
+    } else {
+      console.error('InputDom 依赖于 KeyBoardPlugin, 请正确注册插件!');
+    }
+  }
+
+  private registerKeyboardEvent() {
+    this.KeyBoardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.Enter],
+      callbacks: [this.enterEvent]
+    })
+  }
+
+  private _enterEvent() {
+    console.log(1);
+
   }
 
   public inputInDom(mainKeys) {
@@ -81,10 +108,13 @@ export class InputDom {
 
     this.DOM.style.width = (w - 2) * this._this.scale + 'px';
     this.DOM.style.height = (h - 2) * this._this.scale + 'px';
+    this.minWidth = (w - 2) * this._this.scale;
+    this.minHeight = (h - 2) * this._this.scale;
 
     this.DOM.style.display = display ? 'block' : 'none'
 
     this.DOM.style.transform = `translate(${x}px, ${y}px)`;
+    this.calcWidthHeight();
   }
 
   private handleDomValue(originData: cell) {
@@ -129,7 +159,13 @@ export class InputDom {
         originData.content = this.DOM.value;
         setEventStack(this.DOM.value);
       }
+
+      this.calcWidthHeight();
     }
+  }
+
+  private calcWidthHeight() {
+    this.DOM.style.height = Math.max(this.DOM.scrollHeight, this.minHeight) + 'px';
   }
 
   private _stopPropagation(e: Event) {
@@ -161,6 +197,12 @@ export class InputDom {
     this.DOM.removeEventListener('mouseup', this._stopPropagation);
     this.DOM.removeEventListener('keydown', this._stopPropagation_arrow);
     this.DOM.removeEventListener('keyup', this._stopPropagation_arrow);
+
+    this.KeyBoardPlugin.uninstall({
+      baseKeys: [],
+      mainKeys: [OPERATE_KEYS_ENUM.Enter],
+      callbacks: [this.enterEvent]
+    })
     this.DOM.remove();
   }
 }

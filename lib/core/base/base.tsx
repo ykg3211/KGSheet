@@ -59,7 +59,7 @@ class Base extends Render {
   private initResize(dom: HTMLElement) {
     const func = () => {
       this.handleDPR(dom);
-      this._render();
+      this.render();
     }
     window.addEventListener('resize', func);
     this.once(EventConstant.DESTROY, () => {
@@ -388,7 +388,7 @@ class Base extends Render {
       ...this._data.spanCells,
       ...SourceData.data.spanCells
     }
-    this._render();
+    this.render();
   }
 
   /**

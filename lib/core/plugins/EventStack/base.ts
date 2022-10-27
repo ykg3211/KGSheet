@@ -36,14 +36,14 @@ export default class BaseEventStack {
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],
         mainKeys: ['z', 'Z'],
-        callback: [() => {
+        callbacks: [() => {
           this.anti_reverse()
         }]
       })
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Meta],
         mainKeys: ['z', 'Z'],
-        callback: [() => {
+        callbacks: [() => {
           this.reverse()
         }]
       })

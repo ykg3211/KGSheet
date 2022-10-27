@@ -78,14 +78,14 @@ export default class SideBarResizePlugin {
         if (typeof YMouseDownLastFrameY === 'number' && typeof origin === 'number') {
           this._this._data.h[origin] += (e.pageY - YMouseDownLastFrameY) / this._this.scale;
           this._this._data.h[origin] = Math.max(10, this._this._data.h[origin]);
-          this._this._render();
+          this._this.render();
           YMouseDownLastFrameY = e.pageY;
         }
       } else {
         if (typeof XMouseDownLastFrameX === 'number' && typeof origin === 'number') {
           this._this._data.w[origin] += (e.pageX - XMouseDownLastFrameX) / this._this.scale;
           this._this._data.w[origin] = Math.max(10, this._this._data.w[origin]);
-          this._this._render();
+          this._this.render();
           XMouseDownLastFrameX = e.pageX;
         }
       }

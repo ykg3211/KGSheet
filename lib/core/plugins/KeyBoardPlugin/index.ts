@@ -3,10 +3,12 @@ import Base from "../../base/base";
 import { deepClone } from "../../../utils";
 import { BASE_KEYS, BASE_KEYS_ENUM } from './constant';
 
+
 interface KeyBoardEvent {
+  op?: 'and' | 'or',
   baseKeys?: string[],
   mainKeys: string | string[],
-  callback: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
+  callbacks: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
 }
 
 
@@ -62,27 +64,57 @@ export default class KeyBoardPlugin {
     document.body.removeEventListener('keydown', this.baseKeyDownListener)
   }
 
-  public register(e: KeyBoardEvent) {
-    if (!e.baseKeys) {
-      e.baseKeys = [];
+  public uninstall({
+    op = 'and',
+    baseKeys,
+    mainKeys,
+    callbacks,
+  }: KeyBoardEvent) {
+    if (!baseKeys) {
+      return;
     }
-    const key = e.baseKeys.length === 0 ? '.' : e.baseKeys.sort().join('_');
+    const key = baseKeys.length === 0 ? '.' : baseKeys.sort().join('_');
+    if (!this.devs[key]) {
+      return;
+    }
+
+    if (!(mainKeys instanceof Array)) {
+      mainKeys = [mainKeys]
+    }
+    callbacks;
+    mainKeys.forEach(k => {
+      if (this.devs[key][k]) {
+        this.devs[key][k].callback = this.devs[key][k].callback.filter(cb => !callbacks.includes(cb))
+      }
+    })
+  }
+
+  public register({
+    op = 'and',
+    baseKeys,
+    mainKeys,
+    callbacks,
+  }: KeyBoardEvent) {
+    if (!baseKeys) {
+      baseKeys = [];
+    }
+    const key = baseKeys.length === 0 ? '.' : baseKeys.sort().join('_');
     if (!this.devs[key]) {
       this.devs[key] = {};
     }
 
-    if (!(e.mainKeys instanceof Array)) {
-      e.mainKeys = [e.mainKeys]
+    if (!(mainKeys instanceof Array)) {
+      mainKeys = [mainKeys]
     }
 
-    e.mainKeys.forEach(k => {
+    mainKeys.forEach(k => {
       if (this.devs[key][k]) {
-        this.devs[key][k].callback = this.devs[key][k].callback.concat(e.callback)
+        this.devs[key][k].callback = this.devs[key][k].callback.concat(callbacks)
       } else {
         this.devs[key][k] = {
-          baseKeys: e.baseKeys || [],
+          baseKeys: baseKeys || [],
           mainKeys: k,
-          callback: e.callback
+          callback: callbacks
         };
       }
     })

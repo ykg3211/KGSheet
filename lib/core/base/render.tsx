@@ -30,7 +30,7 @@ export default class Render extends DrawLayer {
   public renderCellsArr: renderCellProps[][];
   public renderSpanCellsArr: renderCellProps[];
 
-  public _render: () => void;
+  public render: () => void;
 
   public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
 
@@ -54,9 +54,9 @@ export default class Render extends DrawLayer {
     this.renderSpanCellsArr = [];
     this.renderCellsArr = [];
 
-    this._render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
+    this.render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
 
-    this.on(EventConstant.RENDER, this._render);
+    this.on(EventConstant.RENDER, this.render);
 
     this._data = createBaseConfig(0, 0);
   }
@@ -65,7 +65,7 @@ export default class Render extends DrawLayer {
   }
   public set data(v: excelConfig) {
     this._data = v;
-    this._render();
+    this.render();
   }
   // 经过缩放的宽度
   public get width() {
@@ -89,7 +89,7 @@ export default class Render extends DrawLayer {
   public set scale(v: number) {
     this._scale = v;
     setTimeout(() => {
-      this._render();
+      this.render();
     }, 0);
   }
 
@@ -104,7 +104,7 @@ export default class Render extends DrawLayer {
     })
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
-      this._render();
+      this.render();
     }, 0);
   }
 
@@ -119,7 +119,7 @@ export default class Render extends DrawLayer {
     })
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
-      this._render();
+      this.render();
     }, 0);
   }
 

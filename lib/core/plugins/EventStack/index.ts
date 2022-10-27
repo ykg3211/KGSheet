@@ -115,7 +115,7 @@ export default class ExcelBaseFunction {
     const after = isReverse ? preWidth : afterWidth;
 
     this._this._data[isRow ? 'h' : 'w'][index] = after;
-    this._this._render();
+    this._this.render();
   }
 
   public rowColumnResize(data: RowColumnResizeType) {

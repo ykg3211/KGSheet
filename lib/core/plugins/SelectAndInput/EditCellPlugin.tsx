@@ -70,7 +70,7 @@ export default class EditCellPlugin {
 
       this.KeyboardPlugin.register({
         mainKeys: OPERATE_KEYS_ENUM.Escape,
-        callback: [(e) => {
+        callbacks: [(e) => {
           e.preventDefault();
           this.removeDom()
         }]
@@ -87,13 +87,13 @@ export default class EditCellPlugin {
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
-          this._this._render()
+          this._this.render()
         }
       }
       this.KeyboardPlugin.register({
         baseKeys: [],
         mainKeys: OPERATE_KEYS_ENUM.Tab,
-        callback: [(e) => {
+        callbacks: [(e) => {
           e.preventDefault();
           tabCB(false);
         }]
@@ -101,7 +101,7 @@ export default class EditCellPlugin {
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Shift],
         mainKeys: OPERATE_KEYS_ENUM.Tab,
-        callback: [(e) => {
+        callbacks: [(e) => {
           e.preventDefault();
           tabCB(true);
         }]
@@ -117,13 +117,13 @@ export default class EditCellPlugin {
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
-          this._this._render()
+          this._this.render()
         }
       }
       this.KeyboardPlugin.register({
         baseKeys: [],
         mainKeys: OPERATE_KEYS_ENUM.Enter,
-        callback: [(e) => {
+        callbacks: [(e) => {
           e.preventDefault();
           enterCB(false);
         }]
@@ -132,7 +132,7 @@ export default class EditCellPlugin {
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Shift],
         mainKeys: OPERATE_KEYS_ENUM.Enter,
-        callback: [(e) => {
+        callbacks: [(e) => {
           e.preventDefault();
           enterCB(true);
         }]
@@ -141,7 +141,7 @@ export default class EditCellPlugin {
 
       this.KeyboardPlugin.register({
         mainKeys: Object.keys(CONTENT_KEYS),
-        callback: [(e, v) => {
+        callbacks: [(e, v) => {
           if (!this.SelectPlugin.selectCell) {
             return;
           }
@@ -272,9 +272,13 @@ export default class EditCellPlugin {
       position[0] += this._this.canvasDom.offsetLeft;
       position[1] += this._this.canvasDom.offsetTop;
 
-      return this.createEditBox(this.editCell, position);
+      this.createEditBox(this.editCell, position);
+
+      this.SelectPlugin._selectCell = cell;
+      this.SelectPlugin._endCell = cell;
+      this._this.render();
     }
-    return null
+    return;
   }
 
   private handleDBClick() {
@@ -398,7 +402,7 @@ export default class EditCellPlugin {
       }
 
       this.currentCell = cell;
-      this._this._render();
+      this._this.render();
     }
     this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.SELECT_TABLE_CELL,
@@ -424,7 +428,7 @@ export default class EditCellPlugin {
       this.pointDownCell = null;
       this.startRegularCell = null;
       this.currentCell = null;
-      this._this._render();
+      this._this.render();
     }
 
     this._this.setEvent(EventConstant.MOUSE_UP, {
@@ -444,7 +448,6 @@ export default class EditCellPlugin {
       return;
     }
     const originData = this._this.getRealCell(cell);
-    // this.editDom = document.createElement('textarea');
     this.editDomInstance = new InputDom(this._this, originData, cell);
     // 需要微调是为了不遮挡
     this.editDomInstance.resetEditDomPosition(x, y, w, h)
@@ -455,7 +458,7 @@ export default class EditCellPlugin {
     if (this.editDomInstance) {
       this.editDomInstance.remove();
       this.editDomInstance = null;
-      this._this._render();
+      this._this.render();
     }
   }
 
@@ -540,7 +543,7 @@ export default class EditCellPlugin {
     for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
       const temp: cell[] = [];
       for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
-        temp.push(createDefaultCell());
+        temp.push(createDefaultCell(''));
       }
       SourceAfterCells.push(temp);
     }

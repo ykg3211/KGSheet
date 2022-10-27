@@ -10,10 +10,10 @@ const createDefaultStyle = () => {
   }
   return result;
 }
-export const createDefaultCell = (content = '', _h?: number, _w?: number) => {
+export const createDefaultCell = (content) => {
   const result: cell = {
     style: createDefaultStyle(),
-    content: content || (_h + '_' + _w),
+    content: content || '',
     type: CellTypeEnum.string,
   }
   return result;
@@ -27,15 +27,15 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     spanCells: {
       '2_3': {
         span: [2, 4],
-        ...createDefaultCell('', 2, 3)
+        ...createDefaultCell('2, 3')
       },
       '6_3': {
         span: [2, 4],
-        ...createDefaultCell('', 6, 3)
+        ...createDefaultCell('6, 3')
       },
       '2_5': {
         span: [2, 4],
-        ...createDefaultCell('', 2, 5)
+        ...createDefaultCell('2, 5')
       },
     }
   }
@@ -43,7 +43,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
   for (let _h = 0; _h < h; _h++) {
     const temp: cell[] = [];
     for (let _w = 0; _w < w; _w++) {
-      temp.push(createDefaultCell('', _h, _w));
+      temp.push(createDefaultCell(_h + '_' + _w));
     }
     result.cells.push(temp);
   }

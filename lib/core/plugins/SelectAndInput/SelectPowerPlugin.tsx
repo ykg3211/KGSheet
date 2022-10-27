@@ -175,13 +175,13 @@ export default class SelectPowerPlugin {
         row: this._this.data.h.length - 1,
         column: this._this.data.w.length - 1
       }
-      this._this._render();
+      this._this.render();
     }
 
     this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.a],
-      callback: [() => {
+      callbacks: [() => {
         selectAll();
       }]
     })
@@ -195,35 +195,35 @@ export default class SelectPowerPlugin {
         this._startCell = deepClone(nextCell);
         this._endCell = deepClone(nextCell);
         this.selectCell = nextCell;
-        this._this._render()
+        this._this.render()
       }
     }
 
     this.KeyboardPlugin.register({
       baseKeys: [],
       mainKeys: OPERATE_KEYS_ENUM.ArrowDown,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowDown);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [],
       mainKeys: OPERATE_KEYS_ENUM.ArrowRight,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowRight);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [],
       mainKeys: OPERATE_KEYS_ENUM.ArrowLeft,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowLeft);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [],
       mainKeys: OPERATE_KEYS_ENUM.ArrowUp,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowUp);
       }]
     })
@@ -234,34 +234,34 @@ export default class SelectPowerPlugin {
       const mirror = deepClone(this._endCell);
       const nextCell = this.getNextCellByMove(mirror, type)
       this._endCell = nextCell;
-      this._this._render()
+      this._this.render()
     }
 
     this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Shift],
       mainKeys: OPERATE_KEYS_ENUM.ArrowDown,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowDown);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Shift],
       mainKeys: OPERATE_KEYS_ENUM.ArrowRight,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowRight);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Shift],
       mainKeys: OPERATE_KEYS_ENUM.ArrowLeft,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowLeft);
       }]
     })
     this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Shift],
       mainKeys: OPERATE_KEYS_ENUM.ArrowUp,
-      callback: [() => {
+      callbacks: [() => {
         selectCellMode(OPERATE_KEYS_ENUM.ArrowUp);
       }]
     })
@@ -287,7 +287,7 @@ export default class SelectPowerPlugin {
 
         isMouseDown_normalCell = true;
         this.selectType = selectTypeEnum.normal;
-        this._this._render();
+        this._this.render();
       } else if (cell.row === -1 && cell.column === -1) {  //点击了最左上角 全选
         this._startCell = {
           row: 0,
@@ -298,7 +298,7 @@ export default class SelectPowerPlugin {
           column: this._this.data.w.length - 1
         }
         this.selectType = selectTypeEnum.normal;
-        this._this._render();
+        this._this.render();
       } else if (cell.row === -1) {  //点击了上边框， 则选中一列
         this._startCell = {
           row: 0,
@@ -310,7 +310,7 @@ export default class SelectPowerPlugin {
         }
         isMouseDown_top_Cell = true;
         this.selectType = selectTypeEnum.column;
-        this._this._render();
+        this._this.render();
       } else if (cell.column === -1) {  //点击了左边框， 则选中一行
         this._startCell = {
           row: cell.row,
@@ -322,7 +322,7 @@ export default class SelectPowerPlugin {
         }
         isMouseDown_left_Cell = true;
         this.selectType = selectTypeEnum.row;
-        this._this._render();
+        this._this.render();
       }
     }
 
@@ -380,7 +380,7 @@ export default class SelectPowerPlugin {
         }
       }
 
-      this._this._render();
+      this._this.render();
     }
 
     this._this.setEvent(EventConstant.MOUSE_MOVE, {

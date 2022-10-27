@@ -48,7 +48,7 @@ export default class CopyAndPaste {
     this.KeyBoardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.c],
-      callback: [() => {
+      callbacks: [() => {
         copy();
       }]
     })
@@ -57,7 +57,7 @@ export default class CopyAndPaste {
     this.KeyBoardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.v],
-      callback: [() => {
+      callbacks: [() => {
         this.paste();
       }]
     })
@@ -129,7 +129,7 @@ export default class CopyAndPaste {
       ctx.strokeRect(x, y, w, h);
       ctx.restore();
     }).bind(this)])
-    this._this._render();
+    this._this.render();
     this._this.once(EventConstant.EXCEL_CHANGE, () => {
       this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER)
     })
