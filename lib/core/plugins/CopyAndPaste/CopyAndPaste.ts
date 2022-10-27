@@ -64,17 +64,31 @@ export default class CopyAndPaste {
   }
 
   // "text/plain"
-  // 1
-  // : 
   // "text/html"
-  // 2
-  // : 
   // "image/png"
   public async paste() {
-    const ClipboardItems = await navigator.clipboard.read();
-    const blob = await ClipboardItems[0].getType('text/html');
-    const text = await blob.text();
-    console.log(text)
+    let ClipboardItems;
+    try {
+      ClipboardItems = await navigator.clipboard.read();
+    } catch (e) { }
+
+    try {
+      const blob_plain = await ClipboardItems[0].getType('text/plain');
+      const text_plain = await blob_plain.text();
+      console.log('plain', text_plain)
+    } catch (e) { }
+
+    try {
+      const blob_html = await ClipboardItems[0].getType('text/html');
+      const text_html = await blob_html.text();
+      console.log('html', text_html)
+    } catch (e) { }
+
+    try {
+      const blob_png = await ClipboardItems[0].getType('text/png');
+      const text_png = await blob_png.text();
+      console.log('png', text_png)
+    } catch (e) { }
   }
 
   public copy(data: BaseDataType) {
@@ -93,11 +107,11 @@ export default class CopyAndPaste {
       const textContent = data.data.cells.map(row => row.map(cell => cell.content).join('\t')).join('\n');
 
 
-      const type = "text/plain";
-      const blob = new Blob([JSON.stringify(data)], { type });
-      const _data = [new ClipboardItem({ [type]: blob })];
+      const _data = [new ClipboardItem({
+        'text/html': new Blob([JSON.stringify(data)], { type: 'text/html' }),
+        'text/plain': new Blob([textContent], { type: 'text/plain' })
+      })];
       navigator.clipboard.write(_data);
-      navigator.clipboard.writeText(textContent);
       this.registeOnceDashBorder(data);
     } catch (e) { }
   }

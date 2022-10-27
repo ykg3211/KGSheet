@@ -599,16 +599,10 @@ export default class EditCellPlugin {
     return { leftTopCell, rightBottomCell } as CellCornerScopeType
   }
 
-  private judgeTargetIncludeSpanCell(targetCells: CellCornerScopeType) {
-
-    return false;
-  }
-
   private handleCopyCB() {
     if (!this.startCopyCell) {
       return;
     }
-
 
     const sourceCells: CellScopeType = deepClone(this.startCopyCell);
     const targetCells = this.getCurrentScopeInCopy();
