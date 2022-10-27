@@ -145,10 +145,10 @@ export default class EditCellPlugin {
           if (!this.SelectPlugin.selectCell) {
             return;
           }
-          const dom = this.initEditBoxDom(this.SelectPlugin.selectCell);
-          if (dom) {
+          this.initEditBoxDom(this.SelectPlugin.selectCell);
+          if (this.editDomInstance) {
             // 比较hack， 在这个dom上绑定了oninput的方法，借助这个方法可以执行到定义的时候的上下文，
-            dom.oninput(v.mainKeys)
+            this.editDomInstance.inputInDom(v.mainKeys)
           }
         }]
       })

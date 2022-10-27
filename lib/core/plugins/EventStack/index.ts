@@ -10,6 +10,7 @@ export interface BaseCellChangeType {
   scope: CellCornerScopeType;
   pre_data: excelConfig;
   after_data: excelConfig;
+  time_stamp?: Date;
 }
 
 export interface BaseCellsChangeEventStackType extends BaseCellChangeType {
@@ -22,10 +23,17 @@ export interface BaseCellsMoveType {
   time_stamp: Date;
 }
 
+export interface RowColumnResizeType {
+  isRow: boolean;
+  index: number;
+  preWidth: number;
+  afterWidth: number;
+}
+
 export default class ExcelBaseFunction {
-  public _this: Base;
-  public name: string;
-  public EventStackPlugin: BaseEventStack;
+  private _this: Base;
+  private name: string;
+  private EventStackPlugin: BaseEventStack;
 
   constructor(_this: Base) {
     this._this = _this;
@@ -38,7 +46,7 @@ export default class ExcelBaseFunction {
     }
   }
 
-  public cells_change({
+  private cells_change({
     scope,
     pre_data,
     after_data,
@@ -95,6 +103,29 @@ export default class ExcelBaseFunction {
         time_stamp
       },
       func: this.cells_change.bind(this)
+    }])
+  }
+
+  private _rowColumnResize({
+    isRow,
+    index,
+    preWidth,
+    afterWidth,
+  }: RowColumnResizeType, isReverse = false) {
+    const after = isReverse ? preWidth : afterWidth;
+
+    this._this._data[isRow ? 'h' : 'w'][index] = after;
+    this._this._render();
+  }
+
+  public rowColumnResize(data: RowColumnResizeType) {
+    const time_stamp = new Date();
+    this.EventStackPlugin.push([{
+      params: {
+        ...data,
+        time_stamp
+      },
+      func: this._rowColumnResize.bind(this)
     }])
   }
 }

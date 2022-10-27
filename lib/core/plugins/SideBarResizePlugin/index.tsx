@@ -6,12 +6,13 @@ import Base from "../../base/base";
 import { EventZIndex } from "../../base/constant";
 import { isNN } from "../../../utils";
 import { EventConstant } from "../base/event";
+import ExcelBaseFunction from "../EventStack";
 
 export default class SideBarResizePlugin {
   private _this: Base;
   private gap: number;
   public name: string;
-
+  private ExcelBaseFunction: ExcelBaseFunction;
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.SideBarResizePlugin;
@@ -19,6 +20,15 @@ export default class SideBarResizePlugin {
     this.gap = 5;
     this.handleMouseHover();
     this.handleMouseDrag();
+    this.initPlugin();
+  }
+
+  private initPlugin() {
+    if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
+      this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction]
+    } else {
+      console.error('SideBarResizePlugin 依赖于 ExcelBaseFunction, 请正确注册插件!');
+    }
   }
 
   protected remove() {
@@ -29,17 +39,21 @@ export default class SideBarResizePlugin {
 
   private handleMouseDrag() {
     let isStart = false;
-    let XMouseDownOriginX: number | null = null;
-    let YMouseDownOriginY: number | null = null;
+    let initWidth: null | number = null;
+    let XMouseDownLastFrameX: number | null = null;
+    let YMouseDownLastFrameY: number | null = null;
     let isLeft = false;
     let origin: number | undefined | null = null;
     const scrollMouseDownCB = (e: MouseEvent, preData: any) => {
-      const { isHoverBar, isLeft: _isLeft, index } = preData;
+      const { isLeft: _isLeft, index } = preData;
       isStart = true;
-      XMouseDownOriginX = e.pageX;
-      YMouseDownOriginY = e.pageY;
+      XMouseDownLastFrameX = e.pageX;
+      YMouseDownLastFrameY = e.pageY;
       isLeft = Boolean(_isLeft);
       origin = index;
+      if (typeof origin === 'number') {
+        initWidth = isLeft ? this._this._data.h[origin] : this._this._data.w[origin];
+      }
     }
 
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
@@ -61,18 +75,18 @@ export default class SideBarResizePlugin {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (isLeft) {
-        if (typeof YMouseDownOriginY === 'number' && typeof origin === 'number') {
-          this._this._data.h[origin] += (e.pageY - YMouseDownOriginY) / this._this.scale;
+        if (typeof YMouseDownLastFrameY === 'number' && typeof origin === 'number') {
+          this._this._data.h[origin] += (e.pageY - YMouseDownLastFrameY) / this._this.scale;
           this._this._data.h[origin] = Math.max(10, this._this._data.h[origin]);
           this._this._render();
-          YMouseDownOriginY = e.pageY;
+          YMouseDownLastFrameY = e.pageY;
         }
       } else {
-        if (typeof XMouseDownOriginX === 'number' && typeof origin === 'number') {
-          this._this._data.w[origin] += (e.pageX - XMouseDownOriginX) / this._this.scale;
+        if (typeof XMouseDownLastFrameX === 'number' && typeof origin === 'number') {
+          this._this._data.w[origin] += (e.pageX - XMouseDownLastFrameX) / this._this.scale;
           this._this._data.w[origin] = Math.max(10, this._this._data.w[origin]);
           this._this._render();
-          XMouseDownOriginX = e.pageX;
+          XMouseDownLastFrameX = e.pageX;
         }
       }
     }
@@ -87,9 +101,22 @@ export default class SideBarResizePlugin {
     })
 
     const scrollMouseUpCB = () => {
+      if (isStart && typeof origin === 'number' && typeof initWidth === 'number') {
+        if (typeof origin === 'number') {
+          const currentWidth = isLeft ? this._this._data.h[origin] : this._this._data.w[origin];
+          this.ExcelBaseFunction.rowColumnResize({
+            isRow: isLeft,
+            index: origin,
+            preWidth: initWidth,
+            afterWidth: currentWidth,
+          })
+        }
+      }
+      origin = null;
       isStart = false;
-      XMouseDownOriginX = null;
-      YMouseDownOriginY = null;
+      initWidth = null;
+      XMouseDownLastFrameX = null;
+      YMouseDownLastFrameY = null;
     }
     this._this.setEvent(EventConstant.MOUSE_UP, {
       type: EventZIndex.SIDE_BAR,
@@ -109,7 +136,7 @@ export default class SideBarResizePlugin {
 
     this._this.setEvent(EventConstant.MOUSE_MOVE, {
       type: EventZIndex.SIDE_BAR,
-      judgeFunc: (e) => {
+      judgeFunc: (e: any) => {
         if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
           const { isHoverBar, isLeft } = this.getCellByPoint([e._mouseX, e._mouseY])
           if (isHoverBar) {

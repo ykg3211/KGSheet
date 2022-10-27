@@ -1,12 +1,13 @@
 import { PluginTypeEnum } from "..";
 import Base from "../../base/base";
-import { BaseCellsChangeEventStackType } from ".";
+import { BaseCellsChangeEventStackType, RowColumnResizeType } from ".";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 
-export interface BaseEventType<T = BaseCellsChangeEventStackType> {
-  params: T,
-  func: (p: T, isReverse?: boolean) => void,
+type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
+export interface BaseEventType {
+  params: BaseEvent,
+  func: (p: BaseEvent, isReverse?: boolean) => void,
 }
 
 // (this[EventType.CELLS_CHANGE])(1)
@@ -26,15 +27,6 @@ export default class BaseEventStack {
     this.REVERSE_STACK = [];
 
     this.initPlugin();
-    // const a = document.createElement('div');
-    // a.innerHTML = 'reverse';
-    // a.onclick = this.reverse.bind(this);
-    // const b = document.createElement('div');
-    // b.innerHTML = 'anti_reverse';
-    // b.onclick = this.anti_reverse.bind(this);
-
-    // document.getElementById('tools').appendChild(a)
-    // document.getElementById('tools').appendChild(b)
   }
 
   private initPlugin() {
@@ -43,14 +35,14 @@ export default class BaseEventStack {
 
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],
-        mainKeys: 'z',
+        mainKeys: ['z', 'Z'],
         callback: [() => {
           this.anti_reverse()
         }]
       })
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Meta],
-        mainKeys: 'z',
+        mainKeys: ['z', 'Z'],
         callback: [() => {
           this.reverse()
         }]

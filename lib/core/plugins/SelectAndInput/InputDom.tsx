@@ -36,6 +36,9 @@ export class InputDom {
     }
   }
 
+  public inputInDom(mainKeys) {
+    this.DOM?.oninput?.(mainKeys)
+  }
 
   private setCommonStyle(originData: cell) {
     const cellStyle = originData.style;
@@ -121,10 +124,10 @@ export class InputDom {
       if (typeof newV === 'string') {
         this.DOM.value = newV;
         originData.content = newV;
-        setEventStack(this.DOM.value)
+        setEventStack(this.DOM.value);
       } else {
         originData.content = this.DOM.value;
-        setEventStack(this.DOM.value)
+        setEventStack(this.DOM.value);
       }
     }
   }
