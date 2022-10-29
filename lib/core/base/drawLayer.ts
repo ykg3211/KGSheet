@@ -68,7 +68,7 @@ export default class DrawLayer extends BaseEvent {
   }
 
   protected handleDefaultComponents() {
-    this.components[CellTypeEnum.string] = (ctx: CanvasRenderingContext2D, data: renderCellProps) => {
+    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: renderCellProps) => {
       const {
         point,
         cell,
@@ -90,8 +90,8 @@ export default class DrawLayer extends BaseEvent {
       ctx.fillStyle = cell.style.fontColor || this.color('black');
       ctx.textAlign = 'left';
       let left = point[0];
-      if (cell.style.align) {
-        switch (cell.style.align) {
+      if (cell.style.textAlign) {
+        switch (cell.style.textAlign) {
           case 'center':
             ctx.textAlign = 'center';
             left += w / 2;

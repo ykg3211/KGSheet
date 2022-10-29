@@ -15,7 +15,7 @@ interface KeyBoardEvent {
 interface KeyBoardEventDev {
   baseKeys: string[],
   mainKeys: string,
-  callback: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
+  callbacks: Array<(e: KeyboardEvent, v: Omit<KeyBoardEventDev, 'callback'>) => void>
 }
 
 
@@ -81,10 +81,9 @@ export default class KeyBoardPlugin {
     if (!(mainKeys instanceof Array)) {
       mainKeys = [mainKeys]
     }
-    callbacks;
     mainKeys.forEach(k => {
       if (this.devs[key][k]) {
-        this.devs[key][k].callback = this.devs[key][k].callback.filter(cb => !callbacks.includes(cb))
+        this.devs[key][k].callbacks = this.devs[key][k].callbacks.filter(cb => !callbacks.includes(cb))
       }
     })
   }
@@ -109,12 +108,12 @@ export default class KeyBoardPlugin {
 
     mainKeys.forEach(k => {
       if (this.devs[key][k]) {
-        this.devs[key][k].callback = this.devs[key][k].callback.concat(callbacks)
+        this.devs[key][k].callbacks = this.devs[key][k].callbacks.concat(callbacks)
       } else {
         this.devs[key][k] = {
           baseKeys: baseKeys || [],
           mainKeys: k,
-          callback: callbacks
+          callbacks: callbacks
         };
       }
     })
@@ -130,7 +129,7 @@ export default class KeyBoardPlugin {
     })
     const baseKey = states.length === 0 ? '.' : states.sort().join('_');
     if (this.devs[baseKey] && this.devs[baseKey][key]) {
-      this.devs[baseKey][key].callback.forEach(cb => {
+      this.devs[baseKey][key].callbacks.forEach(cb => {
         cb(e, {
           baseKeys: states,
           mainKeys: key,

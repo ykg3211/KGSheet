@@ -1,11 +1,10 @@
 // 这里的方法和值都是pretect ，为了方便插件开发，都先弄成public
-import { cell, cellStyle, CellTypeEnum, excelConfig, renderCellProps, spanCell } from '../../interfaces';
+import { cellStyle, CellTypeEnum, excelConfig, renderCellProps } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
 import { _throttleByRequestAnimationFrame } from '../../utils'
 import { EventConstant } from '../plugins/base/event';
-import { PluginTypeEnum } from '../plugins';
 
 
 export default class Render extends DrawLayer {
@@ -350,7 +349,7 @@ export default class Render extends DrawLayer {
     const baseStyle: cellStyle = {
       backgroundColor: this.color('sideBar'),
       fontColor: this.color('black'),
-      align: 'center'
+      textAlign: 'center'
     }
     if (r === startRIndex && c === startCIndex) {
       // 渲染第一格上面的
@@ -359,7 +358,7 @@ export default class Render extends DrawLayer {
         cell: {
           style: baseStyle,
           content: c + 1 + '',
-          type: CellTypeEnum.string
+          type: CellTypeEnum.text
         },
         w,
         h: this.paddingTop
@@ -370,7 +369,7 @@ export default class Render extends DrawLayer {
         cell: {
           style: baseStyle,
           content: r + 1 + '',
-          type: CellTypeEnum.string
+          type: CellTypeEnum.text
         },
         w: this.paddingLeft,
         h
@@ -381,7 +380,7 @@ export default class Render extends DrawLayer {
         cell: {
           style: baseStyle,
           content: '',
-          type: CellTypeEnum.string
+          type: CellTypeEnum.text
         },
         w: this.paddingLeft,
         h: this.paddingTop
@@ -401,7 +400,7 @@ export default class Render extends DrawLayer {
       cell: {
         style: baseStyle,
         content,
-        type: CellTypeEnum.string
+        type: CellTypeEnum.text
       },
       w,
       h

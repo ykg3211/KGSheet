@@ -76,7 +76,7 @@ export class InputDom {
     })
     this.DOM.style.font = cellStyle.font || '';
     this.DOM.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
-    this.DOM.style.textAlign = cellStyle.align || '';
+    this.DOM.style.textAlign = cellStyle.textAlign || '';
     this.DOM.style.color = cellStyle.fontColor || this._this.color('black');
     this.DOM.style.position = 'absolute';
     this.DOM.style.top = '0px';
@@ -84,6 +84,7 @@ export class InputDom {
     this.DOM.style.outline = 'none';
     this.DOM.style.border = '1px solid #4a89fe';
     this.DOM.style.resize = 'none';
+    this.DOM.style.overflow = 'hidden';
   }
 
   public resetEditDomPosition(x: number, y: number, w: number, h: number) {

@@ -4,7 +4,7 @@ import { RenderZIndex } from "../../base/constant";
 import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
-import SelectPowerPlugin, { borderType } from "../SelectAndInput/SelectPowerPlugin";
+import SelectPowerPlugin from "../SelectAndInput/SelectPowerPlugin";
 
 export default class CopyAndPaste {
   public name: string;

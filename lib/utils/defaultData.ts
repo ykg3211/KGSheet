@@ -5,7 +5,7 @@ export const splitSymbol = '_';
 const createDefaultStyle = () => {
   const result: cellStyle = {
     fontColor: 'lightgray',
-    align: 'right',
+    textAlign: 'right',
     fontSize: 18,
   }
   return result;
@@ -14,7 +14,7 @@ export const createDefaultCell = (content) => {
   const result: cell = {
     style: createDefaultStyle(),
     content: content || '',
-    type: CellTypeEnum.string,
+    type: CellTypeEnum.text,
   }
   return result;
 }

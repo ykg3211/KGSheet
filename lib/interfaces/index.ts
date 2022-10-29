@@ -1,13 +1,14 @@
 export type align = 'left' | 'center' | 'right';
 export enum CellTypeEnum {
-  string = 'string',
+  text = 'text',
+  richText = 'richText',
   number = 'number',
   date = 'date',
   money = 'money'
 }
 
 export interface cellStyle {
-  align?: align;
+  textAlign?: align;
   backgroundColor?: string;
   fontColor?: string;
   fontSize?: number;
