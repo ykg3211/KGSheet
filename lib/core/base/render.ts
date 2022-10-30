@@ -86,10 +86,10 @@ export default class Render extends DrawLayer {
     return this._scale;
   }
   public set scale(v: number) {
-    this._scale = v;
-    setTimeout(() => {
-      this.render();
-    }, 0);
+    // this._scale = v;
+    // setTimeout(() => {
+    //   this.render();
+    // }, 0);
   }
 
   public get scrollTop() {

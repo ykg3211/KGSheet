@@ -53,7 +53,7 @@ export enum OPERATE_KEYS_ENUM {
   l = "l",
   p = "p",
 }
-export const OPERATE_KEYS: Record<OPERATE_KEYS_ENUM, boolean> = {
+export const OPERATE_KEYS: Partial<Record<OPERATE_KEYS_ENUM, boolean>> = {
   Escape: true,
   Enter: true,
   ArrowUp: true,
