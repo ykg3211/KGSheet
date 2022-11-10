@@ -1,7 +1,10 @@
 import { PluginTypeEnum } from "..";
+import { deepClone } from "../../../utils";
+import { html2excel } from "../../../utils/htmlParse";
 import Base, { BaseDataType } from "../../base/base";
 import { RenderZIndex } from "../../base/constant";
 import { EventConstant } from "../base/event";
+import ExcelBaseFunction from "../EventStack";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
 import SelectPowerPlugin from "../SelectAndInput/SelectPowerPlugin";
@@ -11,6 +14,7 @@ export default class CopyAndPaste {
   private _this: Base;
   private KeyBoardPlugin: KeyBoardPlugin;
   private SelectPlugin: SelectPowerPlugin;
+  private ExcelBaseFunction: ExcelBaseFunction;
   constructor(_this: Base) {
     this.name = PluginTypeEnum.CopyAndPaste;
     this._this = _this;
@@ -25,6 +29,12 @@ export default class CopyAndPaste {
     }
     if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
       this.KeyBoardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin]
+    } else {
+      console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
+      return;
+    }
+    if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
+      this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction]
     } else {
       console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
       return;
@@ -75,19 +85,62 @@ export default class CopyAndPaste {
     try {
       const blob_plain = await ClipboardItems[0].getType('text/plain');
       const text_plain = await blob_plain.text();
-      console.log('plain', text_plain)
+      // console.log('plain', text_plain)
     } catch (e) { }
 
     try {
       const blob_html = await ClipboardItems[0].getType('text/html');
       const text_html = await blob_html.text();
-      console.log('html', text_html)
+      // console.log('html', text_html)
+      console.log(html2excel(text_html));
+      const newExcelData = html2excel(text_html);
+      const selectCell = this.SelectPlugin.selectCell;
+      if (!newExcelData || !selectCell) {
+        return;
+      }
+      const _h = newExcelData?.cells.length;
+      const _w = newExcelData?.cells[0].length;
+      const preData = this._this.getDataByScope({
+        leftTopCell: selectCell,
+        rightBottomCell: {
+          row: (selectCell?.row || 0) + _h - 1,
+          column: (selectCell?.column || 0) + _w - 1,
+        }
+      })
+      console.log({
+        scope: {
+          leftTopCell: selectCell,
+          rightBottomCell: {
+            row: (selectCell?.row || 0) + _h,
+            column: (selectCell?.column || 0) + _w,
+          }
+        },
+        pre_data: preData.data,
+        after_data: {
+          ...preData.data,
+          cells: deepClone(newExcelData.cells)
+        },
+      });
+      this.ExcelBaseFunction.cellsChange({
+        scope: {
+          leftTopCell: selectCell,
+          rightBottomCell: {
+            row: (selectCell?.row || 0) + _h - 1,
+            column: (selectCell?.column || 0) + _w - 1,
+          }
+        },
+        pre_data: preData.data,
+        after_data: {
+          ...preData.data,
+          cells: deepClone(newExcelData.cells)
+        },
+      })
     } catch (e) { }
 
     try {
       const blob_png = await ClipboardItems[0].getType('text/png');
       const text_png = await blob_png.text();
-      console.log('png', text_png)
+      // console.log('png', text_png)
     } catch (e) { }
   }
 

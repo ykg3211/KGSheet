@@ -14,7 +14,7 @@ export interface BaseCellChangeType {
 }
 
 export interface BaseCellsChangeEventStackType extends BaseCellChangeType {
-  time_stamp: Date;
+  time_stamp?: Date;
 }
 
 export interface BaseCellsMoveType {

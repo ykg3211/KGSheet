@@ -398,7 +398,7 @@ export default class SelectPowerPlugin {
       innerFunc: mouseMoveCB.bind(this),
     })
 
-    const moseUpCB = () => {
+    const mouseUpCB = () => {
       isMouseDown_normalCell = false;
       isMouseDown_top_Cell = false;
       isMouseDown_left_Cell = false;
@@ -412,7 +412,7 @@ export default class SelectPowerPlugin {
         }
         return false;
       },
-      innerFunc: moseUpCB.bind(this),
+      innerFunc: mouseUpCB.bind(this),
     })
 
 

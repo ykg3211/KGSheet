@@ -1,4 +1,4 @@
-import { excelConfig } from "../interfaces";
+import { cell, CellTypeEnum, excelConfig } from "../interfaces";
 
 interface tableElement {
   tag: string;
@@ -103,19 +103,52 @@ function parseHtml(html: string) {
   return point;
 }
 
+function findTag(root: tableElement, tag: string) {
+  const nodes = [root];
+  while (nodes.length > 0) {
+    const node = nodes.shift();
+    if (node?.tag === tag) {
+      return node;
+    } else {
+      node?.children.forEach(subNode => {
+        if (typeof subNode !== 'string') {
+          nodes.push(subNode);
+        }
+      })
+    }
+  }
+  return null;
+}
 
 export function html2excel(html: string) {
   const root = parseHtml(html);
+  const tbodyNode = findTag(root, 'tbody');
+  if (!tbodyNode) {
+    return null;
+  }
+  const cells: excelConfig['cells'] = [];
+  const w: number[] = [];
+  const h: number[] = [];
+  tbodyNode.children.forEach((tr, r) => {
+    const row: cell[] = [];
+    if (typeof tr !== 'string') {
+      tr.children.forEach((td, c) => {
+        if (typeof td !== 'string') {
+          row.push({
+            style: {},
+            content: td.children[0]?.toString?.() || '',
+            type: CellTypeEnum.text,
+          })
+        }
+      })
+    }
+    cells.push(row)
+  })
   const result: excelConfig = {
     w: [],
     h: [],
-    cells: [],
+    cells,
     spanCells: {},
   }
-  function handleNode(node: tableElement) {
-    node.children = node.children.map(n => typeof n === 'string' ? n : handleNode(n));
-    delete node.parent;
-    return node;
-  }
-  return handleNode(root);
+  return result;
 }

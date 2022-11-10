@@ -13,6 +13,7 @@ import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from "../KeyBoardPlug
 import SelectPowerPlugin, { selectTypeEnum } from "./SelectPowerPlugin";
 import { BusinessEventConstant } from "../base/businessEvent";
 import { InputDom } from "./InputDom";
+import { handleRegularData, regularArrowEnum } from "./regularFunc";
 
 export interface CellScopeType {
   startCell: selectedCellType;
@@ -38,7 +39,9 @@ export default class EditCellPlugin {
   private startCopyCell: null | CellScopeType;  // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
 
   private startRegularCell: null | CellScopeType;  // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
+  private endRegularCell: null | CellScopeType;  // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
   private currentCell: null | selectedCellType; // 拖拽的时候鼠标的落点，用于计算的
+  private regularArrow: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
   constructor(_this: Base) {
     this.name = PluginTypeEnum.CommonInputPowerPlugin;
     this._this = _this;
@@ -163,8 +166,28 @@ export default class EditCellPlugin {
       if (this.startRegularCell) {
         const { startCell, endCell } = this.startRegularCell;
         const { currentCell } = this;
-        const { leftTopCell, rightBottomCell } = combineCell([startCell, endCell, currentCell]);
+        const centerTag = {
+          column: (startCell.column + endCell.column) / 2,
+          row: (startCell.row + endCell.row) / 2,
+        }
+        const columnGap = Math.max(Math.abs(currentCell.column - centerTag.column) - centerTag.column, 0);
+        const rowGap = Math.max(Math.abs(currentCell.row - centerTag.row) - centerTag.row, 0);
+        console.log(columnGap)
+        console.log(rowGap)
 
+        if (columnGap >= rowGap) {
+          this.regularArrow = currentCell.column > centerTag.column ? regularArrowEnum.LEFT2RIGHT : regularArrowEnum.RIGHT2LEFT;
+          currentCell.row = endCell.row;
+        } else {
+          this.regularArrow = currentCell.row > centerTag.row ? regularArrowEnum.TOP2BOTTOM : regularArrowEnum.BOTTOM2TOP;
+          currentCell.column = endCell.column;
+        }
+
+        const { leftTopCell, rightBottomCell } = combineCell([startCell, endCell, currentCell]);
+        this.endRegularCell = {
+          startCell: leftTopCell,
+          endCell: rightBottomCell
+        };
         this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell))
 
         return;
@@ -210,7 +233,7 @@ export default class EditCellPlugin {
       return false;
     }
     const { anchor, w, h } = this.SelectPlugin._borderPosition;
-    const strokeRectWidth = 8;
+    const strokeRectWidth = 4;
 
     // 判断选择一行或者一列的情况
     if (this.SelectPlugin.selectType === selectTypeEnum.column) {
@@ -427,6 +450,7 @@ export default class EditCellPlugin {
       this.startCopyCell = null;
       this.pointDownCell = null;
       this.startRegularCell = null;
+      this.endRegularCell = null;
       this.currentCell = null;
       this._this.render();
     }
@@ -591,6 +615,27 @@ export default class EditCellPlugin {
     this.SelectPlugin.selectCells(targetCells)
   }
   private handleRegularCB() {
+    console.log('handleRegularCB');
+    if (!this.SelectPlugin._startCell || !this.SelectPlugin._endCell || !this.endRegularCell) {
+      return;
+    }
+    const sourceData = this._this.getDataByScope({
+      leftTopCell: this.SelectPlugin._startCell,
+      rightBottomCell: this.SelectPlugin._endCell
+    })
 
+    const result = handleRegularData({
+      arrow: this.regularArrow,
+      sourceData,
+      scope: this.endRegularCell
+    })
+    // this.ExcelBaseFunction.cellsChange({
+    //   scope: {
+    //     leftTopCell: this.endRegularCell.startCell,
+    //     rightBottomCell: this.endRegularCell.endCell,
+    //   },
+    //   pre_data: sourceData.data,
+    //   after_data: result,
+    // })
   }
 }
