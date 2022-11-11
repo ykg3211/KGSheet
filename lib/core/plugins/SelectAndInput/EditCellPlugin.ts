@@ -627,13 +627,18 @@ export default class EditCellPlugin {
       sourceData,
       scope: this.endRegularCell
     })
-    // this.ExcelBaseFunction.cellsChange({
-    //   scope: {
-    //     leftTopCell: this.endRegularCell.startCell,
-    //     rightBottomCell: this.endRegularCell.endCell,
-    //   },
-    //   pre_data: sourceData.data,
-    //   after_data: result,
-    // })
+
+    const preData = this._this.getDataByScope({
+      leftTopCell: this.endRegularCell.startCell,
+      rightBottomCell: this.endRegularCell.endCell,
+    })
+    this.ExcelBaseFunction.cellsChange({
+      scope: {
+        leftTopCell: this.endRegularCell.startCell,
+        rightBottomCell: this.endRegularCell.endCell,
+      },
+      pre_data: preData.data,
+      after_data: result,
+    })
   }
 }
