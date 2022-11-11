@@ -161,7 +161,7 @@ export default class CopyAndPaste {
 
 
       const _data = [new ClipboardItem({
-        'text/html': new Blob([JSON.stringify(data)], { type: 'text/html' }),
+        // 'text/html': new Blob([JSON.stringify(data)], { type: 'text/html' }),
         'text/plain': new Blob([textContent], { type: 'text/plain' })
       })];
       navigator.clipboard.write(_data);
