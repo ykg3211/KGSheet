@@ -67,7 +67,7 @@ export default class Plugins {
     this.register(RightClickPlugin);
   }
 
-  public deregistration(name?: string) {
+  public deregister(name?: string) {
     if (name) {
       this.pluginsArr[name].remove?.();
     } else {

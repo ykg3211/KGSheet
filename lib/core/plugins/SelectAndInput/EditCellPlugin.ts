@@ -141,7 +141,7 @@ export default class EditCellPlugin {
         }]
       })
 
-
+      // 所有输入内容的key的处理，主要是为了能呼出输入框
       this.KeyboardPlugin.register({
         mainKeys: Object.keys(CONTENT_KEYS),
         callbacks: [(e, v) => {
@@ -155,7 +155,37 @@ export default class EditCellPlugin {
           }
         }]
       })
+
+
+      // 增加delete方法，清空content；
+      this.KeyboardPlugin.register({
+        mainKeys: [OPERATE_KEYS_ENUM.Backspace, OPERATE_KEYS_ENUM.Delete],
+        callbacks: [(e, v) => {
+          if (!this.SelectPlugin._startCell || !this.SelectPlugin._endCell) {
+            return;
+          }
+          this.clearScopeContent({
+            leftTopCell: this.SelectPlugin._startCell,
+            rightBottomCell: this.SelectPlugin._endCell
+          })
+        }]
+      })
     }
+  }
+
+  // 增加delete方法，清空content；
+  private clearScopeContent(scope: CellCornerScopeType) {
+    const preData = this._this.getDataByScope(scope).data;
+    const afterData = deepClone(preData)
+    afterData.cells = afterData.cells.map(cells => cells.map(cell => {
+      cell.content = '';
+      return cell;
+    }))
+    this.ExcelBaseFunction.cellsChange({
+      scope,
+      pre_data: preData,
+      after_data: afterData,
+    })
   }
 
   private addRenderFunc() {

@@ -18,6 +18,7 @@ export enum OPERATE_KEYS_ENUM {
   ArrowRight = "ArrowRight",
   ArrowUp = "ArrowUp",
   Backspace = "Backspace",
+  Delete = "Delete",
   CapsLock = "CapsLock",
   End = "End",
   Enter = "Enter",

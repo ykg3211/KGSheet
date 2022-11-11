@@ -39,10 +39,10 @@ class Base extends Render {
   }
 
   /**
-   * deregistration
+   * deregister
    */
-  public deregistration() {
-    this.pluginsInstance.deregistration();
+  public deregister() {
+    this.pluginsInstance.deregister();
   }
 
   private initDarkMode() {
