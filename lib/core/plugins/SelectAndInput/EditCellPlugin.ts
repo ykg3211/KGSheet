@@ -170,10 +170,8 @@ export default class EditCellPlugin {
           column: (startCell.column + endCell.column) / 2,
           row: (startCell.row + endCell.row) / 2,
         }
-        const columnGap = Math.max(Math.abs(currentCell.column - centerTag.column) - centerTag.column, 0);
-        const rowGap = Math.max(Math.abs(currentCell.row - centerTag.row) - centerTag.row, 0);
-        console.log(columnGap)
-        console.log(rowGap)
+        const columnGap = Math.max(Math.abs(currentCell.column - centerTag.column) - (Math.abs(startCell.column + endCell.column) / 2), 0);
+        const rowGap = Math.max(Math.abs(currentCell.row - centerTag.row) - (Math.abs(startCell.row - endCell.row) / 2), 0);
 
         if (columnGap >= rowGap) {
           this.regularArrow = currentCell.column > centerTag.column ? regularArrowEnum.LEFT2RIGHT : regularArrowEnum.RIGHT2LEFT;
