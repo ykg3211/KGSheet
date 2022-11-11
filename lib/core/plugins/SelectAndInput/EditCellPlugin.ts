@@ -656,6 +656,22 @@ export default class EditCellPlugin {
     if (!this.SelectPlugin._startCell || !this.SelectPlugin._endCell || !this.endRegularCell) {
       return;
     }
+
+    if (this._this.getSpanCellByCell({
+      cellScope: {
+        startCell: this.endRegularCell.startCell,
+        endCell: this.endRegularCell.endCell
+      },
+      isInView: false
+    }).isSpan) {
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: '123'
+      });
+      console.log('spancell')
+      return;
+    }
+
     const sourceData = this._this.getDataByScope({
       leftTopCell: this.SelectPlugin._startCell,
       rightBottomCell: this.SelectPlugin._endCell
