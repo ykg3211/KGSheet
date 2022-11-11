@@ -17,6 +17,7 @@ export default class Render extends DrawLayer {
   public _scale: number; // 缩放比例
   public maxScale: number; // 最大缩放比例
   public minScale: number; // 最小缩放比例
+  public _scrollBarWidth: number; // 滚动条宽度
 
   public mouseX: number;// 鼠标x坐标
   public mouseY: number;// 鼠标y坐标
@@ -32,7 +33,7 @@ export default class Render extends DrawLayer {
   public render: () => void;
 
   public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
-
+  public mouseCornerScroll: (point: [number, number]) => void;
   constructor() {
     super();
     this._scrollTop = 0;
@@ -54,11 +55,21 @@ export default class Render extends DrawLayer {
     this.renderCellsArr = [];
 
     this.render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
+    this.mouseCornerScroll = _throttleByRequestAnimationFrame(this._mouseCornerScroll.bind(this));
 
     this.on(EventConstant.RENDER, this.render);
 
     this._data = createBaseConfig(0, 0);
   }
+
+
+  public get scrollBarWidth() {
+    return this._scrollBarWidth / this._scale;
+  }
+  public set scrollBarWidth(v: number) {
+    this._scrollBarWidth = v;
+  }
+
   public get data() {
     return this._data;
   }
@@ -405,5 +416,51 @@ export default class Render extends DrawLayer {
       w,
       h
     }, true)
+  }
+  public getMaxScrollBound() {
+    return {
+      height: (this.contentHeight - (this.height / this.scale) + this.paddingTop * 2),
+      width: (this.contentWidth - (this.width / this.scale) + this.paddingLeft * 2)
+    }
+  }
+  public scrollXY(deltaX: number, deltaY: number) {
+    const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
+    if (this.scrollLeft + deltaX < 0 || this.contentWidth - this.width < 0) {
+      this.scrollLeft = 0;
+    } else {
+      if (this.scrollLeft + deltaX > maxWidth) {
+        this.scrollLeft = maxWidth;
+      } else {
+        this.scrollLeft = this.scrollLeft + deltaX;
+      }
+    }
+    if (this.scrollTop + deltaY < 0 || this.contentHeight - this.height < 0) {
+      this.scrollTop = 0;
+    } else {
+      if (this.scrollTop + deltaY > maxHeight) {
+        this.scrollTop = maxHeight;
+      } else {
+        this.scrollTop = this.scrollTop + deltaY;
+      }
+    }
+  }
+
+  private _mouseCornerScroll(point: [number, Number]) {
+    // todo @yukaige
+    return;
+    const [x, y] = point;
+    const gap = 10;
+    if (x < 100) {
+      this.scrollXY(-gap, 0)
+    }
+    if (y < 100) {
+      this.scrollXY(0, -gap)
+    }
+    if (x > this._width - 100) {
+      this.scrollXY(gap, 0)
+    }
+    if (y > this._height - 100) {
+      this.scrollXY(0, gap)
+    }
   }
 }

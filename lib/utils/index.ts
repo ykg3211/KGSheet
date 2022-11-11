@@ -1,15 +1,30 @@
 import { selectedCellType } from "../core/base/base";
 
+export function nextTick(fn: Function) {
+  return new Promise(resolve => {
+    window.requestAnimationFrame(() => {
+      fn();
+      resolve(null);
+    })
+  })
+}
+
 export function isNN(v: any) {
   return v === undefined || v === null
 }
 
+// 判断一颗点是不是在方形内
 export function judgeOver([_x, _y], [x, y, w, h]) {
   return _x >= x && _x <= x + w && _y >= y && _y <= y + h;
 }
 
+// 判断两个方有没有相交
 export function judgeCross([_x, _y, _w, _h], [x, y, w, h]) {
-  return !(_x + _w <= x || _x >= x + w || _y + _h <= y || _y >= y + h)
+  return !(_x + _w <= x || _x >= x + w || _y + _h <= y || _y >= y + h);
+}
+
+export function judgeInner([_x, _y, _w, _h], [x, y, w, h]) {
+  return _x >= x && _y >= y && _x + _w <= x + w && _y + _h <= y + h;
 }
 
 export function combineRect([_x, _y, _w, _h], [x, y, w, h]) {
@@ -44,12 +59,12 @@ export function combineCell(cells: selectedCellType[]) {
 
 export function _throttleByRequestAnimationFrame(fn: Function) {
   let flag = true;
-  return () => {
+  return (...arg) => {
     if (flag) {
       flag = false;
-      window.requestAnimationFrame(() => {
+      nextTick(() => {
         flag = true;
-        fn();
+        fn(...arg);
       })
     }
   }

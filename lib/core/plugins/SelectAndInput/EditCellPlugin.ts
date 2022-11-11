@@ -90,7 +90,8 @@ export default class EditCellPlugin {
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
-          this._this.render()
+          this._this.render();
+          this.SelectPlugin.moveToView();
         }
       }
       this.KeyboardPlugin.register({
@@ -120,7 +121,8 @@ export default class EditCellPlugin {
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
-          this._this.render()
+          this._this.render();
+          this.SelectPlugin.moveToView();
         }
       }
       this.KeyboardPlugin.register({
@@ -327,7 +329,9 @@ export default class EditCellPlugin {
 
       this.SelectPlugin._selectCell = cell;
       this.SelectPlugin._endCell = cell;
+
       this._this.render();
+      this.SelectPlugin.moveToView();
     }
     return;
   }

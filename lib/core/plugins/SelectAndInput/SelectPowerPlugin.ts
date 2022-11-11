@@ -4,7 +4,7 @@
 import { PluginTypeEnum } from "..";
 import Base, { selectedCellType } from "../../base/base";
 import { EventZIndex, RenderZIndex } from "../../base/constant";
-import { combineCell, combineRect, deepClone, judgeCross } from "../../../utils";
+import { combineCell, combineRect, deepClone, judgeCross, judgeInner, nextTick } from "../../../utils";
 import { EventConstant } from "../base/event";
 import KeyBoardPlugin from "../KeyBoardPlugin";
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from "../KeyBoardPlugin/constant";
@@ -196,6 +196,7 @@ export default class SelectPowerPlugin {
         this._endCell = deepClone(nextCell);
         this.selectCell = nextCell;
         this._this.render()
+        this.moveToView();
       }
     }
 
@@ -235,6 +236,7 @@ export default class SelectPowerPlugin {
       const nextCell = this.getNextCellByMove(mirror, type)
       this._endCell = nextCell;
       this._this.render()
+      this.moveToView();
     }
 
     this.KeyboardPlugin.register({
@@ -380,6 +382,8 @@ export default class SelectPowerPlugin {
         }
       }
 
+      this._this.mouseCornerScroll(point)
+
       this._this.render();
     }
 
@@ -414,8 +418,6 @@ export default class SelectPowerPlugin {
       },
       innerFunc: mouseUpCB.bind(this),
     })
-
-
   }
 
   public calcBorder() {
@@ -523,5 +525,33 @@ export default class SelectPowerPlugin {
     this.selectCell = leftTopCell;
     this._startCell = leftTopCell;
     this._endCell = rightBottomCell;
+  }
+
+  public moveToView() {
+    if (!this._endCell) {
+      return;
+    }
+    const that = this._this;
+    const [x, y, w, h] = this._this.getRectByCell(this._endCell);
+    const width = that._width - that.paddingLeft - that.scrollBarWidth;
+    const height = that._height - that.paddingTop - that.scrollBarWidth;
+    const isInner = judgeInner(
+      [x, y, w, h],
+      [that.paddingLeft, that.paddingTop, width, height]
+    );
+    if (!isInner) {
+      if (x < that.paddingLeft) {
+        that.scrollXY((x - that.paddingLeft - 20), 0);
+      }
+      if (y < that.paddingTop) {
+        that.scrollXY(0, (y - that.paddingTop - 20));
+      }
+      if (x + w > width) {
+        that.scrollXY((x + w - width - 20), 0);
+      }
+      if (y + h > height) {
+        that.scrollXY(0, (y + h - height - 10));
+      }
+    }
   }
 }
