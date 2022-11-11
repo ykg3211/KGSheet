@@ -163,12 +163,13 @@ export default class EditCellPlugin {
       this.KeyboardPlugin.register({
         mainKeys: [OPERATE_KEYS_ENUM.Backspace, OPERATE_KEYS_ENUM.Delete],
         callbacks: [(e, v) => {
-          if (!this.SelectPlugin._startCell || !this.SelectPlugin._endCell) {
+          const border = this.SelectPlugin.calcBorder()
+          if (!border) {
             return;
           }
           this.clearScopeContent({
-            leftTopCell: this.SelectPlugin._startCell,
-            rightBottomCell: this.SelectPlugin._endCell
+            leftTopCell: border.cellScope.startCell,
+            rightBottomCell: border.cellScope.endCell
           })
         }]
       })
@@ -178,11 +179,16 @@ export default class EditCellPlugin {
   // 增加delete方法，清空content；
   private clearScopeContent(scope: CellCornerScopeType) {
     const preData = this._this.getDataByScope(scope).data;
-    const afterData = deepClone(preData)
+    const afterData = deepClone(preData);
     afterData.cells = afterData.cells.map(cells => cells.map(cell => {
       cell.content = '';
       return cell;
     }))
+
+    Object.keys(afterData.spanCells).forEach(key => {
+      afterData.spanCells[key].content = '';
+    })
+
     this.ExcelBaseFunction.cellsChange({
       scope,
       pre_data: preData,
@@ -609,7 +615,6 @@ export default class EditCellPlugin {
     const tempMap = {};
     const SourcePreSpanCells = deepClone(SourceData.data.spanCells);
     Object.keys(SourceData.data.spanCells).forEach(key => {
-      // delete this._this._data.spanCells[key];
       const newKey = key.split('_').map(Number);
       newKey[0] += targetCells.leftTopCell.row - SourceData.scope.leftTopCell.row;
       newKey[1] += targetCells.leftTopCell.column - SourceData.scope.leftTopCell.column;
