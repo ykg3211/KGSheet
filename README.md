@@ -8,7 +8,7 @@ pnpm install
 pnpm run dev
 ```
 
-## 事例
+## 示例
 
 ```
 import Excel, { createDefaultData } from 'ysheet';
