@@ -13,6 +13,37 @@
   "files": [
     "lib"
   ],
+  "scripts": {
+    "test": "node ./__tests__/ViteReact.test.js",
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@formily/antd": "^2.2.4",
+    "@formily/core": "^2.2.4",
+    "@formily/react": "^2.2.4",
+    "@types/three": "^0.144.0",
+    "antd": "^4.23.2",
+    "less": "^4.1.3",
+    "less-loader": "^11.0.0",
+    "moment": "^2.29.4",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.0",
+    "rxjs": "^7.5.6",
+    "three": "^0.144.0",
+    "type-fest": "^2.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.1.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ykg3211/YSheet.git"
