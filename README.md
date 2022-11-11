@@ -1,8 +1,14 @@
 # `YSheet`
 
+## RUN
 
+```
+pnpm install
 
-## Usage
+pnpm run dev
+```
+
+## 事例
 
 ```
 import Excel, { createDefaultData } from 'ysheet';
@@ -33,6 +39,4 @@ function ExcelMain() {
 }
 
 export default ExcelMain
-
-// TODO: DEMONSTRATE API
 ```
