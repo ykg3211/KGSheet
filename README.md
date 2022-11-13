@@ -1,12 +1,6 @@
-# `YSheet`
+# `KGSheet`
 
-## RUN
-
-```
-pnpm install
-
-pnpm run dev
-```
+...待完善
 
 ## 示例
 
