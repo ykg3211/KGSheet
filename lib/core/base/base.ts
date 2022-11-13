@@ -6,6 +6,7 @@ import { deepClone, judgeCross, judgeOver } from "../../utils";
 import { rectType } from "./drawLayer";
 import { CellCornerScopeType, CellScopeType } from "../plugins/SelectAndInput/EditCellPlugin";
 import { excelConfig, renderCellProps, spanCell } from "../../interfaces";
+import ToolBar from "../../toolBar";
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -17,6 +18,7 @@ export interface selectedCellType {
   column: number
 }
 class Base extends Render {
+  public ToolBar: ToolBar | null;
   public pluginsInstance: Plugins;
   public setEvent: setEventType;
   public clearEvent: clearEventType;
@@ -24,7 +26,7 @@ class Base extends Render {
 
   constructor(dom: HTMLElement) {
     super();
-
+    this.ToolBar = null;
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
 
@@ -46,6 +48,9 @@ class Base extends Render {
   }
 
   private initDarkMode() {
+    if (this.canvasDom) {
+      this.canvasDom.style.backgroundColor = this.color('white')
+    }
     this.on(EventConstant.DARK_MODE_CHANGE, () => {
       if (this.canvasDom) {
         this.canvasDom.style.backgroundColor = this.color('white')

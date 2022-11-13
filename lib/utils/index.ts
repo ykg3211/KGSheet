@@ -85,3 +85,18 @@ export function debounce(func: any, t: number) {
     }, t);
   }
 }
+
+
+export function getABC(num: number): string {
+  const result: number[] = [];
+  if (num === 0) {
+    return 'A'
+  }
+  while (num > 0) {
+    const temp = num % 26;
+    num -= temp;
+    num = num / 26;
+    result.unshift(temp);
+  }
+  return result.map(i => String.fromCharCode(i + 65)).join('');
+}

@@ -3,9 +3,8 @@ import { cellStyle, CellTypeEnum, excelConfig, renderCellProps } from '../../int
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import { _throttleByRequestAnimationFrame } from '../../utils'
+import { getABC, _throttleByRequestAnimationFrame } from '../../utils'
 import { EventConstant } from '../plugins/base/event';
-
 
 export default class Render extends DrawLayer {
   public _width: number; /** dom 实际width */
@@ -368,7 +367,7 @@ export default class Render extends DrawLayer {
         point: [x, 0],
         cell: {
           style: baseStyle,
-          content: c + 1 + '',
+          content: getABC(c),
           type: CellTypeEnum.text
         },
         w,
@@ -400,7 +399,7 @@ export default class Render extends DrawLayer {
     } else if (r === startRIndex) {
       y = 0;
       h = this.paddingTop;
-      content = c + 1 + '';
+      content = getABC(c);
     } else if (c === startCIndex) {
       x = 0;
       w = this.paddingLeft;

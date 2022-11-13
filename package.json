@@ -6,6 +6,7 @@
   "homepage": "https://github.com/ykg3211/KGSheet.git",
   "license": "MIT",
   "main": "lib/index.js",
+  "types": "lib/index.js",
   "directories": {
     "lib": "lib"
   },
