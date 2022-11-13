@@ -4,8 +4,7 @@ const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
 const createDefaultStyle = () => {
   const result: cellStyle = {
-    fontColor: 'lightgray',
-    textAlign: 'right',
+    textAlign: 'left',
     fontSize: 18,
   }
   return result;

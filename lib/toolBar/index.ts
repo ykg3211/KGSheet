@@ -4,8 +4,7 @@ import { config } from './interface'
 
 class ToolBar extends Base {
   constructor(sheet: Excel, config: config) {
-    super(sheet);
-    console.log(1);
+    super(sheet, config);
   }
 }
 
