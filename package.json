@@ -1,9 +1,9 @@
 {
-  "name": "ysheet",
+  "name": "kgsheet",
   "version": "0.0.1",
   "description": "Web版本excel",
   "author": "ykg3211 <66738367+ykg3211@users.noreply.github.com>",
-  "homepage": "https://github.com/ykg3211/YSheet.git",
+  "homepage": "https://github.com/ykg3211/KGSheet.git",
   "license": "MIT",
   "main": "lib/index.js",
   "directories": {
@@ -17,9 +17,9 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/ykg3211/YSheet.git"
+    "url": "https://github.com/ykg3211/KGSheet.git"
   },
   "bugs": {
-    "url": "https://github.com/ykg3211/YSheet/issues"
+    "url": "https://github.com/ykg3211/KGSheet/issues"
   }
 }
