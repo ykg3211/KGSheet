@@ -12,9 +12,30 @@
   "files": [
     "lib"
   ],
-  "scripts": {},
-  "dependencies": {},
-  "devDependencies": {},
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "antd": "^4.23.2",
+    "kgsheet": "*",
+    "less": "^4.1.3",
+    "less-loader": "^11.0.0",
+    "moment": "^2.29.4",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.1.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ykg3211/KGSheet.git"

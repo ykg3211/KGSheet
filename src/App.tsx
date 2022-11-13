@@ -1,29 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react'
-import './main.module.less'
-import './App.css'
-import Excel, {createDefaultData} from '../lib/index';
+import Excel, { createDefaultData } from 'kgsheet';
 
 function App() {
+  const app = useRef(null);
   const container = useRef(null);
   const once = useRef(true);
-  const instance = useRef(null);
   useEffect(() => {
     if (once.current) {
-      instance.current = new Excel(container.current);
-      const data = createDefaultData(20, 1000);
-      instance.current.setData(data);
+      app.current = new Excel(container.current);
+      const data = createDefaultData(60, 100);
+      app.current.setData(data);
+      window.excel = app.current;
       once.current = false;
     }
   }, [container.current])
 
   return (
     <>
-      <div ref={container} style={{ width: '90%', height: '90%', marginTop: '20px' }}></div>
-      <div onClick={() => {
-        instance.current.reverseDarkMode();
-      }}>切主题</div>
+      <div ref={container} style={{ width: '90%', height: '90%', margin: '30px 0 0 30px', border: '1px solid' }}></div>
+      <div id='tools' style={{ display: 'flex', width: '100%', justifyContent: 'space-around' }}>
+        <div onClick={() => {
+          app.current.reverseDarkMode()
+        }}>dark mode</div>
+      </div>
     </>
   );
+
 }
 
 export default App

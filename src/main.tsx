@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
-import 'moment/locale/zh-cn';
 import 'antd/dist/antd.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
