@@ -410,14 +410,14 @@
     // 
     {
       "packageName": "kgsheet",
-      "projectFolder": "packages/KGSheet",
+      "projectFolder": "packages/sheet-core",
       "reviewCategory": "production",
       "shouldPublish": true,
       "tags": [ "frontend-team" ]
     },
     {
       "packageName": "kgsheet-for-react",
-      "projectFolder": "packages/KGSheet-for-react",
+      "projectFolder": "packages/sheet-for-react",
       "reviewCategory": "production",
       "shouldPublish": true,
       "tags": [ "frontend-team" ]
