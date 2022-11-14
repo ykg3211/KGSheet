@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "sheet-core",
+      "path": "packages/sheet-core"
+    },
+    {
+      "name": "sheet-for-react",
+      "path": "packages/sheet-for-react"
+    },
+    {
+      "name": "react-demo",
+      "path": "packages/react-demo"
+    },
+    {
+      "name": "base",
+      "path": "./"
+    },
+  ],
+}

@@ -9,9 +9,7 @@
     "./dist/index.js": "./dist/index.js"
   },
   "scripts": {
-    "dev": "vite --host",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    
   },
   "directories": {
     "lib": "dist",
