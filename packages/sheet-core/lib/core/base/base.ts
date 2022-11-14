@@ -38,6 +38,10 @@ class Base extends Render {
     dom.appendChild(this.canvasDom);
 
     this.initDarkMode();
+
+    this.setEvent = () => {}
+    this.clearEvent = () => {}
+    this.dispatchEvent = () => {}
   }
 
   /**
