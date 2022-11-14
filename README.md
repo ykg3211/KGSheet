@@ -8,7 +8,7 @@
 
 rush update
 
-cd packages/KGSheet-for-react
+cd packages/react-demo
 
 pnpm run dev
 
