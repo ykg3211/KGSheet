@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Main from './tgsheet'
+import Main from 'kgsheet-for-react'
 import './index.css'
 import 'antd/dist/antd.css';
 

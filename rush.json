@@ -421,6 +421,13 @@
       "reviewCategory": "production",
       "shouldPublish": true,
       "tags": [ "frontend-team" ]
+    },
+    {
+      "packageName": "react-demo",
+      "projectFolder": "packages/react-demo",
+      "reviewCategory": "production",
+      "shouldPublish": false,
+      "tags": [ "frontend-team" ]
     }
   ]
 }

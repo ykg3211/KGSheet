@@ -50,7 +50,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx = null;
     this.canvasDom = null;
     this.components = {};
-    this.darkMode = true;
+    this.darkMode = false;
     this.handleDefaultComponents();
   }
 

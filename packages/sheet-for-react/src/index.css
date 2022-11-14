@@ -1,15 +1,21 @@
-#root {
-  margin: 0 auto;
-  top: 0px;
-  left: 0px;
-  text-align: center;
-  position: absolute;
+.tgsheet {
   width: 100%;
   height: 100%;
-  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid lightgray;
 }
 
-.App {
+.tgsheet_toolbar {
+  width: 100%;
+}
+
+.tgsheet_content {
+  width: 100%;
+  flex: 1;
+}
+
+.tgsheet_target {
   width: 100%;
   height: 100%;
 }

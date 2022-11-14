@@ -1,10 +1,6 @@
 {
-  "name": "kgsheet-for-react",
+  "name": "react-demo",
   "version": "0.0.1",
-  "license": "MIT",
-  "homepage": "https://github.com/ykg3211/KGSheet-for-react.git",
-  "types": "dist/index.d.ts",
-  "main": "src/index.tsx",
   "browser": {
     "./dist/index.js": "./dist/index.js"
   },
@@ -22,7 +18,7 @@
   ],
   "dependencies": {
     "antd": "^4.23.2",
-    "kgsheet": "workspace:^",
+    "kgsheet-for-react": "workspace:^",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "moment": "^2.29.4",
