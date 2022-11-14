@@ -1,4 +1,4 @@
-import Base from "../base";
+import Base from '../base';
 
 export enum PluginTypeEnum {
   RightClickPlugin = 'RightClickPlugin',
@@ -22,7 +22,7 @@ export default class Plugins {
     if (name) {
       this.pluginsArr[name].remove?.();
     } else {
-      Object.values(this.pluginsArr).forEach(plugin => plugin.remove?.())
+      Object.values(this.pluginsArr).forEach(plugin => plugin.remove?.());
     }
   }
 

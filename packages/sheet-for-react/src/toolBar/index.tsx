@@ -1,15 +1,16 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { ToolBar } from 'kgsheet';
 import './index.css';
 import { SheetContext } from '..';
 import { useState } from 'react';
+import BaseTool from './tools/baseTool';
 
 function Tools() {
 	const { sheet, setToolBar, toolBar } = useContext(SheetContext);
 
 	const [flag, setFlag] = useState(0);
 	const refresh = () => {
-		setFlag(v => v + 1);
+		setFlag((v) => v + 1);
 	};
 	useEffect(() => {
 		if (sheet && !toolBar) {
@@ -26,14 +27,17 @@ function Tools() {
 		};
 	}, [sheet]);
 
-	return (
-		<div className="toolBarContainer">
-			<div>12</div>
-			<div>12</div>
-			<div>12</div>
-			<div>12</div>
-		</div>
-	);
+	const tools = useMemo(() => {
+		return (
+			toolBar &&
+			toolBar.getTools().map((tool: any) => {
+				console.log(tool);
+				return <BaseTool key={tool.key} tool={tool}></BaseTool>;
+			})
+		);
+	}, [flag, toolBar]);
+
+	return <div className='tgsheet_toolBarContainer'>{tools}</div>;
 }
 
 export default Tools;

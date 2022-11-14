@@ -1,7 +1,27 @@
-.toolBarContainer {
+.tgsheet_toolBarContainer {
   width: 100%;
   height: 100%;
-  padding: 5px 7px;
+  padding: 10px 5px;
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.tgsheet_btn {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: rgb(41, 47, 54);
+  border-radius: 5px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.tgsheet_btn:hover{
+  background-color: rgba(0,0,0, 0.1);
+}
+.tgsheet_btn:active{
+  background-color: rgba(0,0,0, 0.2);
 }
