@@ -1,0 +1,21 @@
+.tgsheet {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid lightgray;
+}
+
+.tgsheet_toolbar {
+  width: 100%;
+}
+
+.tgsheet_content {
+  width: 100%;
+  flex: 1;
+}
+
+.tgsheet_target {
+  width: 100%;
+  height: 100%;
+}
