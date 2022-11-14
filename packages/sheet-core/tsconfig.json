@@ -8,6 +8,8 @@
       "ESNext"
     ],
     "allowJs": false,
+    "declaration": true,
+    "declarationDir": "dist",
     "skipLibCheck": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -18,12 +20,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
       "@/*": [
         "lib/*"
-      ],
+      ]
     }
   },
   "include": [

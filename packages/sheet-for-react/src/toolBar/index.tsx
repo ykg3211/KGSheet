@@ -31,7 +31,6 @@ function Tools() {
 		return (
 			toolBar &&
 			toolBar.getTools().map((tool: any) => {
-				console.log(tool);
 				return <BaseTool key={tool.key} tool={tool}></BaseTool>;
 			})
 		);

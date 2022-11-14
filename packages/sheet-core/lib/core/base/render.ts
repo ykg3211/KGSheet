@@ -4,6 +4,7 @@ import {
 	CellTypeEnum,
 	excelConfig,
 	renderCellProps,
+	spanCell,
 } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
@@ -21,7 +22,7 @@ export default class Render extends DrawLayer {
 	public _scale: number; // 缩放比例
 	public maxScale: number; // 最大缩放比例
 	public minScale: number; // 最小缩放比例
-	public _scrollBarWidth: number; // 滚动条宽度
+	public _scrollBarWidth!: number; // 滚动条宽度
 
 	public mouseX: number; // 鼠标x坐标
 	public mouseY: number; // 鼠标y坐标
@@ -237,7 +238,7 @@ export default class Render extends DrawLayer {
 								column: cIndex,
 							},
 							point: point.slice(),
-							cell: column,
+							cell: column as spanCell,
 							w: this.data.w[cIndex],
 							h: this.data.h[rIndex],
 						});

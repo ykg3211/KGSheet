@@ -87,6 +87,7 @@ export default class Plugins {
 		}
 
 		this.pluginsArr[name] = newPlugin;
+		//@ts-ignore
 		this._this[name] = newPlugin;
 	}
 }

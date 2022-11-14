@@ -84,6 +84,7 @@ export default class DrawLayer extends BaseEvent {
 	}
 
 	protected handleDefaultComponents() {
+		//@ts-ignore
 		this.components[CellTypeEnum.text] = (
 			ctx: CanvasRenderingContext2D,
 			data: renderCellProps,
@@ -168,6 +169,7 @@ export default class DrawLayer extends BaseEvent {
 		if (!this.ctx) {
 			return;
 		}
+		//@ts-ignore
 		const renderFunc = this.components[props.cell.type];
 		if (renderFunc) {
 			renderFunc(this.ctx, props);
@@ -181,6 +183,7 @@ export default class DrawLayer extends BaseEvent {
 		if (!this.ctx) {
 			return;
 		}
+		//@ts-ignore
 		const renderFunc = this.components[props.cell.type];
 		if (renderFunc) {
 			renderFunc(this.ctx, props);
