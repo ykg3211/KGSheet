@@ -20,9 +20,9 @@ export interface selectedCellType {
 class Base extends Render {
   public ToolBar: ToolBar | null;
   public pluginsInstance: Plugins;
-  public setEvent: setEventType;
-  public clearEvent: clearEventType;
-  public dispatchEvent: dispatchEventType;
+  public setEvent!: setEventType;
+  public clearEvent!: clearEventType;
+  public dispatchEvent!: dispatchEventType;
 
   constructor(dom: HTMLElement) {
     super();
@@ -38,10 +38,6 @@ class Base extends Render {
     dom.appendChild(this.canvasDom);
 
     this.initDarkMode();
-
-    this.setEvent = () => {}
-    this.clearEvent = () => {}
-    this.dispatchEvent = () => {}
   }
 
   /**
