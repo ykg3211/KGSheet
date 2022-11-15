@@ -1,26 +1,29 @@
 {
+  "files": [
+    "lib/index.ts"
+  ],
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
+    "target": "ES6",
     "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
+      "dom",
+      "es2019"
     ],
-    "allowJs": false,
+    "outDir": "./dist",
+    "allowJs": true,
     "declaration": true,
-    "declarationDir": "dist",
+    "declarationDir": "./dist",
     "skipLibCheck": true,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "esnext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "baseUrl": "./",
+    "sourceMap": true,
     "paths": {
       "@/*": [
         "lib/*"
