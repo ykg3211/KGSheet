@@ -17,7 +17,7 @@ export default class BaseEventStack {
 	private REVERSE_STACK: BaseEventType[][];
 	public _this: Base;
 	public name: string;
-	private KeyboardPlugin: KeyBoardPlugin;
+	private KeyboardPlugin!: KeyBoardPlugin;
 
 	constructor(_this: Base) {
 		this._this = _this;
@@ -30,7 +30,9 @@ export default class BaseEventStack {
 	}
 
 	private initPlugin() {
+		// @ts-ignore
 		if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
+			// @ts-ignore
 			this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
 
 			this.KeyboardPlugin.register({

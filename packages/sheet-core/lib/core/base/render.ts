@@ -1,11 +1,5 @@
 // 这里的方法和值都是pretect ，为了方便插件开发，都先弄成public
-import {
-	cellStyle,
-	CellTypeEnum,
-	excelConfig,
-	renderCellProps,
-	spanCell,
-} from '../../interfaces';
+import { cellStyle, CellTypeEnum, excelConfig, renderCellProps, spanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
@@ -63,9 +57,7 @@ export default class Render extends DrawLayer {
 		this.renderCellsArr = [];
 
 		this.render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
-		this.mouseCornerScroll = _throttleByRequestAnimationFrame(
-			this._mouseCornerScroll.bind(this),
-		);
+		this.mouseCornerScroll = _throttleByRequestAnimationFrame(this._mouseCornerScroll.bind(this));
 
 		this.on(EventConstant.RENDER, this.render);
 
@@ -176,14 +168,8 @@ export default class Render extends DrawLayer {
 		this.renderCellsArr = [];
 		this.contentWidth = this.data.w.reduce((a, b) => a + b, 0);
 		this.contentHeight = this.data.h.reduce((a, b) => a + b, 0);
-		const drawMinLineX = Math.min(
-			this.width,
-			this.contentWidth + this.paddingLeft - this.scrollLeft,
-		);
-		const drawMinLineY = Math.min(
-			this.height,
-			this.contentHeight + this.paddingTop - this.scrollTop,
-		);
+		const drawMinLineX = Math.min(this.width, this.contentWidth + this.paddingLeft - this.scrollLeft);
+		const drawMinLineY = Math.min(this.height, this.contentHeight + this.paddingTop - this.scrollTop);
 
 		let hadDrawColumns = false; // 竖线只画一次的标志。
 		let isFirstRender = true; // 用来统计绘制区域的标志
@@ -200,19 +186,14 @@ export default class Render extends DrawLayer {
 		let row = -1;
 		this.data.cells.forEach((rows, rIndex) => {
 			point[0] = startX;
-			const renderThisRow =
-				point[1] + this.data.h[rIndex] > 0 && point[1] < this.height;
+			const renderThisRow = point[1] + this.data.h[rIndex] > 0 && point[1] < this.height;
 			if (renderThisRow) {
 				row += 1;
 				if (!this.renderCellsArr[row]) {
 					this.renderCellsArr[row] = [];
 				}
 				rows.forEach((column, cIndex) => {
-					if (
-						renderThisRow &&
-						point[0] + this.data.w[cIndex] > 0 &&
-						point[0] < this.width
-					) {
+					if (renderThisRow && point[0] + this.data.w[cIndex] > 0 && point[0] < this.width) {
 						startRIndex = startRIndex === null ? rIndex : startRIndex;
 						startCIndex = startCIndex === null ? cIndex : startCIndex;
 						if (!hadDrawColumns) {
@@ -325,19 +306,10 @@ export default class Render extends DrawLayer {
 			const [y, x] = key.split('_').map(Number);
 			point[0] += this.data.w.slice(0, x).reduce((a, b) => a + b, 0);
 			point[1] += this.data.h.slice(0, y).reduce((a, b) => a + b, 0);
-			const _w = this.data.w
-				.slice(x, x + cell.span[0])
-				.reduce((a, b) => a + b, 0);
-			const _h = this.data.h
-				.slice(y, y + cell.span[1])
-				.reduce((a, b) => a + b, 0);
+			const _w = this.data.w.slice(x, x + cell.span[0]).reduce((a, b) => a + b, 0);
+			const _h = this.data.h.slice(y, y + cell.span[1]).reduce((a, b) => a + b, 0);
 
-			if (
-				point[0] > this.width ||
-				point[0] + _w < 0 ||
-				point[1] > this.height ||
-				point[1] + _h < 0
-			) {
+			if (point[0] > this.width || point[0] + _w < 0 || point[1] > this.height || point[1] + _h < 0) {
 				return;
 			}
 			if (!cell.style.backgroundColor) {
@@ -365,16 +337,10 @@ export default class Render extends DrawLayer {
 		);
 	}
 
-	public resetRenderFunction(
-		index: RenderZIndex,
-		funcs: ((ctx: CanvasRenderingContext2D) => void)[] = [],
-	) {
+	public resetRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[] = []) {
 		this.renderFuncArr[index] = funcs;
 	}
-	public addRenderFunction(
-		index: RenderZIndex,
-		funcs: ((ctx: CanvasRenderingContext2D) => void)[],
-	) {
+	public addRenderFunction(index: RenderZIndex, funcs: ((ctx: CanvasRenderingContext2D) => void)[]) {
 		if (!this.renderFuncArr[index]) {
 			this.renderFuncArr[index] = [];
 		}
@@ -486,8 +452,7 @@ export default class Render extends DrawLayer {
 	}
 	public getMaxScrollBound() {
 		return {
-			height:
-				this.contentHeight - this.height / this.scale + this.paddingTop * 2,
+			height: this.contentHeight - this.height / this.scale + this.paddingTop * 2,
 			width: this.contentWidth - this.width / this.scale + this.paddingLeft * 2,
 		};
 	}

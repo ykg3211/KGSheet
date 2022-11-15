@@ -3,7 +3,7 @@ import { PluginTypeEnum } from '..';
 import Base, { BaseDataType, selectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { rectType } from '../../base/drawLayer';
-import { cell } from '../../../interfaces';
+import { cell, spanCell } from '../../../interfaces';
 import {
 	combineCell,
 	debounce,
@@ -66,13 +66,16 @@ export default class EditCellPlugin {
 	private initPlugin() {
 		//@ts-ignore
 		if (this._this[PluginTypeEnum.SelectPowerPlugin]) {
+			//@ts-ignore
 			this.SelectPlugin = this._this[PluginTypeEnum.SelectPowerPlugin];
 		} else {
 			console.error(
 				'CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!',
 			);
 		}
+		//@ts-ignore
 		if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
+			//@ts-ignore
 			this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction];
 		} else {
 			console.error(
@@ -82,7 +85,9 @@ export default class EditCellPlugin {
 	}
 
 	private registerKeyboardEvent() {
+		//@ts-ignore
 		if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
+			//@ts-ignore
 			this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
 
 			this.KeyboardPlugin.register({
@@ -429,7 +434,7 @@ export default class EditCellPlugin {
 	}
 
 	private handleDBClick() {
-		const dbClickCB = (e, cell: selectedCellType) => {
+		const dbClickCB = (e: any, cell: selectedCellType) => {
 			this.initEditBoxDom(cell);
 		};
 		this._this.setEvent(EventConstant.DB_CLICK, {
@@ -466,7 +471,10 @@ export default class EditCellPlugin {
 
 	private handleMouseDown() {
 		// 处理鼠标点击事件
-		const handleMouseDownCursor = (e: MouseEvent, [type, point]) => {
+		const handleMouseDownCursor = (
+			e: MouseEvent,
+			[type, point]: [string, [number, number]],
+		) => {
 			const cells = this.SelectPlugin.cornerCells;
 			const cell = this._this.getCellByPoint(point);
 			if (!cells || !cell) {
@@ -520,7 +528,10 @@ export default class EditCellPlugin {
 	}
 	private handleMouseMove() {
 		// 处理鼠标悬浮改变样式的。  边框和右下角
-		const handleOverCursor = (e: MouseEvent, [type, point]) => {
+		const handleOverCursor = (
+			e: MouseEvent,
+			[type, point]: [string, [number, number]],
+		) => {
 			if (type === 'grab') {
 				document.body.style.cursor = 'cell';
 			} else if (type === 'cell') {
@@ -613,26 +624,26 @@ export default class EditCellPlugin {
 		}
 	}
 
-	private setCommonStyle(dom: HTMLElement, originData: cell) {
-		const cellStyle = originData.style;
+	// private setCommonStyle(dom: HTMLElement, originData: cell) {
+	// 	const cellStyle = originData.style;
 
-		dom.style.backgroundColor = cellStyle.backgroundColor
-			? cellStyle.backgroundColor
-			: this._this.color('white');
-		Object.keys(cellStyle).forEach((key) => {
-			dom.style[key] = cellStyle[key];
-		});
-		dom.style.font = cellStyle.font || '';
-		dom.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
-		dom.style.textAlign = cellStyle.align || '';
-		dom.style.color = cellStyle.fontColor || this._this.color('black');
-		dom.style.position = 'absolute';
-		dom.style.top = '0px';
-		dom.style.left = '0px';
-		dom.style.outline = 'none';
-		dom.style.border = '1px solid #4a89fe';
-		dom.style.resize = 'none';
-	}
+	// 	dom.style.backgroundColor = cellStyle.backgroundColor
+	// 		? cellStyle.backgroundColor
+	// 		: this._this.color('white');
+	// 	Object.keys(cellStyle).forEach((key) => {
+	// 		dom.style[key] = cellStyle[key];
+	// 	});
+	// 	dom.style.font = cellStyle.font || '';
+	// 	dom.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
+	// 	dom.style.textAlign = cellStyle.align || '';
+	// 	dom.style.color = cellStyle.fontColor || this._this.color('black');
+	// 	dom.style.position = 'absolute';
+	// 	dom.style.top = '0px';
+	// 	dom.style.left = '0px';
+	// 	dom.style.outline = 'none';
+	// 	dom.style.border = '1px solid #4a89fe';
+	// 	dom.style.resize = 'none';
+	// }
 
 	private getCurrentScopeInCopy() {
 		if (!this.startCopyCell) {
@@ -719,7 +730,7 @@ export default class EditCellPlugin {
 		}
 
 		// 如果有新的 生成spanCell。
-		const tempMap = {};
+		const tempMap: Record<string, spanCell> = {};
 		const SourcePreSpanCells = deepClone(SourceData.data.spanCells);
 		Object.keys(SourceData.data.spanCells).forEach((key) => {
 			const newKey = key.split('_').map(Number);

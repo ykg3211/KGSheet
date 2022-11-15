@@ -27,14 +27,28 @@ export enum PluginTypeEnum {
 	RightClickPlugin = 'RightClickPlugin',
 }
 
-export interface PluginType {
+type PluginType =
+	| ClickPlugin
+	| EventDispatch
+	| ExcelBaseFunction
+	| MouseMovePlugin
+	| ScrollPlugin
+	| SideBarResizePlugin
+	| SelectPowerPlugin
+	| EditCellPlugin
+	| RightClickPlugin
+	| KeyBoardPlugin
+	| BaseEventStack
+	| CopyAndPaste;
+
+export interface BasePluginType {
 	_this: Base;
 	remove?: () => void;
 }
 
 export default class Plugins {
 	private _this: Base;
-	private pluginsArr: Record<string, PluginType>;
+	private pluginsArr: Record<string, BasePluginType & PluginType>;
 
 	constructor(_this: Base) {
 		this._this = _this;
