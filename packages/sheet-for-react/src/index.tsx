@@ -1,21 +1,21 @@
-import React from 'react'
+import React from 'react';
 import { useState } from 'react';
-import Container from './container'
+import Container from './container';
 import './index.css';
 import Tools from './toolBar';
 
 interface sheet {
-  sheet: any,
-  setSheet: (v: any) => void,
-  toolBar: any,
-  setToolBar: (v: any) => void,
+  sheet: any;
+  setSheet: (v: any) => void;
+  toolBar: any;
+  setToolBar: (v: any) => void;
 }
 
 export const SheetContext = React.createContext<sheet>({
   sheet: null,
-  setSheet: () => { },
+  setSheet: () => {},
   toolBar: null,
-  setToolBar: () => { },
+  setToolBar: () => {},
 });
 
 function Main() {
@@ -24,19 +24,20 @@ function Main() {
 
   const handleSheet = (v: any) => {
     v && setSheet(v);
-  }
+  };
 
   const handleToolBar = (v: any) => {
     v && setToolBar(v);
-  }
+  };
 
   return (
-    <SheetContext.Provider value={{
-      sheet: sheet,
-      setSheet: handleSheet,
-      toolBar: toolBar,
-      setToolBar: handleToolBar,
-    }}>
+    <SheetContext.Provider
+      value={{
+        sheet: sheet,
+        setSheet: handleSheet,
+        toolBar: toolBar,
+        setToolBar: handleToolBar,
+      }}>
       <div className='tgsheet'>
         <div className='tgsheet_toolbar'>
           <Tools />
@@ -46,7 +47,7 @@ function Main() {
         </div>
       </div>
     </SheetContext.Provider>
-  )
+  );
 }
 
-export default Main
+export default Main;

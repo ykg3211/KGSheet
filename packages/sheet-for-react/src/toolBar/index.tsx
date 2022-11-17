@@ -16,7 +16,7 @@ function Tools() {
 		if (sheet && !toolBar) {
 			const instance = new ToolBar({
 				sheet,
-				config: {},
+				// config: {},
 			});
 			setToolBar(instance);
 

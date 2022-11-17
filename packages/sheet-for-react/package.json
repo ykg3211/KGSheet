@@ -9,7 +9,7 @@
     "./dist/index.js": "./dist/index.js"
   },
   "scripts": {
-    
+    "build": "tsc && vite build"
   },
   "directories": {
     "lib": "dist",
