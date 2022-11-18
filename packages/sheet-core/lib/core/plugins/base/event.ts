@@ -30,8 +30,8 @@ export default class BaseEvent {
   once(name: string, func: (data?: any) => void) {
     const _func = (data: any) => {
       func(data);
-      this.un(name, _func)
-    }
+      this.un(name, _func);
+    };
     if (this.deps[name]) {
       this.deps[name].push(_func);
     } else {
@@ -45,7 +45,7 @@ export default class BaseEvent {
       return;
     }
     if (func) {
-      this.deps[name] = this.deps[name].filter(fn => fn !== func);
+      this.deps[name] = this.deps[name].filter((fn) => fn !== func);
     } else {
       delete this.deps[name];
     }
@@ -53,7 +53,7 @@ export default class BaseEvent {
 
   emit(name: string, data?: any) {
     if (this.deps[name]) {
-      this.deps[name].forEach(fn => fn(data));
+      this.deps[name].forEach((fn) => fn(data));
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Excel, { createDefaultData } from 'kgsheet';
 import { SheetContext } from '..';
 
@@ -10,16 +10,13 @@ function Container() {
     if (once.current) {
       const instance = new Excel(container.current);
       setSheet(instance);
-      const data = createDefaultData(60, 100);
+      const data = createDefaultData(10, 1000);
       instance.setData(data);
       once.current = false;
     }
-  }, [container.current])
+  }, [container.current]);
 
-  return (
-    <div ref={container} className="tgsheet_target" ></div>
-  );
-
+  return <div ref={container} className='tgsheet_target'></div>;
 }
 
-export default Container
+export default Container;
