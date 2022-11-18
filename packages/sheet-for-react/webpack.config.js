@@ -1,13 +1,13 @@
 module.exports = {
   entry: './src/index.tsx',
   output: {
-    filename: 'bundle.js',
+    filename: 'index.js',
     path: __dirname + '/dist',
   },
   devtool: 'source-map',
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.css', '.svg', '.ts', '.tsx', '.js', '.json'],
   },
   module: {
     rules: [
