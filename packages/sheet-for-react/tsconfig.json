@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es6",
     "sourceMap": true,
     "lib": [
       "dom",
@@ -14,7 +14,6 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "module": "esnext",
-    "moduleResolution": "Node",
     "jsx": "react"
   },
   "include": [
