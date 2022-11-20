@@ -1,8 +1,16 @@
 module.exports = {
   entry: './src/index.tsx',
+  mode: 'development',
+  experiments: {
+    outputModule: true,
+  },
   output: {
-    filename: 'bundle.js',
+    filename: 'index.js',
     path: __dirname + '/dist',
+    library: {
+      // do not specify a `name` here
+      type: 'module',
+    },
   },
   devtool: 'source-map',
   resolve: {
@@ -12,10 +20,20 @@ module.exports = {
   module: {
     rules: [
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
-
+      { test: /\.tsx?$/, loader: 'ts-loader' },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader', {
+          loader: "less-loader",
+        },],
+      },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
+      // { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
+      {
+        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+        // More information here https://webpack.js.org/guides/asset-modules/
+        type: "asset",
+      },
     ],
   },
 

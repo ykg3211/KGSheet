@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES6",
     "sourceMap": true,
     "lib": [
       "dom",
@@ -12,8 +13,8 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "module": "commonjs",
-    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "Node",
     "jsx": "react"
   },
   "include": [
