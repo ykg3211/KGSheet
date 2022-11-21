@@ -1,16 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // @ts-ignore
-import Main from 'kgsheet-for-react';
 import './index.css';
 import 'antd/dist/antd.css';
-import 'kgsheet-for-react/dist/index.css';
-import { Button } from 'antd';
+
+// import Main from 'kgsheet-for-react';
+// import 'kgsheet-for-react/dist/index.css';
+
+import Main from 'kgsheet-for-react/packages/index';
+import 'kgsheet-for-react/packages/index.css';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <div>
-      <Button>1</Button>
-      {/* <Main /> */}
-    </div>
+    <Main />
   </React.StrictMode>,
 );

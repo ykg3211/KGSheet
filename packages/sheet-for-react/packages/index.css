@@ -1,3 +1,34 @@
+.tgsheet-icon {
+  width: 1em; height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+.tgsheet {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid lightgray;
+}
+
+.tgsheet_toolbar {
+  width: 100%;
+  background-color: rgb(244, 246, 247);
+}
+
+.tgsheet_content {
+  width: 100%;
+  flex: 1;
+}
+
+.tgsheet_target {
+  width: 100%;
+  height: 100%;
+}
+
+
 .tgsheet_toolBarContainer {
   width: 100%;
   height: 100%;
@@ -8,7 +39,7 @@
 }
 
 .tgsheet_btn {
-  padding: 8px;
+  padding: 3px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -9,7 +9,7 @@
     "./dist/index.js": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && esbuild ./src/index.jsx  --outdir=dist --format=esm --loader:.svg=text --bundle"
+    "build": "tsc && esbuild ./packages/index.css  --outdir=dist  --loader:.svg=text --bundle"
   },
   "directories": {
     "lib": "dist",
