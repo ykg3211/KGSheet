@@ -1,4 +1,4 @@
-import { cell, CellTypeEnum, excelConfig } from "../interfaces";
+import { cell, CellTypeEnum, excelConfig } from '../interfaces';
 
 interface tableElement {
   tag: string;
@@ -15,7 +15,7 @@ function parseAttrs(v: string) {
   const source = v.split('');
   let current = source.shift();
   let temp: string[] = [];
-  let state = 'end'
+  let state = 'end';
   while (current) {
     if (current === '=') {
       key = temp.join('').trim();
@@ -43,7 +43,7 @@ function parseHtml(html: string) {
     tag: '.',
     children: [],
     parent: null,
-    attrs: {}
+    attrs: {},
   };
   // 指针
   let point = result;
@@ -73,8 +73,8 @@ function parseHtml(html: string) {
             tag: elementTag,
             attrs: parseAttrs(tag),
             parent: point,
-            children: []
-          }
+            children: [],
+          };
           point.children.push(newElement);
           if (elementTag !== 'col') {
             point = newElement;
@@ -85,7 +85,7 @@ function parseHtml(html: string) {
             stack.shift();
             point = point.parent || point;
           } else {
-            throw new Error('Invalid HTML: ' + stack[0] + '_' + elementTag)
+            throw new Error('Invalid HTML: ' + stack[0] + '_' + elementTag);
           }
         }
       }
@@ -110,11 +110,11 @@ function findTag(root: tableElement, tag: string) {
     if (node?.tag === tag) {
       return node;
     } else {
-      node?.children.forEach(subNode => {
+      node?.children.forEach((subNode) => {
         if (typeof subNode !== 'string') {
           nodes.push(subNode);
         }
-      })
+      });
     }
   }
   return null;
@@ -138,17 +138,17 @@ export function html2excel(html: string) {
             style: {},
             content: td.children[0]?.toString?.() || '',
             type: CellTypeEnum.text,
-          })
+          });
         }
-      })
+      });
     }
-    cells.push(row)
-  })
+    cells.push(row);
+  });
   const result: excelConfig = {
     w: [],
     h: [],
     cells,
     spanCells: {},
-  }
+  };
   return result;
 }

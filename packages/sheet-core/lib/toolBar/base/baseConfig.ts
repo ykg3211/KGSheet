@@ -1,8 +1,11 @@
-import { BarSettingType, ToolsEnum } from "../interface";
+import { BarSettingType, ToolsEnum } from '../interface';
 
 const baseToolBarConfig: BarSettingType = [
-  ToolsEnum.REVERT,
-  ToolsEnum.ANTI_REVERT,
-]
+  {
+    lines: 1,
+    iconWidth: 24,
+    tools: [ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT],
+  },
+];
 
 export default baseToolBarConfig;

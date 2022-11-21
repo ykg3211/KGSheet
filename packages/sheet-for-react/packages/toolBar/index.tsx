@@ -3,6 +3,7 @@ import { ToolBar } from 'kgsheet';
 import { SheetContext } from '../';
 import { useState } from 'react';
 import BaseTool from './tools/baseTool';
+import BaseLayout from './baseLayout';
 
 function Tools() {
   const { sheet, setToolBar, toolBar } = useContext(SheetContext);
@@ -27,12 +28,7 @@ function Tools() {
   }, [sheet]);
 
   const tools = useMemo(() => {
-    return (
-      toolBar &&
-      toolBar.getTools().map((tool: any) => {
-        return <BaseTool key={tool.key} tool={tool}></BaseTool>;
-      })
-    );
+    return toolBar && toolBar.getTools() && <BaseLayout toolBar={toolBar.getTools()} />;
   }, [flag, toolBar]);
 
   return <div className='tgsheet_toolBarContainer'>{tools}</div>;

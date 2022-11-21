@@ -3,26 +3,33 @@ import ToolBar from '..';
 import Base from '../base';
 
 export enum ToolsEnum {
-	REVERT = 'revert',
-	ANTI_REVERT = 'anti_revert',
+  REVERT = 'revert',
+  ANTI_REVERT = 'anti_revert',
 }
 
-export type BarSettingType = Array<string>;
+export type BarSettingType = Array<ToolsGroupType<string>>;
 
 export interface config {
-	barSetting: BarSettingType;
+  barSetting: BarSettingType;
 }
 
 export interface ToolsProps {
-	sheet: Excel;
-	toolBar: Base;
-	key: string;
+  sheet: Excel;
+  toolBar: Base;
+  key: string;
+}
+
+export interface ToolsGroupType<T = BaseToolType> {
+  lines: number;
+  iconWidth: number;
+  tools: T[];
 }
 
 export interface BaseToolType {
-	icon: string;
-	key: string;
-	class?: string;
-	style?: CSSRule;
-	click: () => void;
+  icon: string;
+  label: string;
+  key: string;
+  class?: string;
+  style?: CSSRule;
+  click: () => void;
 }
