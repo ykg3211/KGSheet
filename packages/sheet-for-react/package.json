@@ -9,7 +9,7 @@
     "./dist/index.js": "./dist/index.js"
   },
   "scripts": {
-    "build": "esbuild ./src/index.jsx --bundle --outdir=dist --format=esm"
+    "build": "tsc -p tsconfig.build.json && esbuild ./src/index.jsx  --outdir=dist --format=esm --loader:.svg=text --bundle"
   },
   "directories": {
     "lib": "dist",
@@ -23,9 +23,9 @@
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "moment": "^2.29.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.0",
+    "react": ">=16",
+    "react-dom": ">=16",
+    "react-router-dom": ">4",
     "@ant-design/icons": "~4.7.0",
     "esbuild": "~0.15.14"
   },

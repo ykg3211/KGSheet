@@ -4,10 +4,13 @@ import ReactDOM from 'react-dom/client';
 import Main from 'kgsheet-for-react';
 import './index.css';
 import 'antd/dist/antd.css';
-import 'kgsheet-for-react/src/icons/iconfont.css';
-
+import 'kgsheet-for-react/dist/index.css';
+import { Button } from 'antd';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Main />
+    <div>
+      <Button>1</Button>
+      {/* <Main /> */}
+    </div>
   </React.StrictMode>,
 );
