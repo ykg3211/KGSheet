@@ -6,6 +6,7 @@
 
 ```
 
+// 如果已经安装过rush则可以跳过
 npm install -g @microsoft/rush@5.83.1
 
 rush update
