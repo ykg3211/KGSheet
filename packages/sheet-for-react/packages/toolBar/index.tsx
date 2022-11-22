@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { ToolBar } from 'kgsheet';
 import { SheetContext } from '../';
 import { useState } from 'react';
-import BaseTool from './tools/baseTool';
 import BaseLayout from './baseLayout';
 
 function Tools() {

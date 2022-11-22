@@ -32,7 +32,7 @@
 .tgsheet_toolBarContainer {
   width: 100%;
   height: 100%;
-  padding: 10px 5px;
+  padding: 8px 5px;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -55,4 +55,22 @@
 }
 .tgsheet_btn:active{
   background-color: rgba(0,0,0, 0.2);
+}
+
+.kgsheet_toolBar_container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.kgsheet_toolBar_group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.kgsheet_toolBar_line {
+  height: 100%;
+  border-left: 1px solid rgba(0,0,0, 0.2);
+  margin: 0 8px;
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Icon from '../../icons/icon';
-const BaseTool = ({ tool }: any) => {
+
+const Tool = ({ tool }: any) => {
   return (
     <span
       onClick={() => {
@@ -11,4 +12,4 @@ const BaseTool = ({ tool }: any) => {
     </span>
   );
 };
-export default BaseTool;
+export default Tool;

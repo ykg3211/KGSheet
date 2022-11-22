@@ -9,19 +9,30 @@ export default class Base extends BaseEvent {
   public sheet: Excel;
   protected Tools: ToolsGroupType[];
   protected ToolsMap: Record<string, any>;
-  private tag: number;
+  private _tag: number;
   constructor(sheet: Excel, config?: config) {
     super();
     this.sheet = sheet;
 
-    this.tag = 0;
+    this._tag = 0;
     this.Tools = [];
     this.ToolsMap = {};
+    console.log(1);
     this.initTools(config?.barSetting || baseToolBarConfig);
   }
 
   private initTools(barSetting: BarSettingType) {
     console.log(deepClone(barSetting));
+    const result: ToolsGroupType[] = [];
+    deepClone(barSetting).forEach((g) => {
+      const group: ToolsGroupType = {
+        ...g,
+        tools: g.tools.map(this.dispatchTools.bind(this)),
+      };
+      result.push(group);
+    });
+    this.Tools = result;
+    console.log(result);
   }
 
   private dispatchTools(type: string) {
@@ -33,7 +44,7 @@ export default class Base extends BaseEvent {
       this.ToolsMap[type] = new Tool({
         sheet: this.sheet,
         toolBar: this,
-        key: 'sid_' + type + '_' + this.tag++,
+        key: 'sid_' + type + '_' + this._tag++,
       });
     }
 

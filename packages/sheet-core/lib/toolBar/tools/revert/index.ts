@@ -1,19 +1,11 @@
-import Excel from '@/core';
-import { BaseToolType, ToolsProps } from '@/toolBar/interface';
+import { BaseToolType, ToolsProps } from '../../interface';
+import { BaseTool } from '../base';
 
-export class Revert implements BaseToolType {
-  private sheet: ToolsProps['sheet'];
-  private toolBar: ToolsProps['toolBar'];
-  public icon: string;
-  public label: string;
-  public key: string;
-
-  constructor({ sheet, toolBar, key }: ToolsProps) {
-    this.sheet = sheet;
-    this.toolBar = toolBar;
+export class Revert extends BaseTool {
+  constructor(props: ToolsProps) {
+    super(props);
     this.label = '';
     this.icon = 'UndoOutlined';
-    this.key = key;
   }
 
   public click() {
@@ -22,19 +14,11 @@ export class Revert implements BaseToolType {
   }
 }
 
-export class AntiRevert implements BaseToolType {
-  private sheet: ToolsProps['sheet'];
-  private toolBar: ToolsProps['toolBar'];
-  public icon: string;
-  public label: string;
-  public key: string;
-
-  constructor({ sheet, toolBar, key }: ToolsProps) {
-    this.sheet = sheet;
-    this.toolBar = toolBar;
+export class AntiRevert extends BaseTool {
+  constructor(props: ToolsProps) {
+    super(props);
     this.label = '';
     this.icon = 'RedoOutlined';
-    this.key = key;
   }
 
   public click() {

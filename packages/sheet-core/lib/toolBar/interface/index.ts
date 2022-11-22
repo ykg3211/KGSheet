@@ -1,4 +1,4 @@
-import Excel from '@/core';
+import Excel from '../../core';
 import ToolBar from '..';
 import Base from '../base';
 
@@ -7,7 +7,7 @@ export enum ToolsEnum {
   ANTI_REVERT = 'anti_revert',
 }
 
-export type BarSettingType = Array<ToolsGroupType<string>>;
+export type BarSettingType = Array<ToolsGroupType<ToolsEnum>>;
 
 export interface config {
   barSetting: BarSettingType;
