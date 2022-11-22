@@ -1,0 +1,6 @@
+{
+  "name": "rush",
+  "scripts": {
+    "build": "rush build:watch --to-except react-demo"
+  }
+}

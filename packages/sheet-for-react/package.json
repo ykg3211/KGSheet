@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc && npm run build:css",
+    "build:watch": "tsc",
     "build:css": "esbuild ./packages/index.css  --outdir=dist  --loader:.svg=text --bundle"
   },
   "directories": {
