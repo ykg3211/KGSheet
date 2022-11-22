@@ -10,4 +10,6 @@ rush update
 
 npm run start
 
+> 首次启动项目会报一些Failed错误，不必关心，项目是正常的。
+
 ```
