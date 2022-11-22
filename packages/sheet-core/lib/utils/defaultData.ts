@@ -1,4 +1,4 @@
-import { excelConfig, CellTypeEnum, cell, cellStyle } from "../interfaces";
+import { excelConfig, CellTypeEnum, cell, cellStyle } from '../interfaces';
 const BASE_WIDTH = 120;
 const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
@@ -6,17 +6,17 @@ const createDefaultStyle = () => {
   const result: cellStyle = {
     textAlign: 'left',
     fontSize: 18,
-  }
+  };
   return result;
-}
+};
 export const createDefaultCell = (content = '') => {
   const result: cell = {
     style: createDefaultStyle(),
     content: content || '',
     type: CellTypeEnum.text,
-  }
+  };
   return result;
-}
+};
 
 const createDefaultData = (w: number = 10, h: number = 100) => {
   const result: excelConfig = {
@@ -26,7 +26,7 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     spanCells: {
       '2_3': {
         span: [2, 4],
-        ...createDefaultCell('2, 3')
+        ...createDefaultCell('2, 3'),
       },
       // '6_3': {
       //   span: [2, 4],
@@ -36,8 +36,8 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
       //   span: [2, 4],
       //   ...createDefaultCell('2, 5')
       // },
-    }
-  }
+    },
+  };
 
   for (let _h = 0; _h < h; _h++) {
     const temp: cell[] = [];
@@ -49,6 +49,6 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
   }
 
   return result;
-}
+};
 
 export default createDefaultData;
