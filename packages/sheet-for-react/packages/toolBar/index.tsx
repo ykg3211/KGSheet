@@ -27,7 +27,7 @@ function Tools() {
   }, [sheet]);
 
   const tools = useMemo(() => {
-    return toolBar && toolBar.getTools() && <BaseLayout toolBar={toolBar.getTools()} />;
+    return toolBar && toolBar.getTools() && <BaseLayout toolBars={toolBar.getTools()} />;
   }, [flag, toolBar]);
 
   return <div className='tgsheet_toolBarContainer'>{tools}</div>;

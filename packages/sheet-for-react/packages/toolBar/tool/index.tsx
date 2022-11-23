@@ -7,7 +7,7 @@ const Tool = ({ tool }: any) => {
       onClick={() => {
         tool.click?.();
       }}
-      className='tgsheet_btn'>
+      className='kgsheet_btn'>
       <Icon icon='sheet-icona-alignright' fontSize={20} color='red' />
     </span>
   );

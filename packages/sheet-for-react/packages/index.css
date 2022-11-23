@@ -11,36 +11,39 @@
   display: flex;
   flex-direction: column;
   border: 1px solid lightgray;
+  user-select: none;
 }
 
 .tgsheet_toolbar {
   width: 100%;
+  height: 58px;
   background-color: rgb(244, 246, 247);
 }
 
 .tgsheet_content {
   width: 100%;
-  flex: 1;
+  height: calc(100% - 58px);
 }
 
 .tgsheet_target {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
 }
 
 
 .tgsheet_toolBarContainer {
   width: 100%;
   height: 100%;
-  padding: 8px 5px;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 
-.tgsheet_btn {
-  padding: 3px;
+.kgsheet_btn {
+  padding: 1px 3px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 16px;
@@ -49,11 +52,15 @@
   margin: 0 5px;
   cursor: pointer;
 }
+.kgsheet_btn_label {
+  margin-top: 3px;
+  font-size: 12px;
+}
 
-.tgsheet_btn:hover{
+.kgsheet_btn:hover{
   background-color: rgba(0,0,0, 0.1);
 }
-.tgsheet_btn:active{
+.kgsheet_btn:active{
   background-color: rgba(0,0,0, 0.2);
 }
 

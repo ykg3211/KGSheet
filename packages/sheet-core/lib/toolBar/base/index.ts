@@ -24,9 +24,11 @@ export default class Base extends BaseEvent {
   private initTools(barSetting: BarSettingType) {
     console.log(deepClone(barSetting));
     const result: ToolsGroupType[] = [];
+    let tag = 0;
     deepClone(barSetting).forEach((g) => {
       const group: ToolsGroupType = {
         ...g,
+        key: 'tool_' + tag++,
         tools: g.tools.map(this.dispatchTools.bind(this)),
       };
       result.push(group);
