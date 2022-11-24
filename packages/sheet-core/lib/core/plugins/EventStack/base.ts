@@ -6,86 +6,87 @@ import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
 export interface BaseEventType {
-	params: BaseEvent;
-	func: (p: BaseEvent, isReverse?: boolean) => void;
+  params: BaseEvent;
+  func: (p: BaseEvent, isReverse?: boolean) => void;
 }
 
 // (this[EventType.CELLS_CHANGE])(1)
 
 export default class BaseEventStack {
-	private EVENT_STACK: BaseEventType[][];
-	private REVERSE_STACK: BaseEventType[][];
-	public _this: Base;
-	public name: string;
-	private KeyboardPlugin!: KeyBoardPlugin;
+  private EVENT_STACK: BaseEventType[][];
+  private REVERSE_STACK: BaseEventType[][];
+  public _this: Base;
+  public name: string;
+  private KeyboardPlugin!: KeyBoardPlugin;
 
-	constructor(_this: Base) {
-		this._this = _this;
-		this.name = PluginTypeEnum.EventStack;
+  constructor(_this: Base) {
+    this._this = _this;
+    this.name = PluginTypeEnum.EventStack;
 
-		this.EVENT_STACK = [];
-		this.REVERSE_STACK = [];
+    this.EVENT_STACK = [];
+    this.REVERSE_STACK = [];
 
-		this.initPlugin();
-	}
+    // this.initPlugin();
+  }
 
-	private initPlugin() {
-		// @ts-ignore
-		if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
-			// @ts-ignore
-			this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
+  private initPlugin() {
+    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
+    if (KeyBoardPlugin) {
+      this.KeyboardPlugin = KeyBoardPlugin;
 
-			this.KeyboardPlugin.register({
-				baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],
-				mainKeys: ['z', 'Z'],
-				callbacks: [
-					() => {
-						this.anti_reverse();
-					},
-				],
-			});
-			this.KeyboardPlugin.register({
-				baseKeys: [BASE_KEYS_ENUM.Meta],
-				mainKeys: ['z', 'Z'],
-				callbacks: [
-					() => {
-						this.reverse();
-					},
-				],
-			});
-		}
-	}
+      this.KeyboardPlugin.register({
+        baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],
+        mainKeys: ['z', 'Z'],
+        callbacks: [
+          () => {
+            this.anti_reverse();
+            this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+          },
+        ],
+      });
+      this.KeyboardPlugin.register({
+        baseKeys: [BASE_KEYS_ENUM.Meta],
+        mainKeys: ['z', 'Z'],
+        callbacks: [
+          () => {
+            this.reverse();
+            this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+          },
+        ],
+      });
+    }
+  }
 
-	public push(events: BaseEventType[], immediate = true) {
-		this.REVERSE_STACK = [];
-		events.forEach((event) => {
-			if (immediate) {
-				event.func?.(event.params);
-			}
-		});
-		this.EVENT_STACK.push(events);
-	}
+  public push(events: BaseEventType[], immediate = true) {
+    this.REVERSE_STACK = [];
+    events.forEach((event) => {
+      if (immediate) {
+        event.func?.(event.params);
+      }
+    });
+    this.EVENT_STACK.push(events);
+  }
 
-	public reverse() {
-		this._this.devMode && console.info('reverse');
-		const pres = this.EVENT_STACK.pop();
-		if (pres) {
-			for (let i = pres.length - 1; i >= 0; i--) {
-				const pre = pres[i];
-				pre.func?.(pre.params, true);
-			}
-			this.REVERSE_STACK.push(pres);
-		}
-	}
+  public reverse() {
+    this._this.devMode && console.info('reverse');
+    const pres = this.EVENT_STACK.pop();
+    if (pres) {
+      for (let i = pres.length - 1; i >= 0; i--) {
+        const pre = pres[i];
+        pre.func?.(pre.params, true);
+      }
+      this.REVERSE_STACK.push(pres);
+    }
+  }
 
-	public anti_reverse() {
-		this._this.devMode && console.info('anti_reverse');
-		const pres = this.REVERSE_STACK.pop();
-		if (pres) {
-			pres.forEach((pre) => {
-				pre.func(pre.params);
-			});
-			this.EVENT_STACK.push(pres);
-		}
-	}
+  public anti_reverse() {
+    this._this.devMode && console.info('anti_reverse');
+    const pres = this.REVERSE_STACK.pop();
+    if (pres) {
+      pres.forEach((pre) => {
+        pre.func(pre.params);
+      });
+      this.EVENT_STACK.push(pres);
+    }
+  }
 }

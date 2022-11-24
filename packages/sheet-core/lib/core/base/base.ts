@@ -1,11 +1,11 @@
 import { EventConstant } from '../plugins/base/event';
 import Render from './render';
-import Plugins from '../plugins';
+import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
 import { dispatchEventType, setEventType, clearEventType } from '../plugins/base/EventDispatch';
 import { deepClone, judgeCross, judgeOver } from '../../utils';
 import { rectType } from './drawLayer';
 import { CellCornerScopeType, CellScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
-import { excelConfig, renderCellProps, spanCell } from '../../interfaces';
+import { excelConfig, spanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
 
 export interface BaseDataType {
@@ -23,13 +23,14 @@ class Base extends Render {
   public setEvent!: setEventType;
   public clearEvent!: clearEventType;
   public dispatchEvent!: dispatchEventType;
+  public pluginsArr: PluginType;
 
   constructor(dom: HTMLElement) {
     super();
     this.ToolBar = null;
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
-
+    this.pluginsArr = {};
     this.handleDPR(dom);
     this.initResize(dom);
 
@@ -56,6 +57,10 @@ class Base extends Render {
         this.canvasDom.style.backgroundColor = this.color('white');
       }
     });
+  }
+
+  public getPlugin<T extends PluginTypeEnum>(name: T): PluginType[T] {
+    return this.pluginsArr[name];
   }
 
   /**

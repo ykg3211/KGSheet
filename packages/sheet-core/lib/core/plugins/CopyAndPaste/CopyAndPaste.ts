@@ -10,207 +10,195 @@ import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 
 export default class CopyAndPaste {
-	public name: string;
-	private _this: Base;
-	private KeyBoardPlugin!: KeyBoardPlugin;
-	private SelectPlugin!: SelectPowerPlugin;
-	private ExcelBaseFunction!: ExcelBaseFunction;
-	constructor(_this: Base) {
-		this.name = PluginTypeEnum.CopyAndPaste;
-		this._this = _this;
-		this.initPlugin();
-	}
-	private initPlugin() {
-		// @ts-ignore
-		if (this._this[PluginTypeEnum.SelectPowerPlugin]) {
-			// @ts-ignore
-			this.SelectPlugin = this._this[PluginTypeEnum.SelectPowerPlugin];
-		} else {
-			console.error(
-				'CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!',
-			);
-			return;
-		}
-		// @ts-ignore
-		if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
-			// @ts-ignore
-			this.KeyBoardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
-		} else {
-			console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
-			return;
-		}
-		// @ts-ignore
-		if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
-			// @ts-ignore
-			this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction];
-		} else {
-			console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
-			return;
-		}
+  public name: string;
+  private _this: Base;
+  private KeyBoardPlugin!: KeyBoardPlugin;
+  private SelectPlugin!: SelectPowerPlugin;
+  private ExcelBaseFunction!: ExcelBaseFunction;
+  constructor(_this: Base) {
+    this.name = PluginTypeEnum.CopyAndPaste;
+    this._this = _this;
+    this.initPlugin();
+  }
+  private initPlugin() {
+    const SelectPowerPlugin = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin);
+    if (SelectPowerPlugin) {
+      this.SelectPlugin = SelectPowerPlugin;
+    } else {
+      console.error('CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!');
+      return;
+    }
 
-		this.initCopy();
-	}
+    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
+    if (KeyBoardPlugin) {
+      this.KeyBoardPlugin = KeyBoardPlugin;
+    } else {
+      console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
+      return;
+    }
 
-	private initCopy() {
-		const copy = () => {
-			const border = this.SelectPlugin.calcBorder();
-			if (border) {
-				const data = this._this.getDataByScope({
-					leftTopCell: border.cellScope.startCell,
-					rightBottomCell: border.cellScope.endCell,
-				});
-				this.copy(data);
-			}
-		};
+    const ExcelBaseFunction = this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction);
+    if (ExcelBaseFunction) {
+      this.ExcelBaseFunction = ExcelBaseFunction;
+    } else {
+      console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
+      return;
+    }
 
-		this.KeyBoardPlugin.register({
-			baseKeys: [BASE_KEYS_ENUM.Meta],
-			mainKeys: [OPERATE_KEYS_ENUM.c],
-			callbacks: [
-				() => {
-					copy();
-				},
-			],
-		});
+    this.initCopy();
+  }
 
-		this.KeyBoardPlugin.register({
-			baseKeys: [BASE_KEYS_ENUM.Meta],
-			mainKeys: [OPERATE_KEYS_ENUM.v],
-			callbacks: [
-				() => {
-					this.paste();
-				},
-			],
-		});
-	}
+  private initCopy() {
+    const copy = () => {
+      const border = this.SelectPlugin.calcBorder();
+      if (border) {
+        const data = this._this.getDataByScope({
+          leftTopCell: border.cellScope.startCell,
+          rightBottomCell: border.cellScope.endCell,
+        });
+        this.copy(data);
+      }
+    };
 
-	// "text/plain"
-	// "text/html"
-	// "image/png"
-	public async paste() {
-		let ClipboardItems;
-		try {
-			ClipboardItems = await navigator.clipboard.read();
-		} catch (e) {}
+    this.KeyBoardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.c],
+      callbacks: [
+        () => {
+          copy();
+        },
+      ],
+    });
 
-		try {
-			// @ts-ignore
-			const blob_plain = await ClipboardItems[0].getType('text/plain');
-			const text_plain = await blob_plain.text();
-			// console.log('plain', text_plain)
-		} catch (e) {}
+    this.KeyBoardPlugin.register({
+      baseKeys: [BASE_KEYS_ENUM.Meta],
+      mainKeys: [OPERATE_KEYS_ENUM.v],
+      callbacks: [
+        () => {
+          this.paste();
+        },
+      ],
+    });
+  }
 
-		try {
-			// @ts-ignore
-			const blob_html = await ClipboardItems[0].getType('text/html');
-			const text_html = await blob_html.text();
-			// console.log('html', text_html)
-			console.log(html2excel(text_html));
-			const newExcelData = html2excel(text_html);
-			const selectCell = this.SelectPlugin.selectCell;
-			if (!newExcelData || !selectCell) {
-				return;
-			}
-			const _h = newExcelData?.cells.length;
-			const _w = newExcelData?.cells[0].length;
-			const preData = this._this.getDataByScope({
-				leftTopCell: selectCell,
-				rightBottomCell: {
-					row: (selectCell?.row || 0) + _h - 1,
-					column: (selectCell?.column || 0) + _w - 1,
-				},
-			});
-			console.log({
-				scope: {
-					leftTopCell: selectCell,
-					rightBottomCell: {
-						row: (selectCell?.row || 0) + _h,
-						column: (selectCell?.column || 0) + _w,
-					},
-				},
-				pre_data: preData.data,
-				after_data: {
-					...preData.data,
-					cells: deepClone(newExcelData.cells),
-				},
-			});
-			this.ExcelBaseFunction.cellsChange({
-				scope: {
-					leftTopCell: selectCell,
-					rightBottomCell: {
-						row: (selectCell?.row || 0) + _h - 1,
-						column: (selectCell?.column || 0) + _w - 1,
-					},
-				},
-				pre_data: preData.data,
-				after_data: {
-					...preData.data,
-					cells: deepClone(newExcelData.cells),
-				},
-			});
-		} catch (e) {}
+  // "text/plain"
+  // "text/html"
+  // "image/png"
+  public async paste() {
+    let ClipboardItems;
+    try {
+      ClipboardItems = await navigator.clipboard.read();
+    } catch (e) {}
 
-		try {
-			// @ts-ignore
-			const blob_png = await ClipboardItems[0].getType('text/png');
-			const text_png = await blob_png.text();
-			// console.log('png', text_png)
-		} catch (e) {}
-	}
+    try {
+      // @ts-ignore
+      const blob_plain = await ClipboardItems[0].getType('text/plain');
+      const text_plain = await blob_plain.text();
+      // console.log('plain', text_plain)
+    } catch (e) {}
 
-	public copy(data: BaseDataType) {
-		try {
-			Object.keys(data.data.spanCells).forEach((key) => {
-				let [row, column] = key.split('_').map(Number);
-				row -= data.scope.leftTopCell.row;
-				column -= data.scope.leftTopCell.column;
-				for (let r = row; r < row + data.data.spanCells[key].span[1]; r++) {
-					for (
-						let c = column;
-						c < column + data.data.spanCells[key].span[0];
-						c++
-					) {
-						data.data.cells[r][c].content = '';
-					}
-				}
-				data.data.cells[row][column].content = data.data.spanCells[key].content;
-			});
-			const textContent = data.data.cells
-				.map((row) => row.map((cell) => cell.content).join('\t'))
-				.join('\n');
+    try {
+      // @ts-ignore
+      const blob_html = await ClipboardItems[0].getType('text/html');
+      const text_html = await blob_html.text();
+      // console.log('html', text_html)
+      console.log(html2excel(text_html));
+      const newExcelData = html2excel(text_html);
+      const selectCell = this.SelectPlugin.selectCell;
+      if (!newExcelData || !selectCell) {
+        return;
+      }
+      const _h = newExcelData?.cells.length;
+      const _w = newExcelData?.cells[0].length;
+      const preData = this._this.getDataByScope({
+        leftTopCell: selectCell,
+        rightBottomCell: {
+          row: (selectCell?.row || 0) + _h - 1,
+          column: (selectCell?.column || 0) + _w - 1,
+        },
+      });
+      console.log({
+        scope: {
+          leftTopCell: selectCell,
+          rightBottomCell: {
+            row: (selectCell?.row || 0) + _h,
+            column: (selectCell?.column || 0) + _w,
+          },
+        },
+        pre_data: preData.data,
+        after_data: {
+          ...preData.data,
+          cells: deepClone(newExcelData.cells),
+        },
+      });
+      this.ExcelBaseFunction.cellsChange({
+        scope: {
+          leftTopCell: selectCell,
+          rightBottomCell: {
+            row: (selectCell?.row || 0) + _h - 1,
+            column: (selectCell?.column || 0) + _w - 1,
+          },
+        },
+        pre_data: preData.data,
+        after_data: {
+          ...preData.data,
+          cells: deepClone(newExcelData.cells),
+        },
+      });
+    } catch (e) {}
 
-			const _data = [
-				new ClipboardItem({
-					// 'text/html': new Blob([JSON.stringify(data)], { type: 'text/html' }),
-					'text/plain': new Blob([textContent], { type: 'text/plain' }),
-				}),
-			];
-			navigator.clipboard.write(_data);
-			this.registerOnceDashBorder(data);
-		} catch (e) {}
-	}
+    try {
+      // @ts-ignore
+      const blob_png = await ClipboardItems[0].getType('text/png');
+      const text_png = await blob_png.text();
+      // console.log('png', text_png)
+    } catch (e) {}
+  }
 
-	private registerOnceDashBorder(data: BaseDataType) {
-		this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
-		this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [
-			((ctx: CanvasRenderingContext2D) => {
-				ctx.save();
-				const [x, y, w, h] = this._this.calBorder(
-					data.scope.leftTopCell,
-					data.scope.rightBottomCell,
-				);
-				this._this._data.h;
-				ctx.strokeStyle = '#4a89fe';
-				ctx.lineWidth = 1;
-				ctx.beginPath();
-				ctx.setLineDash([5]);
-				ctx.strokeRect(x, y, w, h);
-				ctx.restore();
-			}).bind(this),
-		]);
-		this._this.render();
-		this._this.once(EventConstant.EXCEL_CHANGE, () => {
-			this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
-		});
-	}
+  public copy(data: BaseDataType) {
+    try {
+      Object.keys(data.data.spanCells).forEach((key) => {
+        let [row, column] = key.split('_').map(Number);
+        row -= data.scope.leftTopCell.row;
+        column -= data.scope.leftTopCell.column;
+        for (let r = row; r < row + data.data.spanCells[key].span[1]; r++) {
+          for (let c = column; c < column + data.data.spanCells[key].span[0]; c++) {
+            data.data.cells[r][c].content = '';
+          }
+        }
+        data.data.cells[row][column].content = data.data.spanCells[key].content;
+      });
+      const textContent = data.data.cells.map((row) => row.map((cell) => cell.content).join('\t')).join('\n');
+
+      const _data = [
+        new ClipboardItem({
+          // 'text/html': new Blob([JSON.stringify(data)], { type: 'text/html' }),
+          'text/plain': new Blob([textContent], { type: 'text/plain' }),
+        }),
+      ];
+      navigator.clipboard.write(_data);
+      this.registerOnceDashBorder(data);
+    } catch (e) {}
+  }
+
+  private registerOnceDashBorder(data: BaseDataType) {
+    this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
+    this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [
+      ((ctx: CanvasRenderingContext2D) => {
+        ctx.save();
+        const [x, y, w, h] = this._this.calBorder(data.scope.leftTopCell, data.scope.rightBottomCell);
+        this._this._data.h;
+        ctx.strokeStyle = '#4a89fe';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.setLineDash([5]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.restore();
+      }).bind(this),
+    ]);
+    this._this.render();
+    this._this.once(EventConstant.EXCEL_CHANGE, () => {
+      this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
+    });
+  }
 }

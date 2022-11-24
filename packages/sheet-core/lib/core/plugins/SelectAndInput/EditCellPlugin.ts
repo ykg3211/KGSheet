@@ -54,27 +54,24 @@ export default class EditCellPlugin {
   }
 
   private initPlugin() {
-    //@ts-ignore
-    if (this._this[PluginTypeEnum.SelectPowerPlugin]) {
-      //@ts-ignore
-      this.SelectPlugin = this._this[PluginTypeEnum.SelectPowerPlugin];
+    const SelectPowerPlugin = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin);
+    if (SelectPowerPlugin) {
+      this.SelectPlugin = SelectPowerPlugin;
     } else {
       console.error('CommonInputPlugin 依赖于 SelectPowerPlugin, 请正确注册插件!');
     }
-    //@ts-ignore
-    if (this._this[PluginTypeEnum.ExcelBaseFunction]) {
-      //@ts-ignore
-      this.ExcelBaseFunction = this._this[PluginTypeEnum.ExcelBaseFunction];
+    const ExcelBaseFunction = this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction);
+    if (ExcelBaseFunction) {
+      this.ExcelBaseFunction = ExcelBaseFunction;
     } else {
       console.error('CommonInputPlugin 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
   }
 
   private registerKeyboardEvent() {
-    //@ts-ignore
-    if (this._this[PluginTypeEnum.KeyBoardPlugin]) {
-      //@ts-ignore
-      this.KeyboardPlugin = this._this[PluginTypeEnum.KeyBoardPlugin];
+    const KetBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
+    if (KetBoardPlugin) {
+      this.KeyboardPlugin = KetBoardPlugin;
 
       this.KeyboardPlugin.register({
         mainKeys: OPERATE_KEYS_ENUM.Escape,
