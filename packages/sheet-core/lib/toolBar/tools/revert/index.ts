@@ -1,10 +1,12 @@
-import { BaseToolType, ToolsEnum, ToolsIconsMap, ToolsProps } from '../../interface';
+import { ToolsEnum, ToolsIconsMap } from '..';
+import { ToolsProps } from '../../interface';
 import { BaseTool } from '../base';
 
 export class Revert extends BaseTool {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '撤销';
+    this.toolTip = '撤销(⌘+z)';
     this.icon = ToolsIconsMap[ToolsEnum.REVERT];
   }
 
@@ -18,6 +20,7 @@ export class AntiRevert extends BaseTool {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '重做';
+    this.toolTip = '重做(⌘+shift+z)';
     this.icon = ToolsIconsMap[ToolsEnum.ANTI_REVERT];
   }
 

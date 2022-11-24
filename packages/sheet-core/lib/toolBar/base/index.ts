@@ -1,7 +1,7 @@
 import { deepClone } from '../../utils';
 import Excel from '../../core';
 import BaseEvent from '../../core/plugins/base/event';
-import { BarSettingType, config, ToolsEnum, ToolsGroupType } from '../interface';
+import { BarSettingType, config, ToolsEventConstant, ToolsGroupType } from '../interface';
 import getTools from '../tools';
 import baseToolBarConfig from './baseConfig';
 
@@ -13,11 +13,9 @@ export default class Base extends BaseEvent {
   constructor(sheet: Excel, config?: config) {
     super();
     this.sheet = sheet;
-
     this._tag = 0;
     this.Tools = [];
     this.ToolsMap = {};
-    console.log(1);
     this.initTools(config?.barSetting || baseToolBarConfig);
   }
 
@@ -51,5 +49,9 @@ export default class Base extends BaseEvent {
     }
 
     return this.ToolsMap[type];
+  }
+
+  public refresh() {
+    this.emit(ToolsEventConstant.REFRESH);
   }
 }

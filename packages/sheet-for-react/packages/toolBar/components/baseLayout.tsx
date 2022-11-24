@@ -1,6 +1,6 @@
 import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import React, { useMemo } from 'react';
-import Group from '../group';
+import Group from './group';
 
 interface Props {
   toolBars: ToolsGroupType[];

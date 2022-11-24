@@ -1,13 +1,14 @@
-import { BaseToolType, ToolsProps } from '../../interface';
+import { ToolsProps } from '../../interface';
 
 export class BaseTool {
   protected sheet: ToolsProps['sheet'];
   protected toolBar: ToolsProps['toolBar'];
-  protected icon: string;
-  protected label: string;
-  protected key: string;
-  protected class: string;
-  protected style: Partial<CSSStyleDeclaration>;
+  public icon: string;
+  public label: string;
+  public toolTip: string;
+  public key: string;
+  public class: string;
+  public style: Partial<CSSStyleDeclaration>;
 
   constructor({ sheet, toolBar, key }: ToolsProps) {
     this.sheet = sheet;
@@ -15,6 +16,7 @@ export class BaseTool {
     this.key = key;
     this.icon = '';
     this.label = '';
+    this.toolTip = '';
     this.class = '';
     this.style = {};
   }

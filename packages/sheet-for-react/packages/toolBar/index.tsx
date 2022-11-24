@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { ToolBar } from 'kgsheet';
 import { SheetContext } from '../';
 import { useState } from 'react';
-import BaseLayout from './baseLayout';
+import BaseLayout from './components/baseLayout';
 
 function Tools() {
   const { sheet, setToolBar, toolBar } = useContext(SheetContext);
@@ -30,7 +30,7 @@ function Tools() {
     return toolBar && toolBar.getTools() && <BaseLayout toolBars={toolBar.getTools()} />;
   }, [flag, toolBar]);
 
-  return <div className='tgsheet_toolBarContainer'>{tools}</div>;
+  return <div className='kgsheet_toolBarContainer'>{tools}</div>;
 }
 
 export default Tools;

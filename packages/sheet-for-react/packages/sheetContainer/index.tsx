@@ -16,7 +16,7 @@ function Container() {
     }
   }, [container.current]);
 
-  return <div ref={container} className='tgsheet_target'></div>;
+  return <div ref={container} className='kgsheet_target'></div>;
 }
 
 export default Container;

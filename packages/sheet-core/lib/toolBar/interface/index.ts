@@ -1,18 +1,14 @@
 import Excel from '../../core';
 import ToolBar from '..';
 import Base from '../base';
-
-export enum ToolsEnum {
-  REVERT = 'revert',
-  ANTI_REVERT = 'anti_revert',
-}
-
-export const ToolsIconsMap = {
-  [ToolsEnum.REVERT]: 'sheet-iconcancel',
-  [ToolsEnum.ANTI_REVERT]: 'sheet-iconredo',
-};
+import { BaseTool } from '../tools/base';
+import { ToolsEnum } from '../tools';
 
 export type BarSettingType = Array<ToolsGroupConfig<ToolsEnum>>;
+
+export enum ToolsEventConstant {
+  REFRESH = 'refresh',
+}
 
 export interface config {
   barSetting: BarSettingType;
@@ -24,24 +20,15 @@ export interface ToolsProps {
   key: string;
 }
 
-export interface ToolsGroupConfig<T = BaseToolType> {
+export interface ToolsGroupConfig<T = BaseTool> {
   lines: number;
   iconWidth: number;
   tools: T[];
 }
 
-export interface ToolsGroupType<T = BaseToolType> {
+export interface ToolsGroupType<T = BaseTool> {
   key: string;
   lines: number;
   iconWidth: number;
   tools: T[];
-}
-
-export interface BaseToolType {
-  icon: string;
-  label: string;
-  key: string;
-  class?: string;
-  style?: CSSRule;
-  click: () => void;
 }

@@ -1,11 +1,11 @@
-.tgsheet-icon {
+.kgsheet-icon {
   width: 1em; height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
 }
 
-.tgsheet {
+.kgsheet {
   width: 100%;
   height: 100%;
   display: flex;
@@ -14,25 +14,25 @@
   user-select: none;
 }
 
-.tgsheet_toolbar {
+.kgsheet_toolbar {
   width: 100%;
   height: 58px;
   background-color: rgb(244, 246, 247);
 }
 
-.tgsheet_content {
+.kgsheet_content {
   width: 100%;
   height: calc(100% - 58px);
 }
 
-.tgsheet_target {
+.kgsheet_target {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
 }
 
 
-.tgsheet_toolBarContainer {
+.kgsheet_toolBarContainer {
   width: 100%;
   height: 100%;
   display: flex;

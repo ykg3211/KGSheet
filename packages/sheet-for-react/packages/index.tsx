@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import Container from './sheetContainer';
 import Tools from './toolBar';
 import './icons/iconfont.js';
+import Excel, { ToolBar } from 'kgsheet';
+import 'antd/dist/reset.css';
 
 interface sheet {
   sheet: any;
@@ -19,14 +21,24 @@ export const SheetContext = React.createContext<sheet>({
 });
 
 function Main() {
-  const [sheet, setSheet] = useState(null);
-  const [toolBar, setToolBar] = useState(null);
+  const [sheet, setSheet] = useState<Excel | null>(null);
+  const [toolBar, setToolBar] = useState<ToolBar | null>(null);
+  const [, setFlag] = useState(0);
+  const refresh = () => {
+    setFlag((v) => v + 1);
+  };
 
-  const handleSheet = (v: any) => {
+  useEffect(() => {
+    if (sheet) {
+      sheet.on('refresh', refresh);
+    }
+  }, [sheet]);
+
+  const handleSheet = (v: Excel) => {
     v && setSheet(v);
   };
 
-  const handleToolBar = (v: any) => {
+  const handleToolBar = (v: ToolBar) => {
     v && setToolBar(v);
   };
 
@@ -38,11 +50,11 @@ function Main() {
         toolBar: toolBar,
         setToolBar: handleToolBar,
       }}>
-      <div className='tgsheet'>
-        <div className='tgsheet_toolbar'>
+      <div className='kgsheet'>
+        <div className='kgsheet_toolbar'>
           <Tools />
         </div>
-        <div className='tgsheet_content'>
+        <div className='kgsheet_content'>
           <Container />
         </div>
       </div>
