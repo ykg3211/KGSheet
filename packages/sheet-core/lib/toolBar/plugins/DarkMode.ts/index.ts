@@ -22,12 +22,19 @@ export default class DarkMode {
   private _this: Base;
   public _darkMode: boolean;
   public backgroundColor!: string;
+  private media: MediaQueryList;
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.DarkMode;
     this._this = _this;
 
-    this._darkMode = true;
+    this.media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    this.media.addEventListener('change', (e) => {
+      this.darkMode = e.matches || false;
+    });
+
+    this._darkMode = this.media.matches || false;
   }
   get darkMode() {
     return this._darkMode;
@@ -39,8 +46,12 @@ export default class DarkMode {
     this._this.emit(ToolsEventConstant.REFRESH);
   }
 
-  public toogleDarkMode() {
-    this.darkMode = !this.darkMode;
+  public toogleDarkMode(dark?: boolean) {
+    if (dark === undefined) {
+      this.darkMode = !this.darkMode;
+    } else {
+      this.darkMode = dark;
+    }
     return this.darkMode;
   }
 

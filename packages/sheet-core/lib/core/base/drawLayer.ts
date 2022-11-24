@@ -54,7 +54,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx = null;
     this.canvasDom = null;
     this.components = {};
-    this.darkMode = true;
+    this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
     this.devMode = true;
     this.handleDefaultComponents();
   }
