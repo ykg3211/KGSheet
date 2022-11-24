@@ -23,14 +23,14 @@ class Base extends Render {
   public setEvent!: setEventType;
   public clearEvent!: clearEventType;
   public dispatchEvent!: dispatchEventType;
-  public pluginsArr: PluginType;
+  public pluginsMap: PluginType;
 
   constructor(dom: HTMLElement) {
     super();
     this.ToolBar = null;
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
-    this.pluginsArr = {};
+    this.pluginsMap = {};
     this.handleDPR(dom);
     this.initResize(dom);
 
@@ -60,7 +60,7 @@ class Base extends Render {
   }
 
   public getPlugin<T extends PluginTypeEnum>(name: T): PluginType[T] {
-    return this.pluginsArr[name];
+    return this.pluginsMap[name];
   }
 
   /**

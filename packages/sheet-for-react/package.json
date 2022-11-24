@@ -10,8 +10,8 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc & npm run build:css",
-    "build:watch": "tsc & npm run build:css",
+    "build": "tsc && npm run build:css",
+    "build:watch": "tsc && npm run build:css",
     "build:css": "cp ./packages/index.css ./dist"
   },
   "directories": {

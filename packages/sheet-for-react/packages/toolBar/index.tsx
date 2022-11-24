@@ -3,34 +3,29 @@ import { ToolBar } from 'kgsheet';
 import { SheetContext } from '../';
 import { useState } from 'react';
 import BaseLayout from './components/baseLayout';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 
 function Tools() {
-  const { sheet, setToolBar, toolBar } = useContext(SheetContext);
-
-  const [flag, setFlag] = useState(0);
-  const refresh = () => {
-    setFlag((v) => v + 1);
-  };
-  useEffect(() => {
-    if (sheet && !toolBar) {
-      const instance = new ToolBar({
-        sheet,
-        // config: {},
-      });
-      setToolBar(instance);
-
-      instance.on?.('refresh', refresh);
-    }
-    return () => {
-      toolBar?.off?.('refresh', refresh);
-    };
-  }, [sheet]);
+  const { toolBar, flag } = useContext(SheetContext);
 
   const tools = useMemo(() => {
     return toolBar && toolBar.getTools() && <BaseLayout toolBars={toolBar.getTools()} />;
   }, [flag, toolBar]);
 
-  return <div className='kgsheet_toolBarContainer'>{tools}</div>;
+  const style = useMemo<React.CSSProperties>(() => {
+    if (toolBar) {
+      return {
+        backgroundColor: toolBar.getColor(colorType.white),
+      };
+    }
+    return {};
+  }, [flag, toolBar]);
+
+  return (
+    <div style={style} className='kgsheet_toolBarContainer'>
+      {tools}
+    </div>
+  );
 }
 
 export default Tools;

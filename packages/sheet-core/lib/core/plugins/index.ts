@@ -28,18 +28,18 @@ export enum PluginTypeEnum {
 }
 
 export interface PluginType {
-  KeyBoardPlugin?: KeyBoardPlugin;
-  EventDispatch?: EventDispatch;
-  EventStack?: BaseEventStack;
-  ExcelBaseFunction?: ExcelBaseFunction;
-  MouseMovePlugin?: MouseMovePlugin;
-  ClickPlugin?: ClickPlugin;
-  ScrollPlugin?: ScrollPlugin;
-  SideBarResizePlugin?: SideBarResizePlugin;
-  SelectPowerPlugin?: SelectPowerPlugin;
-  CommonInputPowerPlugin?: EditCellPlugin;
-  CopyAndPaste?: CopyAndPaste;
-  RightClickPlugin?: RightClickPlugin;
+  [PluginTypeEnum.KeyBoardPlugin]?: KeyBoardPlugin;
+  [PluginTypeEnum.EventDispatch]?: EventDispatch;
+  [PluginTypeEnum.EventStack]?: BaseEventStack;
+  [PluginTypeEnum.ExcelBaseFunction]?: ExcelBaseFunction;
+  [PluginTypeEnum.MouseMovePlugin]?: MouseMovePlugin;
+  [PluginTypeEnum.ClickPlugin]?: ClickPlugin;
+  [PluginTypeEnum.ScrollPlugin]?: ScrollPlugin;
+  [PluginTypeEnum.SideBarResizePlugin]?: SideBarResizePlugin;
+  [PluginTypeEnum.SelectPowerPlugin]?: SelectPowerPlugin;
+  [PluginTypeEnum.CommonInputPowerPlugin]?: EditCellPlugin;
+  [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
+  [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
 }
 
 export interface BasePluginType {
@@ -82,9 +82,9 @@ export default class Plugins {
   public deregister(name?: PluginTypeEnum) {
     if (name) {
       //@ts-ignore
-      this.pluginsArr[name]?.remove?.();
+      this._this.pluginsArr[name]?.remove?.();
     } else {
-      Object.values(this._this.pluginsArr).forEach((plugin) => plugin.remove?.());
+      Object.values(this._this.pluginsMap).forEach((plugin) => plugin.remove?.());
     }
   }
 
@@ -92,11 +92,11 @@ export default class Plugins {
     const newPlugin = new Plugin(this._this);
     const name = newPlugin.name as PluginTypeEnum;
 
-    if (this._this.pluginsArr[name]) {
+    if (this._this.pluginsMap[name]) {
       //@ts-ignore
-      this._this.pluginsArr[name]?.remove?.();
+      this._this.pluginsMap[name]?.remove?.();
     }
 
-    this._this.pluginsArr[name] = newPlugin;
+    this._this.pluginsMap[name] = newPlugin;
   }
 }

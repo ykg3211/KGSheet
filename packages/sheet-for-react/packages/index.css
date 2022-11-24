@@ -58,10 +58,10 @@
 }
 
 .kgsheet_btn:hover{
-  background-color: rgba(0,0,0, 0.1);
+  background-color: rgba(127, 127, 127, 0.2);
 }
 .kgsheet_btn:active{
-  background-color: rgba(0,0,0, 0.2);
+  background-color: rgba(127, 127, 127, 0.4);
 }
 
 .kgsheet_toolBar_container {

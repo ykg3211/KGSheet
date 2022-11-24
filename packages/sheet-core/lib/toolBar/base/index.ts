@@ -4,23 +4,30 @@ import BaseEvent from '../../core/plugins/base/event';
 import { BarSettingType, config, ToolsEventConstant, ToolsGroupType } from '../interface';
 import getTools from '../tools';
 import baseToolBarConfig from './baseConfig';
+import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
 
 export default class Base extends BaseEvent {
   public sheet: Excel;
   protected Tools: ToolsGroupType[];
   protected ToolsMap: Record<string, any>;
   private _tag: number;
+  public pluginsInstance: Plugins;
+  public pluginsMap: PluginType;
+
   constructor(sheet: Excel, config?: config) {
     super();
     this.sheet = sheet;
     this._tag = 0;
     this.Tools = [];
     this.ToolsMap = {};
+
+    this.pluginsMap = {};
+    this.pluginsInstance = new Plugins(this);
+
     this.initTools(config?.barSetting || baseToolBarConfig);
   }
 
   private initTools(barSetting: BarSettingType) {
-    console.log(deepClone(barSetting));
     const result: ToolsGroupType[] = [];
     let tag = 0;
     deepClone(barSetting).forEach((g) => {
@@ -32,7 +39,10 @@ export default class Base extends BaseEvent {
       result.push(group);
     });
     this.Tools = result;
-    console.log(result);
+  }
+
+  public getPlugin<T extends PluginTypeEnum>(name: T): PluginType[T] {
+    return this.pluginsMap[name];
   }
 
   private dispatchTools(type: string) {

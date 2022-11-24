@@ -4,16 +4,18 @@ import Container from './sheetContainer';
 import Tools from './toolBar';
 import './icons/iconfont.js';
 import Excel, { ToolBar } from 'kgsheet';
-import 'antd/dist/reset.css';
+import 'antd/dist/antd.css';
 
 interface sheet {
-  sheet: any;
-  setSheet: (v: any) => void;
-  toolBar: any;
-  setToolBar: (v: any) => void;
+  flag: number;
+  sheet: Excel;
+  setSheet: (v: Excel) => void;
+  toolBar: ToolBar;
+  setToolBar: (v: ToolBar) => void;
 }
 
 export const SheetContext = React.createContext<sheet>({
+  flag: 0,
   sheet: null,
   setSheet: () => {},
   toolBar: null,
@@ -23,7 +25,7 @@ export const SheetContext = React.createContext<sheet>({
 function Main() {
   const [sheet, setSheet] = useState<Excel | null>(null);
   const [toolBar, setToolBar] = useState<ToolBar | null>(null);
-  const [, setFlag] = useState(0);
+  const [flag, setFlag] = useState(0);
   const refresh = () => {
     setFlag((v) => v + 1);
   };
@@ -31,6 +33,18 @@ function Main() {
   useEffect(() => {
     if (sheet) {
       sheet.on('refresh', refresh);
+    }
+  }, [sheet]);
+
+  useEffect(() => {
+    if (sheet && !toolBar) {
+      const instance = new ToolBar({
+        sheet,
+        // config: {},
+      });
+      setToolBar(instance);
+
+      instance.on?.('refresh', refresh);
     }
   }, [sheet]);
 
@@ -45,6 +59,7 @@ function Main() {
   return (
     <SheetContext.Provider
       value={{
+        flag,
         sheet: sheet,
         setSheet: handleSheet,
         toolBar: toolBar,
