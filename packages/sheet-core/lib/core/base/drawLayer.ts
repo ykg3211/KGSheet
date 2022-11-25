@@ -46,8 +46,6 @@ export default class DrawLayer extends BaseEvent {
     Record<keyof CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellProps) => void>
   >;
   public darkMode: boolean;
-  public devMode: boolean;
-
   constructor() {
     super();
 
@@ -55,8 +53,11 @@ export default class DrawLayer extends BaseEvent {
     this.canvasDom = null;
     this.components = {};
     this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
-    this.devMode = true;
     this.handleDefaultComponents();
+  }
+
+  public get devMode() {
+    return true;
   }
 
   public toggleDarkMode(v?: boolean) {

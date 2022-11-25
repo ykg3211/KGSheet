@@ -11,6 +11,7 @@ import RightClickPlugin from './RightClickPlugin';
 import KeyBoardPlugin from './KeyBoardPlugin';
 import BaseEventStack from './EventStack/base';
 import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
+import BlurFocusReset from './BlurFocusReset';
 
 export enum PluginTypeEnum {
   KeyBoardPlugin = 'KeyBoardPlugin',
@@ -25,6 +26,7 @@ export enum PluginTypeEnum {
   EditCellPlugin = 'EditCellPlugin',
   CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
+  BlurFocusReset = 'BlurFocusReset',
 }
 
 export interface PluginType {
@@ -40,6 +42,7 @@ export interface PluginType {
   [PluginTypeEnum.EditCellPlugin]?: EditCellPlugin;
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
+  [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
 }
 
 export interface BasePluginType {
@@ -59,6 +62,9 @@ export default class Plugins {
     // 全局的编辑撤销翻撤销事件栈。
     this.register(BaseEventStack);
     this.register(ExcelBaseFunction);
+
+    // sheet失焦之后重制某些状态的
+    this.register(BlurFocusReset);
 
     // 鼠标移动的插件，
     this.register(MouseMovePlugin);

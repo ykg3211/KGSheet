@@ -81,6 +81,7 @@ export default class SelectPowerPlugin {
   }
 
   public remove() {
+    this._this.devMode && console.log('remove: SelectPowerPlugin');
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS, []);
     this._this.un(EventConstant.SELECT_CELL_MOVE_TO_VIEW, this.moveToViewShadow);
   }

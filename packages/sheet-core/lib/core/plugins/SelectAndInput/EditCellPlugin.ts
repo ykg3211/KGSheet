@@ -41,6 +41,8 @@ export default class EditCellPlugin {
   private endRegularCell!: null | CellScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
   private currentCell!: null | selectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
+
+  private resetParams: any;
   constructor(_this: Base) {
     this.name = PluginTypeEnum.EditCellPlugin;
     this._this = _this;
@@ -51,6 +53,7 @@ export default class EditCellPlugin {
     this.initEvent();
     this.addRenderFunc();
     this.transformEditDom();
+    this.initResetParams();
   }
 
   private initPlugin() {
@@ -66,6 +69,22 @@ export default class EditCellPlugin {
     } else {
       console.error('CommonInputPlugin 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
+  }
+
+  private initResetParams() {
+    this.resetParams = this._resetParams.bind(this);
+    this._this.on(EventConstant.BLUR_FOCUS_RESET_PARAMS, this.resetParams);
+  }
+
+  private remove() {
+    this._this.devMode && console.log('remove: EditCellPlugin');
+    this._this.un(EventConstant.BLUR_FOCUS_RESET_PARAMS, this.resetParams);
+  }
+
+  private _resetParams() {
+    this.pointDownCell = null;
+    this.startCopyCell = null;
+    this.startRegularCell = null;
   }
 
   private registerKeyboardEvent() {
@@ -189,7 +208,7 @@ export default class EditCellPlugin {
             if (!border) {
               return;
             }
-            this.clearScopeContent({
+            this.clearContentByScope({
               leftTopCell: border.cellScope.startCell,
               rightBottomCell: border.cellScope.endCell,
             });
@@ -200,7 +219,7 @@ export default class EditCellPlugin {
   }
 
   // 增加delete方法，清空content；
-  private clearScopeContent(scope: CellCornerScopeType) {
+  private clearContentByScope(scope: CellCornerScopeType) {
     const preData = this._this.getDataByScope(scope).data;
     const afterData = deepClone(preData);
     afterData.cells = afterData.cells.map((cells) =>

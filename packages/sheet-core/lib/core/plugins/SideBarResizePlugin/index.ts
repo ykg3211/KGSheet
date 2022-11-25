@@ -33,6 +33,7 @@ export default class SideBarResizePlugin {
   }
 
   protected remove() {
+    this._this.devMode && console.log('remove: SideBarResizePlugin');
     this._this.clearEvent(EventConstant.MOUSE_DOWN, EventZIndex.SIDE_BAR);
     this._this.clearEvent(EventConstant.MOUSE_MOVE, EventZIndex.SIDE_BAR);
     this._this.clearEvent(EventConstant.MOUSE_UP, EventZIndex.SIDE_BAR);

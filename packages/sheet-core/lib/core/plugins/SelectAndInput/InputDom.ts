@@ -205,6 +205,7 @@ export class InputDom {
   }
 
   public remove() {
+    this._this.devMode && console.log('remove: InputDom');
     this.DOM.removeEventListener('mousedown', this._stopPropagation);
     this.DOM.removeEventListener('mouseup', this._stopPropagation);
     this.DOM.removeEventListener('keydown', this._stopPropagation_arrow);

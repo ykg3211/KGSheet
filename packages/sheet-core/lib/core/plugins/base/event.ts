@@ -12,6 +12,7 @@ export enum EventConstant {
   MOUSE_MOVE = 'mouse_move',
   MOUSE_HOVER_EVENT = 'mouse_hover_event',
   SELECT_CELL_MOVE_TO_VIEW = 'select_cell_move_to_view',
+  BLUR_FOCUS_RESET_PARAMS = 'blur_focus_reset_params',
 }
 
 export default class BaseEvent {
