@@ -10,7 +10,7 @@ function Container() {
     if (once.current) {
       const instance = new Excel(container.current);
       setSheet(instance);
-      const data = createDefaultData(100, 1000);
+      const data = createDefaultData(10, 15);
       instance.setData(data);
       once.current = false;
     }

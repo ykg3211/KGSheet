@@ -199,7 +199,6 @@ export default class ScrollPlugin {
   }
 
   private handleScroll() {
-    document.body.style.overscrollBehaviorX = 'none';
     let isShift = false;
     let isControl = false;
 

@@ -13,6 +13,8 @@ export default class Render extends DrawLayer {
   public paddingLeft: number; // 左侧的宽度 // 实际为左侧的常驻条宽度
   public contentWidth: number; // 实际内容的宽度
   public contentHeight: number; // 实际内容的宽度
+  public overGapWidth: number; // 滚动条到顶之后，sheet超出的空的宽度
+  public overGapHeight: number; // 滚动条到顶之后，sheet超出的空的宽度
   public _scale: number; // 缩放比例
   public maxScale: number; // 最大缩放比例
   public minScale: number; // 最小缩放比例
@@ -45,6 +47,8 @@ export default class Render extends DrawLayer {
     this.contentHeight = 0;
     this.paddingTop = 20;
     this.paddingLeft = 40;
+    this.overGapWidth = 40;
+    this.overGapHeight = 40;
     this._scale = 1;
     this.maxScale = 4;
     this.minScale = 0.4;
@@ -452,8 +456,8 @@ export default class Render extends DrawLayer {
   }
   public getMaxScrollBound() {
     return {
-      height: this.contentHeight - this.height / this.scale + this.paddingTop * 2,
-      width: this.contentWidth - this.width / this.scale + this.paddingLeft * 2,
+      height: this.contentHeight - this.height / this.scale + this.paddingTop + this.overGapWidth,
+      width: this.contentWidth - this.width / this.scale + this.paddingLeft + this.overGapHeight,
     };
   }
   public scrollXY(deltaX: number, deltaY: number) {
