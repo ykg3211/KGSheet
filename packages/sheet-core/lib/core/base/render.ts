@@ -113,10 +113,6 @@ export default class Render extends DrawLayer {
   }
   public set scrollTop(v: number) {
     this._scrollTop = v;
-    this.emit(EventConstant.SCROLL_CONTENT, {
-      scrollTop: this._scrollTop,
-      scrollLeft: this._scrollLeft,
-    });
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
       this.render();
@@ -128,10 +124,7 @@ export default class Render extends DrawLayer {
   }
   public set scrollLeft(v: number) {
     this._scrollLeft = v;
-    this.emit(EventConstant.SCROLL_CONTENT, {
-      scrollTop: this._scrollTop,
-      scrollLeft: this._scrollLeft,
-    });
+    console.log(v);
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
       this.render();
@@ -462,7 +455,7 @@ export default class Render extends DrawLayer {
   }
   public scrollXY(deltaX: number, deltaY: number) {
     const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
-    if (this.scrollLeft + deltaX < 0 || this.contentWidth - this.width < 0) {
+    if (this.scrollLeft + deltaX < 0 || this.contentWidth + this.paddingLeft + this.overGapWidth - this.width < 0) {
       this.scrollLeft = 0;
     } else {
       if (this.scrollLeft + deltaX > maxWidth) {
@@ -471,7 +464,7 @@ export default class Render extends DrawLayer {
         this.scrollLeft = this.scrollLeft + deltaX;
       }
     }
-    if (this.scrollTop + deltaY < 0 || this.contentHeight - this.height < 0) {
+    if (this.scrollTop + deltaY < 0 || this.contentHeight + this.paddingTop + this.overGapHeight - this.height < 0) {
       this.scrollTop = 0;
     } else {
       if (this.scrollTop + deltaY > maxHeight) {

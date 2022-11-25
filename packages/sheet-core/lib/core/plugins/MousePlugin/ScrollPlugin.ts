@@ -80,12 +80,18 @@ export default class ScrollPlugin {
     const scrollMouseMoveCB = (e: MouseEvent) => {
       if (XMouseDownOriginX !== null) {
         const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
-        this._this.scrollXY((gap / this._this.width) * this._this.contentWidth, 0);
+        this._this.scrollXY(
+          (gap / this._this.width) * (this._this.contentWidth + this._this.paddingLeft + this._this.overGapWidth),
+          0,
+        );
         XMouseDownOriginX = e.pageX;
       }
       if (YMouseDownOriginY !== null) {
         const gap = (e.pageY - YMouseDownOriginY) / this._this.scale;
-        this._this.scrollXY(0, (gap / this._this.height) * this._this.contentHeight);
+        this._this.scrollXY(
+          0,
+          (gap / this._this.height) * (this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight),
+        );
         YMouseDownOriginY = e.pageY;
       }
     };
@@ -146,9 +152,11 @@ export default class ScrollPlugin {
     const { width: maxWidth, height: maxHeight } = this._this.getMaxScrollBound();
     const YTop = this._this.height - this._this.scrollBarWidth;
     const XLeft = this._this.width - this._this.scrollBarWidth;
+    const contentWidth = this._this.contentWidth + this._this.paddingLeft + this._this.overGapWidth;
+    const contentHeight = this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight;
     // 画X轴滚动条
-    if (this._this.width < this._this.contentWidth) {
-      this.scrollBarXW = Math.max((this._this.width * this._this.width) / this._this.contentWidth, 20);
+    if (this._this.width < contentWidth) {
+      this.scrollBarXW = Math.max((this._this.width * this._this.width) / contentWidth, 20);
       const percentX = this._this.scrollLeft / maxWidth;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
@@ -174,8 +182,8 @@ export default class ScrollPlugin {
     }
 
     // 画Y轴滚动条
-    if (this._this.height < this._this.contentHeight) {
-      this.scrollBarYW = Math.max((this._this.height * this._this.height) / this._this.contentHeight, 20);
+    if (this._this.height < contentHeight) {
+      this.scrollBarYW = Math.max((this._this.height * this._this.height) / contentHeight, 20);
       const percentY = this._this.scrollTop / maxHeight;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;

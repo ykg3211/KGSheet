@@ -1,7 +1,6 @@
 export enum EventConstant {
   RENDER = 'render',
   EXCEL_CHANGE = 'excel_change',
-  SCROLL_CONTENT = 'scroll_content',
   DARK_MODE_CHANGE = 'dark_mode_change',
   DESTROY = 'destroy',
   DB_CLICK = 'dblclick',
