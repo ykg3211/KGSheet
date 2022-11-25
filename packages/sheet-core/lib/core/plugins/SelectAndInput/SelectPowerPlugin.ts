@@ -50,6 +50,8 @@ export default class SelectPowerPlugin {
   private fillRectWidth: number;
   private strokeRectWidth: number;
 
+  private moveToViewShadow: any;
+
   constructor(_this: Base) {
     this.name = PluginTypeEnum.SelectPowerPlugin;
     this._this = _this;
@@ -63,6 +65,7 @@ export default class SelectPowerPlugin {
     this.strokeRectWidth = 5;
 
     this.registerKeyboardEvent();
+    this.initListener();
   }
 
   // 计算时选中的格子。主要是为了解决spanCell的。
@@ -79,6 +82,12 @@ export default class SelectPowerPlugin {
 
   public remove() {
     this._this.resetRenderFunction(RenderZIndex.SELECT_CELLS, []);
+    this._this.un(EventConstant.SELECT_CELL_MOVE_TO_VIEW, this.moveToViewShadow);
+  }
+
+  private initListener() {
+    this.moveToViewShadow = this.moveToView.bind(this);
+    this._this.on(EventConstant.SELECT_CELL_MOVE_TO_VIEW, this.moveToViewShadow);
   }
 
   private registerRenderFunc() {
@@ -208,7 +217,7 @@ export default class SelectPowerPlugin {
         this._endCell = deepClone(nextCell);
         this.selectCell = nextCell;
         this._this.render();
-        this.moveToView();
+        this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
       }
     };
 
@@ -256,7 +265,7 @@ export default class SelectPowerPlugin {
       const nextCell = this.getNextCellByMove(mirror, type);
       this._endCell = nextCell;
       this._this.render();
-      this.moveToView();
+      this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
     };
 
     this.KeyboardPlugin.register({

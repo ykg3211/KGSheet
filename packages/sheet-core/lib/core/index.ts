@@ -22,11 +22,11 @@ class Excel extends Base {
 
   public reverse() {
     this.getPlugin(PluginTypeEnum.EventStack)?.reverse?.();
-    this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+    this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
   }
   public anti_reverse() {
     this.getPlugin(PluginTypeEnum.EventStack)?.anti_reverse?.();
-    this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+    this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
   }
 }
 

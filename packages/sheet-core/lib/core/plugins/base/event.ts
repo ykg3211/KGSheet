@@ -11,6 +11,7 @@ export enum EventConstant {
   MOUSE_UP = 'mouse_up',
   MOUSE_MOVE = 'mouse_move',
   MOUSE_HOVER_EVENT = 'mouse_hover_event',
+  SELECT_CELL_MOVE_TO_VIEW = 'select_cell_move_to_view',
 }
 
 export default class BaseEvent {

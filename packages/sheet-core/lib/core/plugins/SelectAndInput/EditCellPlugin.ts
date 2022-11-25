@@ -97,7 +97,7 @@ export default class EditCellPlugin {
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
           this._this.render();
-          this.SelectPlugin.moveToView();
+          this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
         }
       };
       this.KeyboardPlugin.register({
@@ -135,7 +135,7 @@ export default class EditCellPlugin {
           this.SelectPlugin._endCell = deepClone(nextCell);
           this.SelectPlugin.selectCell = nextCell;
           this._this.render();
-          this.SelectPlugin.moveToView();
+          this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
         }
       };
       this.KeyboardPlugin.register({
@@ -381,6 +381,7 @@ export default class EditCellPlugin {
       return;
     }
     if (this._this.canvasDom) {
+      this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
       this.editCell = realCell;
 
       const position = this._this.getRectByCell(this.editCell);
@@ -394,7 +395,6 @@ export default class EditCellPlugin {
       this.SelectPlugin._endCell = cell;
 
       this._this.render();
-      this.SelectPlugin.moveToView();
     }
     return;
   }
@@ -583,27 +583,6 @@ export default class EditCellPlugin {
     }
   }
 
-  // private setCommonStyle(dom: HTMLElement, originData: cell) {
-  // 	const cellStyle = originData.style;
-
-  // 	dom.style.backgroundColor = cellStyle.backgroundColor
-  // 		? cellStyle.backgroundColor
-  // 		: this._this.color('white');
-  // 	Object.keys(cellStyle).forEach((key) => {
-  // 		dom.style[key] = cellStyle[key];
-  // 	});
-  // 	dom.style.font = cellStyle.font || '';
-  // 	dom.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
-  // 	dom.style.textAlign = cellStyle.align || '';
-  // 	dom.style.color = cellStyle.fontColor || this._this.color('black');
-  // 	dom.style.position = 'absolute';
-  // 	dom.style.top = '0px';
-  // 	dom.style.left = '0px';
-  // 	dom.style.outline = 'none';
-  // 	dom.style.border = '1px solid #4a89fe';
-  // 	dom.style.resize = 'none';
-  // }
-
   private getCurrentScopeInCopy() {
     if (!this.startCopyCell) {
       return null;
@@ -653,7 +632,7 @@ export default class EditCellPlugin {
         type: 'warning',
         message: '123',
       });
-      console.log('spancell');
+      this._this.devMode && console.log('spancell');
       return;
     }
 
@@ -713,7 +692,7 @@ export default class EditCellPlugin {
     this.SelectPlugin.selectCells(targetCells);
   }
   private handleRegularCB() {
-    console.log('handleRegularCB');
+    this._this.devMode && console.log('handleRegularCB');
     if (!this.SelectPlugin._startCell || !this.SelectPlugin._endCell || !this.endRegularCell) {
       return;
     }
@@ -731,7 +710,7 @@ export default class EditCellPlugin {
         type: 'warning',
         message: '123',
       });
-      console.log('spancell');
+      this._this.devMode && console.log('spancell');
       return;
     }
 

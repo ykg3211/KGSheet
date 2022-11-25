@@ -3,6 +3,7 @@ import Base from '../../base/base';
 import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
 import KeyBoardPlugin from '../KeyBoardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import { EventConstant } from '../base/event';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
 export interface BaseEventType {
@@ -26,7 +27,7 @@ export default class BaseEventStack {
     this.EVENT_STACK = [];
     this.REVERSE_STACK = [];
 
-    // this.initPlugin();
+    this.initPlugin();
   }
 
   private initPlugin() {
@@ -40,7 +41,7 @@ export default class BaseEventStack {
         callbacks: [
           () => {
             this.anti_reverse();
-            this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+            this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
           },
         ],
       });
@@ -50,7 +51,7 @@ export default class BaseEventStack {
         callbacks: [
           () => {
             this.reverse();
-            this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.moveToView?.();
+            this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
           },
         ],
       });

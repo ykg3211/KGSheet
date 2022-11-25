@@ -94,15 +94,9 @@ export class InputDom {
       return;
     }
     const { paddingLeft, paddingTop, width, height } = this._this;
-    // @ts-ignore
-    const { _scrollBarWidth = 10 } = this._this.getPlugin(PluginTypeEnum.ScrollPlugin);
+    const _scrollBarWidth = this._this._scrollBarWidth || 10;
     const contentX = paddingLeft + (this._this.canvasDom?.offsetLeft || 0);
     const contentY = paddingTop + (this._this.canvasDom?.offsetTop || 0);
-
-    const display = judgeCross(
-      [x, y, w, h],
-      [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth],
-    );
 
     x += 1;
     y += 1;
@@ -117,9 +111,14 @@ export class InputDom {
     this.minWidth = (w - 2) * this._this.scale;
     this.minHeight = (h - 2) * this._this.scale;
 
+    const display = judgeCross(
+      [x, y, w, h],
+      [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth],
+    );
     this.DOM.style.display = display ? 'block' : 'none';
 
     this.DOM.style.transform = `translate(${x}px, ${y}px)`;
+
     this.calcWidthHeight();
   }
 
@@ -170,6 +169,7 @@ export class InputDom {
       }
 
       this.calcWidthHeight();
+      this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
     };
   }
 
