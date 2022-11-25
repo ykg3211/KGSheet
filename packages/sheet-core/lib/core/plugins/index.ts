@@ -22,7 +22,7 @@ export enum PluginTypeEnum {
   ScrollPlugin = 'ScrollPlugin',
   SideBarResizePlugin = 'SideBarResizePlugin',
   SelectPowerPlugin = 'SelectPowerPlugin',
-  CommonInputPowerPlugin = 'CommonInputPowerPlugin',
+  EditCellPlugin = 'EditCellPlugin',
   CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
 }
@@ -37,7 +37,7 @@ export interface PluginType {
   [PluginTypeEnum.ScrollPlugin]?: ScrollPlugin;
   [PluginTypeEnum.SideBarResizePlugin]?: SideBarResizePlugin;
   [PluginTypeEnum.SelectPowerPlugin]?: SelectPowerPlugin;
-  [PluginTypeEnum.CommonInputPowerPlugin]?: EditCellPlugin;
+  [PluginTypeEnum.EditCellPlugin]?: EditCellPlugin;
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
 }

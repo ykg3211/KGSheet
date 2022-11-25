@@ -94,7 +94,13 @@ export default class CopyAndPaste {
       // @ts-ignore
       const blob_plain = await ClipboardItems[0].getType('text/plain');
       const text_plain = await blob_plain.text();
-      // console.log('plain', text_plain)
+      const content = text_plain.split('\n').map((item) => item.split('\t'));
+      this._this.devMode && console.log('paste');
+      this._this.devMode && console.log(content);
+      const anchor = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.selectCell;
+      if (anchor) {
+        this._this.getPlugin(PluginTypeEnum.EditCellPlugin)?.setContent(content, anchor);
+      }
     } catch (e) {}
 
     try {

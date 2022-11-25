@@ -42,7 +42,7 @@ export default class EditCellPlugin {
   private currentCell!: null | selectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
   constructor(_this: Base) {
-    this.name = PluginTypeEnum.CommonInputPowerPlugin;
+    this.name = PluginTypeEnum.EditCellPlugin;
     this._this = _this;
 
     this.initPlugin();
@@ -581,6 +581,43 @@ export default class EditCellPlugin {
       this.editDomInstance = null;
       this._this.render();
     }
+  }
+
+  public setContent(data: string[][], point: selectedCellType) {
+    const w = data[0].length;
+    const h = data.length;
+    const scope = {
+      leftTopCell: point,
+      rightBottomCell: {
+        row: point.row + h - 1,
+        column: point.column + w - 1,
+      },
+    };
+
+    const spanCell = this._this.getSpanCellByCell({
+      cellScope: {
+        startCell: scope.leftTopCell,
+        endCell: scope.rightBottomCell,
+      },
+    });
+    if (spanCell.isSpan) {
+      return;
+    }
+
+    const sourceData = this._this.getDataByScope(scope);
+
+    const targetData = deepClone(sourceData);
+    data.forEach((row, r) => {
+      row.forEach((content, c) => {
+        targetData.data.cells[r][c].content = content;
+      });
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope: scope,
+      pre_data: sourceData.data,
+      after_data: targetData.data,
+    });
   }
 
   private getCurrentScopeInCopy() {
