@@ -38,13 +38,24 @@ export default class ScrollPlugin {
     let YMouseDownOriginY: number | null = null;
     const scrollMouseDownCB = (e: MouseEvent, point: [number, number]) => {
       const isX = judgeOver([point[0], point[1]], this.Xxywh);
-      const isY = judgeOver([point[0], point[1]], this.Yxywh);
-
       if (isX) {
         XMouseDownOriginX = e.pageX;
+        return;
       }
+
+      const isY = judgeOver([point[0], point[1]], this.Yxywh);
       if (isY) {
         YMouseDownOriginY = e.pageY;
+        return;
+      }
+
+      if (point[0] > this._this.width - this._this.scrollBarWidth) {
+        this._this.scrollTop = (this._this.contentHeight * point[1]) / (this._this.height + this.scrollBarYW);
+        YMouseDownOriginY = e.pageY;
+      }
+      if (point[1] > this._this.height - this._this.scrollBarWidth) {
+        this._this.scrollLeft = (this._this.contentWidth * point[0]) / (this._this.width + this.scrollBarXW);
+        XMouseDownOriginX = e.pageX;
       }
     };
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
