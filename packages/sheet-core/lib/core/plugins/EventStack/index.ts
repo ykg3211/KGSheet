@@ -2,7 +2,6 @@ import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
 import { excelConfig } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
-import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 import BaseEventStack from './base';
 import { EventConstant } from '../base/event';
 

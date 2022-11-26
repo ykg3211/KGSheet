@@ -22,13 +22,11 @@ export interface ToolsProps {
 
 export interface ToolsGroupConfig<T = BaseTool> {
   lines: number;
-  iconWidth: number;
   tools: T[];
 }
 
 export interface ToolsGroupType<T = BaseTool> {
   key: string;
   lines: number;
-  iconWidth: number;
   tools: T[];
 }

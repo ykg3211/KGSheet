@@ -2,7 +2,7 @@ import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
 import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
 import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import { BASE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 import { EventConstant } from '../base/event';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;

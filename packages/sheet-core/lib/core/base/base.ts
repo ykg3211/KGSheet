@@ -100,6 +100,7 @@ class Base extends Render {
    * 处理高分屏的比例
    */
   private handleDPR(dom: HTMLElement) {
+    this.devMode && console.log('handleSize');
     if (!this.canvasDom || !this.ctx) {
       return;
     }
