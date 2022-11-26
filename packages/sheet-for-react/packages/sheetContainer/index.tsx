@@ -11,7 +11,7 @@ function Container() {
       const instance = new Excel(container.current);
       setSheet(instance);
       window.sheet = instance;
-      const data = createDefaultData(10, 15);
+      const data = createDefaultData(100, 150);
       instance.setData(data);
       once.current = false;
     }

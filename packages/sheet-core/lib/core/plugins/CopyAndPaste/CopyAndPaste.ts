@@ -9,6 +9,11 @@ import KeyBoardPlugin from '../KeyBoardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 
+/**
+ * Chrome 浏览器规定，只有 HTTPS 协议的页面才能使用这个 API。
+ * 所以在http的页面这个功能是烂掉的，
+ */
+
 export default class CopyAndPaste {
   public name: string;
   private _this: Base;
@@ -198,7 +203,7 @@ export default class CopyAndPaste {
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.setLineDash([5]);
-        ctx.strokeRect(x, y, w, h);
+        ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
         ctx.restore();
       }).bind(this),
     ]);
