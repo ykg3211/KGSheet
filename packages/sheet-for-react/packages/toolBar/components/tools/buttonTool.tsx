@@ -1,18 +1,17 @@
 import React from 'react';
-import Icon from '../../icons/icon';
+import Icon from '../../../icons/icon';
 import { Tooltip } from 'antd';
 import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
 
 interface Props {
-  group: ToolsGroupType<BaseTool>;
   tool: BaseTool;
   style: React.CSSProperties;
   color: string;
   needLabel?: boolean;
 }
 
-const Tool = ({ group, tool, style, color, needLabel = false }: Props) => {
+const ButtonTool = ({ tool, style, color, needLabel = false }: Props) => {
   return (
     <Tooltip placement='bottom' title={tool.toolTip}>
       <span
@@ -33,4 +32,4 @@ const Tool = ({ group, tool, style, color, needLabel = false }: Props) => {
     </Tooltip>
   );
 };
-export default Tool;
+export default ButtonTool;

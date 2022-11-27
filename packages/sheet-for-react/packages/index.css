@@ -84,6 +84,13 @@
   height: 52px;
   justify-content: space-around;
 }
+
+.kgsheet_toolBar_group_inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .kgsheet_toolBar_line {
   height: 70%;
   margin: 0 8px;

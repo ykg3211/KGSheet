@@ -2,7 +2,7 @@ import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../..';
-import Tool from './tool';
+import Tools from './tools';
 
 interface Props {
   group: ToolsGroupType;
@@ -18,38 +18,29 @@ export default function Group({ group }: Props) {
     return 'rgba(0,0,0,0)';
   }, [flag, toolBar]);
 
-  const splitGroup = useMemo(() => {
-    const mirror = [...group.tools];
-    const result = [];
-    while (mirror.length > 0) {
-      result.push(mirror.splice(0, 2));
-    }
-    return result;
-  }, [group]);
-
   if (group.lines === 1) {
     return (
       <div className='kgsheet_toolBar_group_no_warp'>
         {group.tools.map((tool) => {
-          return <Tool style={{ height: '48px' }} color={color} tool={tool} group={group} key={tool.key} needLabel />;
+          return <Tools style={{ height: '48px' }} color={color} tool={tool} key={tool.key} needLabel />;
         })}
       </div>
     );
   }
 
+  const toolsLine = useMemo(() => {
+    const result = [[...group.tools], [...group.tools]];
+    return result;
+  }, [group]);
+
   return (
-    <div style={{ display: 'flex' }}>
-      {splitGroup.map((_group, index) => {
+    <div className='kgsheet_toolBar_group'>
+      {toolsLine.map((_group, index) => {
         return (
-          <div className='kgsheet_toolBar_group' key={_group.map((g) => g.key).join('_') + index}>
+          <div className='kgsheet_toolBar_group_inline' key={_group.map((g) => g.key).join('_') + index}>
             {_group.map((tool, i) => {
-              return (
-                <Tool style={{ height: '24px' }} color={color} tool={tool} group={group} key={tool.key + '_' + i} />
-              );
+              return <Tools style={{ height: '24px' }} color={color} tool={tool} key={tool.key + '_' + i} />;
             })}
-            {_group.length < 2 && (
-              <div style={{ height: group.lines === 1 ? '48px' : '24px' }} className='kgsheet_empty_tool'></div>
-            )}
           </div>
         );
       })}

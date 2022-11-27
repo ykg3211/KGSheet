@@ -1,4 +1,3 @@
-import { PluginTypeEnum } from '../../../core/plugins';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
 

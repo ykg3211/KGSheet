@@ -15,9 +15,9 @@ import { BusinessEventConstant } from '../base/businessEvent';
 import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
 
-export interface CellScopeType {
-  startCell: SelectedCellType;
-  endCell: SelectedCellType;
+export interface CellCornerScopeType {
+  leftTopCell: SelectedCellType;
+  rightBottomCell: SelectedCellType;
 }
 
 export interface CellCornerScopeType {
@@ -35,10 +35,10 @@ export default class EditCellPlugin {
   private editCell!: null | SelectedCellType;
 
   private pointDownCell!: null | SelectedCellType; // 剪切单元格专用的，记录鼠标点下去的时候的cell位置。
-  private startCopyCell!: null | CellScopeType; // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
+  private startCopyCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
 
-  private startRegularCell!: null | CellScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
-  private endRegularCell!: null | CellScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
+  private startRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
+  private endRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
   private currentCell!: null | SelectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
 
@@ -209,8 +209,8 @@ export default class EditCellPlugin {
               return;
             }
             this.clearContentByScope({
-              leftTopCell: border.cellScope.startCell,
-              rightBottomCell: border.cellScope.endCell,
+              leftTopCell: border.cellScope.leftTopCell,
+              rightBottomCell: border.cellScope.rightBottomCell,
             });
           },
         ],
@@ -247,7 +247,7 @@ export default class EditCellPlugin {
           return;
         }
         if (this.startRegularCell) {
-          const { startCell, endCell } = this.startRegularCell;
+          const { leftTopCell: startCell, rightBottomCell: endCell } = this.startRegularCell;
           const { currentCell } = this;
           const centerTag = {
             column: (startCell.column + endCell.column) / 2,
@@ -274,8 +274,8 @@ export default class EditCellPlugin {
 
           const { leftTopCell, rightBottomCell } = combineCell([startCell, endCell, currentCell]);
           this.endRegularCell = {
-            startCell: leftTopCell,
-            endCell: rightBottomCell,
+            leftTopCell: leftTopCell,
+            rightBottomCell: rightBottomCell,
           };
           this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell));
 
@@ -461,7 +461,7 @@ export default class EditCellPlugin {
       if (!cells || !cell) {
         return;
       }
-      const { startCell: leftTopCell, endCell: rightBottomCell } = cells;
+      const { leftTopCell: leftTopCell, rightBottomCell: rightBottomCell } = cells;
 
       // 下面是为了收敛选中的cell的，保证是框选内部的cell
       if (cell.column < leftTopCell.column) {
@@ -484,14 +484,14 @@ export default class EditCellPlugin {
       if (type === 'cell') {
         this.removeDom();
         this.startCopyCell = {
-          startCell: leftTopCell,
-          endCell: rightBottomCell,
+          leftTopCell: leftTopCell,
+          rightBottomCell: rightBottomCell,
         };
       } else if (type === 'grab') {
         this.removeDom();
         this.startRegularCell = {
-          startCell: leftTopCell,
-          endCell: rightBottomCell,
+          leftTopCell: leftTopCell,
+          rightBottomCell: rightBottomCell,
         };
       }
     };
@@ -615,8 +615,8 @@ export default class EditCellPlugin {
 
     const spanCell = this._this.getSpanCellByCell({
       cellScope: {
-        startCell: scope.leftTopCell,
-        endCell: scope.rightBottomCell,
+        leftTopCell: scope.leftTopCell,
+        rightBottomCell: scope.rightBottomCell,
       },
     });
     if (spanCell.isSpan) {
@@ -643,7 +643,7 @@ export default class EditCellPlugin {
     if (!this.startCopyCell) {
       return null;
     }
-    const { startCell: leftTopCell, endCell: rightBottomCell } = deepClone(this.startCopyCell);
+    const { leftTopCell: leftTopCell, rightBottomCell: rightBottomCell } = deepClone(this.startCopyCell);
     if (this.currentCell && this.pointDownCell) {
       let columnGap = this.currentCell.column - this.pointDownCell.column;
       let rowGap = this.currentCell.row - this.pointDownCell.row;
@@ -668,7 +668,7 @@ export default class EditCellPlugin {
       return;
     }
 
-    const sourceCells: CellScopeType = deepClone(this.startCopyCell);
+    const sourceCells: CellCornerScopeType = deepClone(this.startCopyCell);
     const targetCells = this.getCurrentScopeInCopy();
 
     if (!targetCells) {
@@ -678,8 +678,8 @@ export default class EditCellPlugin {
     if (
       this._this.getSpanCellByCell({
         cellScope: {
-          startCell: targetCells.leftTopCell,
-          endCell: targetCells.rightBottomCell,
+          leftTopCell: targetCells.leftTopCell,
+          rightBottomCell: targetCells.rightBottomCell,
         },
         isInView: false,
       }).isSpan
@@ -693,15 +693,15 @@ export default class EditCellPlugin {
     }
 
     const SourceData = this._this.getDataByScope({
-      leftTopCell: sourceCells.startCell,
-      rightBottomCell: sourceCells.endCell,
+      leftTopCell: sourceCells.leftTopCell,
+      rightBottomCell: sourceCells.rightBottomCell,
     });
 
     // 生成sourceData处的空数据
     const SourceAfterCells: cell[][] = [];
-    for (let row = sourceCells.startCell.row; row <= sourceCells.endCell.row; row++) {
+    for (let row = sourceCells.leftTopCell.row; row <= sourceCells.rightBottomCell.row; row++) {
       const temp: cell[] = [];
-      for (let column = sourceCells.startCell.column; column <= sourceCells.endCell.column; column++) {
+      for (let column = sourceCells.leftTopCell.column; column <= sourceCells.rightBottomCell.column; column++) {
         temp.push(createDefaultCell(''));
       }
       SourceAfterCells.push(temp);
@@ -723,8 +723,8 @@ export default class EditCellPlugin {
     this.ExcelBaseFunction.cellsMove({
       sourceData: {
         scope: {
-          leftTopCell: sourceCells.startCell,
-          rightBottomCell: sourceCells.endCell,
+          leftTopCell: sourceCells.leftTopCell,
+          rightBottomCell: sourceCells.rightBottomCell,
         },
         pre_data: {
           ...SourceData.data,
@@ -756,8 +756,8 @@ export default class EditCellPlugin {
     if (
       this._this.getSpanCellByCell({
         cellScope: {
-          startCell: this.endRegularCell.startCell,
-          endCell: this.endRegularCell.endCell,
+          leftTopCell: this.endRegularCell.leftTopCell,
+          rightBottomCell: this.endRegularCell.rightBottomCell,
         },
         isInView: false,
       }).isSpan
@@ -782,13 +782,13 @@ export default class EditCellPlugin {
     });
 
     const preData = this._this.getDataByScope({
-      leftTopCell: this.endRegularCell.startCell,
-      rightBottomCell: this.endRegularCell.endCell,
+      leftTopCell: this.endRegularCell.leftTopCell,
+      rightBottomCell: this.endRegularCell.rightBottomCell,
     });
     this.ExcelBaseFunction.cellsChange({
       scope: {
-        leftTopCell: this.endRegularCell.startCell,
-        rightBottomCell: this.endRegularCell.endCell,
+        leftTopCell: this.endRegularCell.leftTopCell,
+        rightBottomCell: this.endRegularCell.rightBottomCell,
       },
       pre_data: preData.data,
       after_data: result,

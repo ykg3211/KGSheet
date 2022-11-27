@@ -1,6 +1,6 @@
 import { cell, excelConfig, spanCell } from '../../../interfaces';
 import { BaseDataType } from '../../base/base';
-import { CellScopeType } from './EditCellPlugin';
+import { CellCornerScopeType } from './EditCellPlugin';
 
 export enum regularArrowEnum {
   LEFT2RIGHT = 'left_2_right',
@@ -100,24 +100,24 @@ export const handleRegularData = ({
 }: {
   arrow: regularArrowEnum;
   sourceData: BaseDataType;
-  scope: CellScopeType;
+  scope: CellCornerScopeType;
 }): excelConfig => {
   const w: number[] = handleW({
     arrow,
     sourceW: sourceData.data.w,
-    width: Math.abs(scope.endCell.column - scope.startCell.column + 1),
+    width: Math.abs(scope.rightBottomCell.column - scope.leftTopCell.column + 1),
   });
   const h: number[] = handleH({
     arrow,
     sourceH: sourceData.data.h,
-    height: Math.abs(scope.endCell.row - scope.startCell.row + 1),
+    height: Math.abs(scope.rightBottomCell.row - scope.leftTopCell.row + 1),
   });
 
   const cells: cell[][] = calculateData({
     arrow,
     sourceData: sourceData.data.cells,
-    width: Math.abs(scope.endCell.column - scope.startCell.column + 1),
-    height: Math.abs(scope.endCell.row - scope.startCell.row + 1),
+    width: Math.abs(scope.rightBottomCell.column - scope.leftTopCell.column + 1),
+    height: Math.abs(scope.rightBottomCell.row - scope.leftTopCell.row + 1),
   });
   const spanCells: Record<string, spanCell> = sourceData.data.spanCells;
 

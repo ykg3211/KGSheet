@@ -5,7 +5,7 @@ import { combineCell, combineRect, deepClone, judgeCross, judgeInner } from '../
 import { EventConstant } from '../base/event';
 import KeyBoardPlugin from '../KeyBoardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
-import { CellCornerScopeType, CellScopeType } from './EditCellPlugin';
+import { CellCornerScopeType } from './EditCellPlugin';
 import { spanCell } from '../../../interfaces';
 import { createDefaultStyle } from '../../../utils/defaultData';
 
@@ -35,7 +35,7 @@ export default class SelectPowerPlugin {
   private KeyboardPlugin!: KeyBoardPlugin;
 
   public selectedCells!: null | selectedCellsType;
-  public cornerCells: CellScopeType | undefined;
+  public cornerCells: CellCornerScopeType | undefined;
 
   public _selectCell!: SelectedCellType | null; // 真正选中的格子
   public _startCell: SelectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
@@ -563,9 +563,9 @@ export default class SelectPowerPlugin {
     return {
       cellPosition,
       cellScope: {
-        startCell,
-        endCell,
-      } as CellScopeType,
+        leftTopCell: startCell,
+        rightBottomCell: endCell,
+      } as CellCornerScopeType,
     };
   }
 

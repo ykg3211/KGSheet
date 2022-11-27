@@ -4,7 +4,7 @@ import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
 import { dispatchEventType, setEventType, clearEventType } from '../plugins/base/EventDispatch';
 import { deepClone, judgeCross, judgeOver } from '../../utils';
 import { rectType } from './drawLayer';
-import { CellCornerScopeType, CellScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
+import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
 import { excelConfig, spanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
 
@@ -151,7 +151,7 @@ class Base extends Render {
     isInView = true,
   }: {
     cell?: SelectedCellType | null;
-    cellScope?: CellScopeType;
+    cellScope?: CellCornerScopeType;
     isInView?: boolean;
   }) {
     cellScope = deepClone(cellScope);
@@ -164,9 +164,9 @@ class Base extends Render {
     let w = 1;
     let h = 1;
     if (!cell && cellScope) {
-      cell = cellScope.startCell;
-      w = cellScope.endCell.column - cellScope.endCell.column + 1;
-      h = cellScope.endCell.row - cellScope.endCell.row + 1;
+      cell = cellScope.leftTopCell;
+      w = cellScope.rightBottomCell.column - cellScope.rightBottomCell.column + 1;
+      h = cellScope.rightBottomCell.row - cellScope.rightBottomCell.row + 1;
     }
     let source: (spanCell & {
       location: SelectedCellType;

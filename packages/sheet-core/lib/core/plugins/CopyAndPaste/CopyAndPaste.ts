@@ -58,8 +58,8 @@ export default class CopyAndPaste {
       const border = this.SelectPlugin.calcBorder();
       if (border) {
         const data = this._this.getDataByScope({
-          leftTopCell: border.cellScope.startCell,
-          rightBottomCell: border.cellScope.endCell,
+          leftTopCell: border.cellScope.leftTopCell,
+          rightBottomCell: border.cellScope.rightBottomCell,
         });
         this.copy(data);
       }
