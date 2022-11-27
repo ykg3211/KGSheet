@@ -1,12 +1,12 @@
 import Base from '../base';
 import DarkMode from './DarkMode.ts';
 
-export enum PluginTypeEnum {
+export enum ToolsPluginTypeEnum {
   DarkMode = 'DarkMode',
 }
 
 export interface PluginType {
-  [PluginTypeEnum.DarkMode]?: DarkMode;
+  [ToolsPluginTypeEnum.DarkMode]?: DarkMode;
 }
 
 export interface BasePluginType {
@@ -23,7 +23,7 @@ export default class Plugins {
     this.register(DarkMode);
   }
 
-  public deregister(name?: PluginTypeEnum) {
+  public deregister(name?: ToolsPluginTypeEnum) {
     if (name) {
       //@ts-ignore
       this._this.pluginsMap[name]?.remove?.();
@@ -34,7 +34,7 @@ export default class Plugins {
 
   public register(Plugin: any) {
     const newPlugin = new Plugin(this._this);
-    const name = newPlugin.name as PluginTypeEnum;
+    const name = newPlugin.name as ToolsPluginTypeEnum;
 
     if (this._this.pluginsMap[name]) {
       //@ts-ignore

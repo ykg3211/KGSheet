@@ -1,6 +1,6 @@
-import { cell, excelConfig, spanCell } from "../../../interfaces"
-import { BaseDataType } from "../../base/base"
-import { CellScopeType } from "./EditCellPlugin"
+import { cell, excelConfig, spanCell } from '../../../interfaces';
+import { BaseDataType } from '../../base/base';
+import { CellScopeType } from './EditCellPlugin';
 
 export enum regularArrowEnum {
   LEFT2RIGHT = 'left_2_right',
@@ -9,15 +9,7 @@ export enum regularArrowEnum {
   TOP2BOTTOM = 'top_2_bottom',
 }
 
-const handleW = ({
-  arrow,
-  sourceW,
-  width
-}: {
-  arrow: regularArrowEnum,
-  sourceW: number[],
-  width: number
-}) => {
+const handleW = ({ arrow, sourceW, width }: { arrow: regularArrowEnum; sourceW: number[]; width: number }) => {
   if (arrow === regularArrowEnum.TOP2BOTTOM || arrow === regularArrowEnum.BOTTOM2TOP) {
     return sourceW;
   }
@@ -36,17 +28,9 @@ const handleW = ({
   }
 
   return w;
-}
+};
 
-const handleH = ({
-  arrow,
-  sourceH,
-  height
-}: {
-  arrow: regularArrowEnum,
-  sourceH: number[],
-  height: number
-}) => {
+const handleH = ({ arrow, sourceH, height }: { arrow: regularArrowEnum; sourceH: number[]; height: number }) => {
   if (arrow === regularArrowEnum.LEFT2RIGHT || arrow === regularArrowEnum.RIGHT2LEFT) {
     return sourceH;
   }
@@ -65,7 +49,7 @@ const handleH = ({
   }
 
   return h;
-}
+};
 
 const calculateData = ({
   arrow,
@@ -73,10 +57,10 @@ const calculateData = ({
   width,
   height,
 }: {
-  arrow: regularArrowEnum,
-  sourceData: cell[][],
-  width: number,
-  height: number
+  arrow: regularArrowEnum;
+  sourceData: cell[][];
+  width: number;
+  height: number;
 }): cell[][] => {
   const result = new Array(height).fill(null).map(() => new Array(width).fill(null));
 
@@ -89,7 +73,7 @@ const calculateData = ({
   } else if (arrow === regularArrowEnum.RIGHT2LEFT) {
     for (let row = 0; row < height; row++) {
       for (let column = 0; column < width; column++) {
-        result[row][width - column - 1] = sourceData[row][sourceData[0].length - 1 - column % sourceData[0].length];
+        result[row][width - column - 1] = sourceData[row][sourceData[0].length - 1 - (column % sourceData[0].length)];
       }
     }
   } else if (arrow === regularArrowEnum.TOP2BOTTOM) {
@@ -101,32 +85,32 @@ const calculateData = ({
   } else if (arrow === regularArrowEnum.BOTTOM2TOP) {
     for (let column = 0; column < width; column++) {
       for (let row = 0; row < height; row++) {
-        result[height - row - 1][column] = sourceData[sourceData.length - 1 - row % sourceData.length][column];
+        result[height - row - 1][column] = sourceData[sourceData.length - 1 - (row % sourceData.length)][column];
       }
     }
   }
 
   return result;
-}
+};
 
 export const handleRegularData = ({
   arrow,
   sourceData,
-  scope
+  scope,
 }: {
-  arrow: regularArrowEnum,
-  sourceData: BaseDataType,
-  scope: CellScopeType
+  arrow: regularArrowEnum;
+  sourceData: BaseDataType;
+  scope: CellScopeType;
 }): excelConfig => {
   const w: number[] = handleW({
     arrow,
     sourceW: sourceData.data.w,
-    width: Math.abs(scope.endCell.column - scope.startCell.column + 1)
+    width: Math.abs(scope.endCell.column - scope.startCell.column + 1),
   });
   const h: number[] = handleH({
     arrow,
     sourceH: sourceData.data.h,
-    height: Math.abs(scope.endCell.row - scope.startCell.row + 1)
+    height: Math.abs(scope.endCell.row - scope.startCell.row + 1),
   });
 
   const cells: cell[][] = calculateData({
@@ -141,6 +125,6 @@ export const handleRegularData = ({
     w,
     h,
     cells,
-    spanCells
+    spanCells,
   };
-}
+};

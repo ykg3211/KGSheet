@@ -1,6 +1,6 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 import { PluginTypeEnum } from '..';
-import Base, { BaseDataType, selectedCellType } from '../../base/base';
+import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { rectType } from '../../base/drawLayer';
 import { cell, spanCell } from '../../../interfaces';
@@ -16,13 +16,13 @@ import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
 
 export interface CellScopeType {
-  startCell: selectedCellType;
-  endCell: selectedCellType;
+  startCell: SelectedCellType;
+  endCell: SelectedCellType;
 }
 
 export interface CellCornerScopeType {
-  leftTopCell: selectedCellType;
-  rightBottomCell: selectedCellType;
+  leftTopCell: SelectedCellType;
+  rightBottomCell: SelectedCellType;
 }
 
 export default class EditCellPlugin {
@@ -32,14 +32,14 @@ export default class EditCellPlugin {
   private SelectPlugin!: SelectPowerPlugin;
   private ExcelBaseFunction!: ExcelBaseFunction;
   private editDomInstance!: null | InputDom;
-  private editCell!: null | selectedCellType;
+  private editCell!: null | SelectedCellType;
 
-  private pointDownCell!: null | selectedCellType; // 剪切单元格专用的，记录鼠标点下去的时候的cell位置。
+  private pointDownCell!: null | SelectedCellType; // 剪切单元格专用的，记录鼠标点下去的时候的cell位置。
   private startCopyCell!: null | CellScopeType; // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
 
   private startRegularCell!: null | CellScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
   private endRegularCell!: null | CellScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
-  private currentCell!: null | selectedCellType; // 拖拽的时候鼠标的落点，用于计算的
+  private currentCell!: null | SelectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
 
   private resetParams: any;
@@ -394,7 +394,7 @@ export default class EditCellPlugin {
     this.handleMouseUp();
   }
 
-  private initEditBoxDom(cell: selectedCellType) {
+  private initEditBoxDom(cell: SelectedCellType) {
     const { cell: realCell } = this._this.getSpanCellByCell({ cell });
     if (!realCell) {
       return;
@@ -419,7 +419,7 @@ export default class EditCellPlugin {
   }
 
   private handleDBClick() {
-    const dbClickCB = (e: any, cell: selectedCellType) => {
+    const dbClickCB = (e: any, cell: SelectedCellType) => {
       this.initEditBoxDom(cell);
     };
     this._this.setEvent(EventConstant.DB_CLICK, {
@@ -583,7 +583,7 @@ export default class EditCellPlugin {
     });
   }
 
-  private createEditBox(cell: selectedCellType, [x, y, w, h]: rectType) {
+  private createEditBox(cell: SelectedCellType, [x, y, w, h]: rectType) {
     if (this.editDomInstance) {
       return;
     }
@@ -602,7 +602,7 @@ export default class EditCellPlugin {
     }
   }
 
-  public setContent(data: string[][], point: selectedCellType) {
+  public setContent(data: string[][], point: SelectedCellType) {
     const w = data[0].length;
     const h = data.length;
     const scope = {

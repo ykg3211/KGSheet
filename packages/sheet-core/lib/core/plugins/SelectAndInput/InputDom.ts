@@ -1,7 +1,7 @@
 import { PluginTypeEnum } from '..';
 import { cell } from '../../../interfaces';
 import { debounce, deepClone, judgeCross } from '../../../utils';
-import Base, { BaseDataType, selectedCellType } from '../../base/base';
+import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyBoardPlugin from '../KeyBoardPlugin';
@@ -10,14 +10,14 @@ import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyBoardPlug
 export class InputDom {
   private DOM: HTMLTextAreaElement;
   private _this: Base;
-  private cell: selectedCellType;
+  private cell: SelectedCellType;
   private ExcelBaseFunction!: ExcelBaseFunction;
   private KeyBoardPlugin!: KeyBoardPlugin;
   private minHeight!: number;
   private minWidth!: number;
   private enterEvent!: () => void;
 
-  constructor(_this: Base, data: cell, cell: selectedCellType) {
+  constructor(_this: Base, data: cell, cell: SelectedCellType) {
     this._this = _this;
     this.DOM = document.createElement('textarea');
     this.cell = cell;

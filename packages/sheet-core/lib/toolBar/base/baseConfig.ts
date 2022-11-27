@@ -4,7 +4,7 @@ import { ToolsEnum } from '../tools';
 const baseToolBarConfig: BarSettingType = [
   {
     lines: 1,
-    tools: [ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT, ToolsEnum.DARK_MODE],
+    tools: [ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT, ToolsEnum.CLEAR_STYLE],
   },
   {
     lines: 2,

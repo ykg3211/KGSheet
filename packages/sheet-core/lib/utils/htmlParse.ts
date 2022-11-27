@@ -1,10 +1,10 @@
 import { cell, CellTypeEnum, excelConfig } from '../interfaces';
 
-interface tableElement {
+interface TableElement {
   tag: string;
   attrs: Record<string, string>;
-  children: Array<tableElement | string>;
-  parent?: null | tableElement;
+  children: Array<TableElement | string>;
+  parent?: null | TableElement;
 }
 
 function parseAttrs(v: string) {
@@ -39,7 +39,7 @@ function parseAttrs(v: string) {
 }
 
 function parseHtml(html: string) {
-  const result: tableElement = {
+  const result: TableElement = {
     tag: '.',
     children: [],
     parent: null,
@@ -69,7 +69,7 @@ function parseHtml(html: string) {
 
       if (elementTag) {
         if (!elementTag?.startsWith('/')) {
-          const newElement: tableElement = {
+          const newElement: TableElement = {
             tag: elementTag,
             attrs: parseAttrs(tag),
             parent: point,
@@ -103,7 +103,7 @@ function parseHtml(html: string) {
   return point;
 }
 
-function findTag(root: tableElement, tag: string) {
+function findTag(root: TableElement, tag: string) {
   const nodes = [root];
   while (nodes.length > 0) {
     const node = nodes.shift();

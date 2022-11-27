@@ -1,7 +1,7 @@
 import Excel from '../core';
 import Base from './base';
 import { config } from './interface';
-import { PluginTypeEnum } from './plugins';
+import { ToolsPluginTypeEnum } from './plugins';
 import { colorType } from './plugins/DarkMode.ts';
 
 interface ToolBarType {
@@ -19,7 +19,7 @@ class ToolBar extends Base {
   }
 
   public getColor(name: colorType) {
-    return this.getPlugin(PluginTypeEnum.DarkMode)?.color(name);
+    return this.getPlugin(ToolsPluginTypeEnum.DarkMode)?.color(name);
   }
 }
 

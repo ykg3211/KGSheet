@@ -6,7 +6,7 @@ import './icons/iconfont.js';
 import Excel, { ToolBar } from 'kgsheet';
 import 'antd/dist/antd.css';
 
-interface sheet {
+interface Sheet {
   flag: number;
   sheet: Excel;
   setSheet: (v: Excel) => void;
@@ -14,7 +14,7 @@ interface sheet {
   setToolBar: (v: ToolBar) => void;
 }
 
-export const SheetContext = React.createContext<sheet>({
+export const SheetContext = React.createContext<Sheet>({
   flag: 0,
   sheet: null,
   setSheet: () => {},

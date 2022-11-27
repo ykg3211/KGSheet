@@ -1,5 +1,5 @@
 import Base from '../../base';
-import { PluginTypeEnum } from '..';
+import { ToolsPluginTypeEnum } from '..';
 import { ToolsEventConstant } from '../../interface';
 
 export enum colorType {
@@ -25,7 +25,7 @@ export default class DarkMode {
   private media: MediaQueryList;
 
   constructor(_this: Base) {
-    this.name = PluginTypeEnum.DarkMode;
+    this.name = ToolsPluginTypeEnum.DarkMode;
     this._this = _this;
 
     this.media = window.matchMedia('(prefers-color-scheme: dark)');

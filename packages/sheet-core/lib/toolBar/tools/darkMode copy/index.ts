@@ -1,8 +1,8 @@
 import { ToolsPluginTypeEnum } from '../../plugins';
 import { ToolsProps } from '../../interface';
-import ButtonBase from '../base/buttonBase';
+import { BaseTool } from '../base';
 
-export class DarkMode extends ButtonBase {
+export class DarkMode extends BaseTool {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '黑暗模式';

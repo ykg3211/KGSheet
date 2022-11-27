@@ -16,11 +16,14 @@ const Tool = ({ group, tool, style, color, needLabel = false }: Props) => {
   return (
     <Tooltip placement='bottom' title={tool.toolTip}>
       <span
-        style={{
-          ...style,
-          color,
-        }}
-        className='kgsheet_btn'
+        style={Object.assign(
+          {
+            ...style,
+            color,
+          },
+          tool.style,
+        )}
+        className={'kgsheet_btn ' + tool.class}
         onClick={() => {
           tool.click();
         }}>

@@ -28,6 +28,10 @@ class Excel extends Base {
     this.getPlugin(PluginTypeEnum.EventStack)?.anti_reverse?.();
     this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
   }
+
+  public clearStyle() {
+    this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.clearStyle();
+  }
 }
 
 export default Excel;

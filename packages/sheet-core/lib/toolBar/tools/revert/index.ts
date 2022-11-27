@@ -1,13 +1,12 @@
-import { ToolsEnum, ToolsIconsMap } from '..';
 import { ToolsProps } from '../../interface';
-import { BaseTool } from '../base';
+import ButtonBase from '../base/buttonBase';
 
-export class Revert extends BaseTool {
+export class Revert extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '撤销';
     this.toolTip = '撤销(⌘+z)';
-    this.icon = ToolsIconsMap[ToolsEnum.REVERT];
+    this.icon = 'sheet-iconcancel';
   }
 
   public click() {
@@ -16,12 +15,12 @@ export class Revert extends BaseTool {
   }
 }
 
-export class AntiRevert extends BaseTool {
+export class AntiRevert extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '重做';
     this.toolTip = '重做(⌘+shift+z)';
-    this.icon = ToolsIconsMap[ToolsEnum.ANTI_REVERT];
+    this.icon = 'sheet-iconredo';
   }
 
   public click() {

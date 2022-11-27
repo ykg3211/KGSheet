@@ -13,7 +13,7 @@ export interface BaseDataType {
   data: excelConfig;
 }
 
-export interface selectedCellType {
+export interface SelectedCellType {
   row: number;
   column: number;
 }
@@ -78,7 +78,7 @@ class Base extends Render {
   }
 
   // 计算边框
-  public calBorder(startCell: selectedCellType, endCell: selectedCellType) {
+  public calBorder(startCell: SelectedCellType, endCell: SelectedCellType) {
     const { _data, paddingLeft, paddingTop, scrollLeft, scrollTop } = this;
 
     startCell.column = Math.max(0, startCell.column);
@@ -150,7 +150,7 @@ class Base extends Render {
     cellScope,
     isInView = true,
   }: {
-    cell?: selectedCellType | null;
+    cell?: SelectedCellType | null;
     cellScope?: CellScopeType;
     isInView?: boolean;
   }) {
@@ -165,11 +165,11 @@ class Base extends Render {
     let h = 1;
     if (!cell && cellScope) {
       cell = cellScope.startCell;
-      w = cellScope.endCell.column - cellScope.startCell.column + 1;
-      h = cellScope.endCell.row - cellScope.startCell.row + 1;
+      w = cellScope.endCell.column - cellScope.endCell.column + 1;
+      h = cellScope.endCell.row - cellScope.endCell.row + 1;
     }
     let source: (spanCell & {
-      location: selectedCellType;
+      location: SelectedCellType;
     })[] = [];
     if (isInView) {
       source = this.renderSpanCellsArr.map((spanCell) => ({
@@ -189,12 +189,12 @@ class Base extends Render {
       });
     }
     let isSpan = false;
-    let result: null | selectedCellType = cell as selectedCellType;
+    let result: null | SelectedCellType = cell as SelectedCellType;
     source.forEach((c) => {
       if (
         judgeCross(
           [c.location.column, c.location.row, c.span[0], c.span[1]],
-          [(cell as selectedCellType).column, (cell as selectedCellType).row, w, h],
+          [(cell as SelectedCellType).column, (cell as SelectedCellType).row, w, h],
         )
       ) {
         isSpan = true;
@@ -218,7 +218,7 @@ class Base extends Render {
   public getCellByPoint(point: [number, number]) {
     const { renderCellsArr, renderSpanCellsArr } = this;
 
-    let selectedCell: selectedCellType | null = null;
+    let selectedCell: SelectedCellType | null = null;
 
     // 点击最左上角的
     if (point[0] <= this.paddingLeft && point[1] <= this.paddingTop) {
@@ -287,13 +287,13 @@ class Base extends Render {
       });
     }
 
-    return selectedCell as selectedCellType | null;
+    return selectedCell as SelectedCellType | null;
   }
 
   /**
    * getRectByCell
    */
-  public getRectByCell(cell: selectedCellType) {
+  public getRectByCell(cell: SelectedCellType) {
     const { _data, paddingLeft, scrollTop, scrollLeft, paddingTop } = this;
     // 手动深拷贝
     const startCell = {
@@ -320,7 +320,7 @@ class Base extends Render {
   /**
    * getRealCell
    */
-  public getRealCell(cell: selectedCellType) {
+  public getRealCell(cell: SelectedCellType) {
     const spanCell = this.getSpanCell(cell);
     if (this._data.spanCells && spanCell) {
       return spanCell;
@@ -335,11 +335,11 @@ class Base extends Render {
     _leftTopCell = deepClone(_leftTopCell);
     _rightBottomCell = deepClone(_rightBottomCell);
 
-    let leftTopCell: selectedCellType = {
+    let leftTopCell: SelectedCellType = {
       row: Math.min(_leftTopCell.row, _rightBottomCell.row),
       column: Math.min(_leftTopCell.column, _rightBottomCell.column),
     };
-    let rightBottomCell: selectedCellType = {
+    let rightBottomCell: SelectedCellType = {
       row: Math.max(_leftTopCell.row, _rightBottomCell.row),
       column: Math.max(_leftTopCell.column, _rightBottomCell.column),
     };
@@ -409,7 +409,7 @@ class Base extends Render {
   /**
    * getSpanCell
    */
-  public getSpanCell(cell: selectedCellType) {
+  public getSpanCell(cell: SelectedCellType) {
     return this._data.spanCells[cell.row + '_' + cell.column] as spanCell | undefined;
   }
 }

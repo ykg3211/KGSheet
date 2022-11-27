@@ -4,7 +4,7 @@ import BaseEvent from '../../core/plugins/base/event';
 import { BarSettingType, config, ToolsEventConstant, ToolsGroupType } from '../interface';
 import getTools from '../tools';
 import baseToolBarConfig from './baseConfig';
-import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
+import Plugins, { PluginType, ToolsPluginTypeEnum } from '../plugins';
 
 export default class Base extends BaseEvent {
   public sheet: Excel;
@@ -41,7 +41,7 @@ export default class Base extends BaseEvent {
     this.Tools = result;
   }
 
-  public getPlugin<T extends PluginTypeEnum>(name: T): PluginType[T] {
+  public getPlugin<T extends ToolsPluginTypeEnum>(name: T): PluginType[T] {
     return this.pluginsMap[name];
   }
 

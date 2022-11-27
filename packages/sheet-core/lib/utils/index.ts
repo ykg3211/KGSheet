@@ -1,4 +1,4 @@
-import { selectedCellType } from '../core/base/base';
+import { SelectedCellType } from '../core/base/base';
 
 type numbers2 = [number, number];
 type numbers4 = [number, number, number, number];
@@ -38,12 +38,12 @@ export function combineRect([_x, _y, _w, _h]: numbers4, [x, y, w, h]: numbers4) 
 }
 
 // 合并所有的cell成一个大cell
-export function combineCell(cells: selectedCellType[]) {
-  const leftTopCell: selectedCellType = {
+export function combineCell(cells: SelectedCellType[]) {
+  const leftTopCell: SelectedCellType = {
     row: Infinity,
     column: Infinity,
   };
-  const rightBottomCell: selectedCellType = {
+  const rightBottomCell: SelectedCellType = {
     row: -Infinity,
     column: -Infinity,
   };

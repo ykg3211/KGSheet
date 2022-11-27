@@ -1,15 +1,13 @@
-// @ts-noche ck
-// 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
-
 import { PluginTypeEnum } from '..';
-import Base, { selectedCellType } from '../../base/base';
+import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { combineCell, combineRect, deepClone, judgeCross, judgeInner, nextTick } from '../../../utils';
+import { combineCell, combineRect, deepClone, judgeCross, judgeInner } from '../../../utils';
 import { EventConstant } from '../base/event';
 import KeyBoardPlugin from '../KeyBoardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 import { CellCornerScopeType, CellScopeType } from './EditCellPlugin';
 import { spanCell } from '../../../interfaces';
+import { createDefaultStyle } from '../../../utils/defaultData';
 
 type ArrowType =
   | OPERATE_KEYS_ENUM.ArrowDown
@@ -29,7 +27,7 @@ export enum selectTypeEnum {
   column = 'column',
 }
 
-export type selectedCellsType = selectedCellType[][];
+export type selectedCellsType = SelectedCellType[][];
 
 export default class SelectPowerPlugin {
   public name: string;
@@ -39,9 +37,9 @@ export default class SelectPowerPlugin {
   public selectedCells!: null | selectedCellsType;
   public cornerCells: CellScopeType | undefined;
 
-  public _selectCell!: selectedCellType | null; // 真正选中的格子
-  public _startCell: selectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
-  public _endCell: selectedCellType | null; // 下面的是用来画框框的 选择 结尾的格子
+  public _selectCell!: SelectedCellType | null; // 真正选中的格子
+  public _startCell: SelectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
+  public _endCell: SelectedCellType | null; // 下面的是用来画框框的 选择 结尾的格子
   public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
 
   // 用来标记是不是点击边框选中的一行或者一列
@@ -78,6 +76,21 @@ export default class SelectPowerPlugin {
 
   public get isSelect() {
     return this._startCell && this._endCell;
+  }
+
+  public getSelectCellsScope(): CellCornerScopeType | null {
+    if (this._startCell && this._endCell) {
+      return {
+        leftTopCell: this._startCell,
+        rightBottomCell: this._endCell,
+      };
+    }
+    return null;
+  }
+
+  public setSelectCellsScope({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
+    this._startCell = leftTopCell;
+    this._endCell = rightBottomCell;
   }
 
   public remove() {
@@ -122,7 +135,7 @@ export default class SelectPowerPlugin {
     ]);
   }
 
-  public getNextCellByMove(_cell: selectedCellType | null, arrow: ArrowType) {
+  public getNextCellByMove(_cell: SelectedCellType | null, arrow: ArrowType) {
     const { cell, isSpan } = this._this.getSpanCellByCell({ cell: _cell });
     if (cell && _cell) {
       if (isSpan) {
@@ -465,16 +478,38 @@ export default class SelectPowerPlugin {
     });
   }
 
+  public clearStyle() {
+    const scope = this.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const sourceData = this._this.getDataByScope(scope);
+    const targetData = deepClone(sourceData);
+
+    targetData.data.cells = targetData.data.cells.map((row) => {
+      return row.map((cell) => {
+        cell.style = createDefaultStyle();
+        return cell;
+      });
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData.data,
+      after_data: targetData.data,
+    });
+  }
+
   public calcBorder() {
     if (!(this._startCell && this._endCell)) {
       return null;
     }
 
-    let startCell: selectedCellType = {
+    let startCell: SelectedCellType = {
       row: Math.min(this._startCell.row, this._endCell.row),
       column: Math.min(this._startCell.column, this._endCell.column),
     };
-    let endCell: selectedCellType = {
+    let endCell: SelectedCellType = {
       row: Math.max(this._startCell.row, this._endCell.row),
       column: Math.max(this._startCell.column, this._endCell.column),
     };
@@ -489,7 +524,7 @@ export default class SelectPowerPlugin {
       h: _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
     };
 
-    const crossSpanCells: selectedCellType[] = [startCell, endCell];
+    const crossSpanCells: SelectedCellType[] = [startCell, endCell];
 
     renderSpanCellsArr.forEach((cell) => {
       if (
