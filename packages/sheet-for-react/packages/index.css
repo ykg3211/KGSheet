@@ -50,6 +50,7 @@
   border-radius: 5px;
   margin: 0 5px;
   cursor: pointer;
+  transition: .1s all ease-in-out;
 }
 .kgsheet_btn_label {
   margin-top: 3px;
@@ -98,4 +99,23 @@
 .kgsheet_empty_tool {
   width: 24px;
   padding: 0 5px;
+}
+
+
+
+/* antd */
+/* antd */
+/* antd */
+/* antd */
+/* antd */
+
+.ant-select-selector {
+  border-radius: 5px !important;
+  transition: .1s all ease-in-out !important;
+}
+.ant-select-selector:hover{
+  background-color: rgba(127, 127, 127, 0.2) !important;
+}
+.ant-select-selector:active{
+  background-color: rgba(127, 127, 127, 0.4) !important;
 }

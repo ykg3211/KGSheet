@@ -6,7 +6,12 @@ export class FontSize extends OptionBase {
     super(props);
     this.label = '字号';
     this.toolTip = '字号';
-    this.icon = 'sheet-iconcentre';
+    this.options = [9, 10, 11, 12, 14, 18, 24, 30, 36].map((num) => ({
+      label: num + '',
+      value: num + '',
+    }));
+    this.value = '12';
+    this.width = 62;
   }
 
   public click() {

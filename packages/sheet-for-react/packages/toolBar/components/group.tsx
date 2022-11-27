@@ -11,7 +11,7 @@ interface Props {
 export default function Group({ group }: Props) {
   const { toolBar, flag } = useContext(SheetContext);
 
-  const color = useMemo<string>(() => {
+  const fontColor = useMemo<string>(() => {
     if (toolBar) {
       return toolBar.getColor(colorType.black);
     }
@@ -22,7 +22,7 @@ export default function Group({ group }: Props) {
     return (
       <div className='kgsheet_toolBar_group_no_warp'>
         {group.tools.map((tool) => {
-          return <Tools style={{ height: '48px' }} color={color} tool={tool} key={tool.key} needLabel />;
+          return <Tools style={{ height: '48px' }} color={fontColor} tool={tool} key={tool.key} needLabel />;
         })}
       </div>
     );
@@ -39,7 +39,7 @@ export default function Group({ group }: Props) {
         return (
           <div className='kgsheet_toolBar_group_inline' key={_group.map((g) => g.key).join('_') + index}>
             {_group.map((tool, i) => {
-              return <Tools style={{ height: '24px' }} color={color} tool={tool} key={tool.key + '_' + i} />;
+              return <Tools style={{ height: '24px' }} color={fontColor} tool={tool} key={tool.key + '_' + i} />;
             })}
           </div>
         );

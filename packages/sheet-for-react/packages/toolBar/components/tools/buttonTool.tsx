@@ -13,7 +13,7 @@ interface Props {
 
 const ButtonTool = ({ tool, style, color, needLabel = false }: Props) => {
   return (
-    <Tooltip placement='bottom' title={tool.toolTip}>
+    <Tooltip placement='top' title={tool.toolTip}>
       <span
         style={Object.assign(
           {

@@ -14,6 +14,10 @@ export enum EventConstant {
   BLUR_FOCUS_RESET_PARAMS = 'blur_focus_reset_params',
 }
 
+export enum BusinessEventConstant {
+  MSG_BOX = 'message_box',
+}
+
 export default class BaseEvent {
   protected deps: Record<string, ((data?: any) => void)[]>;
   constructor() {

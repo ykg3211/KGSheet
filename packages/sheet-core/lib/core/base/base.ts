@@ -211,6 +211,61 @@ class Base extends Render {
     };
   }
 
+  public judgeCellsCrossSpanCell({
+    cellScope,
+    isInView = true,
+    except,
+  }: {
+    cellScope: CellCornerScopeType;
+    isInView?: boolean;
+    except?: string[];
+  }) {
+    let source: (spanCell & {
+      location: SelectedCellType;
+    })[] = [];
+    if (isInView) {
+      source = this.renderSpanCellsArr.map((spanCell) => ({
+        location: spanCell.location,
+        ...spanCell.cell,
+      }));
+    } else {
+      Object.keys(this._data.spanCells).forEach((key) => {
+        const [x, y] = key.split('_').map(Number);
+        source.push({
+          location: {
+            row: x,
+            column: y,
+          },
+          ...this._data.spanCells[key],
+        });
+      });
+    }
+
+    source = source.filter((spanCell) => {
+      return !(except || []).includes(spanCell.location.column + '_' + spanCell.location.row);
+    });
+
+    let isCross = false;
+    source.some((spanCell) => {
+      if (
+        judgeCross(
+          [spanCell.location.column, spanCell.location.row, spanCell.span[0], spanCell.span[1]],
+          [
+            cellScope.leftTopCell.column,
+            cellScope.leftTopCell.row,
+            cellScope.rightBottomCell.column - cellScope.leftTopCell.column + 1,
+            cellScope.rightBottomCell.row - cellScope.leftTopCell.row + 1,
+          ],
+        )
+      ) {
+        isCross = true;
+        return true;
+      }
+      return false;
+    });
+    return isCross;
+  }
+
   /**
    * getCellByPoint
    * 通过相对于视图的坐标获取当前点击的单元格

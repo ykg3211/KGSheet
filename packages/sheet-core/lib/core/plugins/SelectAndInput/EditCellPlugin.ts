@@ -1,25 +1,18 @@
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 import { PluginTypeEnum } from '..';
-import Base, { BaseDataType, SelectedCellType } from '../../base/base';
+import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { rectType } from '../../base/drawLayer';
 import { cell, spanCell } from '../../../interfaces';
-import { combineCell, debounce, deepClone, judgeCross, judgeOver } from '../../../utils';
+import { combineCell, deepClone, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
-import { EventConstant } from '../base/event';
+import { BusinessEventConstant, EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyBoardPlugin from '../KeyBoardPlugin';
 import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
 import SelectPowerPlugin, { selectTypeEnum } from './SelectPowerPlugin';
-import { BusinessEventConstant } from '../base/businessEvent';
 import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
-
-export interface CellCornerScopeType {
-  leftTopCell: SelectedCellType;
-  rightBottomCell: SelectedCellType;
-}
-
 export interface CellCornerScopeType {
   leftTopCell: SelectedCellType;
   rightBottomCell: SelectedCellType;
@@ -38,7 +31,7 @@ export default class EditCellPlugin {
   private startCopyCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格边框的标志， 用处是剪切单元格。
 
   private startRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
-  private endRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角开始的标志， 用处就是有规则的扩展单元格
+  private endRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角结束的标志， 用处就是有规则的扩展单元格
   private currentCell!: null | SelectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
 
@@ -675,18 +668,24 @@ export default class EditCellPlugin {
       return;
     }
 
+    const exceptSpanCells = this._this.getSpanCellByCell({
+      cellScope: sourceCells,
+      isInView: false,
+    }).cell;
+
     if (
-      this._this.getSpanCellByCell({
+      this._this.judgeCellsCrossSpanCell({
         cellScope: {
           leftTopCell: targetCells.leftTopCell,
           rightBottomCell: targetCells.rightBottomCell,
         },
+        except: [sourceCells],
         isInView: false,
-      }).isSpan
+      })
     ) {
       this._this.emit(BusinessEventConstant.MSG_BOX, {
         type: 'warning',
-        message: '123',
+        message: '无法拖拽，拖拽的目标区域有合并的单元格',
       });
       this._this.devMode && console.log('spancell');
       return;
@@ -754,13 +753,13 @@ export default class EditCellPlugin {
     }
 
     if (
-      this._this.getSpanCellByCell({
+      this._this.judgeCellsCrossSpanCell({
         cellScope: {
           leftTopCell: this.endRegularCell.leftTopCell,
           rightBottomCell: this.endRegularCell.rightBottomCell,
         },
         isInView: false,
-      }).isSpan
+      })
     ) {
       this._this.emit(BusinessEventConstant.MSG_BOX, {
         type: 'warning',

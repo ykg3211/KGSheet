@@ -4,7 +4,9 @@ import Container from './sheetContainer';
 import Tools from './toolBar';
 import './icons/iconfont.js';
 import Excel, { ToolBar } from 'kgsheet';
+import { BusinessEventConstant } from 'kgsheet/dist/core/plugins/base/event';
 import 'antd/dist/antd.css';
+import message from 'antd/lib/message';
 
 interface Sheet {
   flag: number;
@@ -33,6 +35,12 @@ function Main() {
   useEffect(() => {
     if (sheet) {
       sheet.on('refresh', refresh);
+      sheet.on(BusinessEventConstant.MSG_BOX, ({ type, message: msg }) => {
+        // @ts-ignore
+        message?.[type]?.({
+          content: msg,
+        });
+      });
     }
   }, [sheet]);
 

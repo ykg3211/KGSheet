@@ -2,8 +2,8 @@ import { ToolsProps } from '../../interface';
 import { BaseTool, ToolTypeEnum } from '.';
 
 interface OptionsType {
-  value: '';
-  label: '';
+  value: string;
+  label: string;
 }
 
 export default class OptionBase extends BaseTool {

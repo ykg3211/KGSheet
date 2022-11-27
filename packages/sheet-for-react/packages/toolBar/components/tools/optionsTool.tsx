@@ -1,34 +1,60 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import Icon from '../../../icons/icon';
-import { Tooltip } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
+import { SheetContext } from '../../..';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 
 interface Props {
   tool: BaseTool;
-  style: React.CSSProperties;
   color: string;
-  needLabel?: boolean;
+  style: React.CSSProperties;
 }
 
-const OptionsTool = ({ tool, style, color, needLabel = false }: Props) => {
+const OptionsTool = ({ tool, style, color }: Props) => {
+  const { toolBar, flag } = useContext(SheetContext);
+
+  const backgroundColor = useMemo<string>(() => {
+    if (toolBar) {
+      return toolBar.getColor(colorType.white);
+    }
+    return 'rgba(0,0,0,0)';
+  }, [flag]);
+
   return (
-    <Tooltip placement='bottom' title={tool.toolTip}>
-      <span
-        style={Object.assign(
+    <Tooltip placement='top' title={tool.toolTip}>
+      <Select
+        size='small'
+        bordered={false}
+        defaultValue='lucy'
+        style={Object.assign({ width: tool.width + 'px', color }, style)}
+        dropdownStyle={{
+          backgroundColor: backgroundColor,
+        }}
+        onChange={() => {
+          //
+        }}
+        options={[
           {
-            ...style,
-            color,
+            value: 'jack',
+            label: 'Jack',
           },
-          tool.style,
-        )}
-        className={'kgsheet_btn ' + tool.class}
-        onClick={() => {
-          tool.click();
-        }}>
-        <Icon icon={tool.icon} color={color}></Icon>
-        {needLabel && <span className='kgsheet_btn_label'>{tool.label}</span>}
-      </span>
+          {
+            value: 'lucy',
+            label: 'Lucy',
+          },
+          {
+            value: 'disabled',
+            disabled: true,
+            label: 'Disabled',
+          },
+          {
+            value: 'Yiminghe',
+            label: 'yiminghe',
+          },
+        ]}
+      />
     </Tooltip>
   );
 };

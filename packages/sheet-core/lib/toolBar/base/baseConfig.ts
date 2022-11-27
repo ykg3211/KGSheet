@@ -8,14 +8,7 @@ const baseToolBarConfig: BarSettingType = [
   },
   {
     lines: 2,
-    tools: [
-      ToolsEnum.REVERT,
-      ToolsEnum.ANTI_REVERT,
-      ToolsEnum.REVERT,
-      ToolsEnum.ANTI_REVERT,
-      ToolsEnum.DARK_MODE,
-      ToolsEnum.ANTI_REVERT,
-    ],
+    tools: [ToolsEnum.FONT_SIZE, ToolsEnum.DARK_MODE],
   },
   // {
   //   lines: 1,

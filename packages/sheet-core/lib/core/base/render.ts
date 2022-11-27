@@ -124,7 +124,6 @@ export default class Render extends DrawLayer {
   }
   public set scrollLeft(v: number) {
     this._scrollLeft = v;
-    console.log(v);
     // 这是为了兼容触控板快速滚动并且急停的时候出现的未渲染的问题
     setTimeout(() => {
       this.render();
