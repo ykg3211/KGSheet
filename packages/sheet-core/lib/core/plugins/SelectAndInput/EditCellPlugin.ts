@@ -673,23 +673,23 @@ export default class EditCellPlugin {
       isInView: false,
     }).cells;
 
-    // if (
-    //   this._this.judgeCellsCrossSpanCell({
-    //     cellScope: {
-    //       leftTopCell: targetCells.leftTopCell,
-    //       rightBottomCell: targetCells.rightBottomCell,
-    //     },
-    //     except: [sourceCells],
-    //     isInView: false,
-    //   })
-    // ) {
-    //   this._this.emit(BusinessEventConstant.MSG_BOX, {
-    //     type: 'warning',
-    //     message: '无法拖拽，拖拽的目标区域有合并的单元格',
-    //   });
-    //   this._this.devMode && console.log('spancell');
-    //   return;
-    // }
+    if (
+      this._this.judgeCellsCrossSpanCell({
+        cellScope: {
+          leftTopCell: targetCells.leftTopCell,
+          rightBottomCell: targetCells.rightBottomCell,
+        },
+        except: exceptSpanCells.map((span) => span.column + '_' + span.row),
+        isInView: false,
+      })
+    ) {
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: '无法拖拽，拖拽的目标区域有合并的单元格',
+      });
+      this._this.devMode && console.log('spancell');
+      return;
+    }
 
     const SourceData = this._this.getDataByScope({
       leftTopCell: sourceCells.leftTopCell,
@@ -763,7 +763,7 @@ export default class EditCellPlugin {
     ) {
       this._this.emit(BusinessEventConstant.MSG_BOX, {
         type: 'warning',
-        message: '123',
+        message: '目标区域包含合并单元格，可取消合并单元格后重试。',
       });
       this._this.devMode && console.log('spancell');
       return;

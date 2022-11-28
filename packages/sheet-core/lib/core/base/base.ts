@@ -165,8 +165,8 @@ class Base extends Render {
     let h = 1;
     if (!cell && cellScope) {
       cell = cellScope.leftTopCell;
-      w = cellScope.rightBottomCell.column - cellScope.rightBottomCell.column + 1;
-      h = cellScope.rightBottomCell.row - cellScope.rightBottomCell.row + 1;
+      w = cellScope.rightBottomCell.column - cellScope.leftTopCell.column + 1;
+      h = cellScope.rightBottomCell.row - cellScope.leftTopCell.row + 1;
     }
     let source: (spanCell & {
       location: SelectedCellType;
