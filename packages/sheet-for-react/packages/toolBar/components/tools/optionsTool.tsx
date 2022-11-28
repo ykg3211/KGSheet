@@ -5,6 +5,7 @@ import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
 import { SheetContext } from '../../..';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
+import Popover from '../popover';
 
 interface Props {
   tool: BaseTool;
@@ -24,6 +25,9 @@ const OptionsTool = ({ tool, style, color }: Props) => {
 
   return (
     <Tooltip placement='top' title={tool.toolTip}>
+      <Popover trigger={<div>1231</div>}>
+        <div>1231</div>
+      </Popover>
       <Select
         size='small'
         bordered={false}
