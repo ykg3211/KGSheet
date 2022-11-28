@@ -388,13 +388,13 @@ export default class EditCellPlugin {
   }
 
   private initEditBoxDom(cell: SelectedCellType) {
-    const { cell: realCell } = this._this.getSpanCellByCell({ cell });
-    if (!realCell) {
+    const { cells: realCell } = this._this.getSpanCellByCell({ cell });
+    if (realCell.length === 0) {
       return;
     }
     if (this._this.canvasDom) {
       this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
-      this.editCell = realCell;
+      this.editCell = realCell[0];
 
       const position = this._this.getRectByCell(this.editCell);
 
@@ -671,25 +671,25 @@ export default class EditCellPlugin {
     const exceptSpanCells = this._this.getSpanCellByCell({
       cellScope: sourceCells,
       isInView: false,
-    }).cell;
+    }).cells;
 
-    if (
-      this._this.judgeCellsCrossSpanCell({
-        cellScope: {
-          leftTopCell: targetCells.leftTopCell,
-          rightBottomCell: targetCells.rightBottomCell,
-        },
-        except: [sourceCells],
-        isInView: false,
-      })
-    ) {
-      this._this.emit(BusinessEventConstant.MSG_BOX, {
-        type: 'warning',
-        message: '无法拖拽，拖拽的目标区域有合并的单元格',
-      });
-      this._this.devMode && console.log('spancell');
-      return;
-    }
+    // if (
+    //   this._this.judgeCellsCrossSpanCell({
+    //     cellScope: {
+    //       leftTopCell: targetCells.leftTopCell,
+    //       rightBottomCell: targetCells.rightBottomCell,
+    //     },
+    //     except: [sourceCells],
+    //     isInView: false,
+    //   })
+    // ) {
+    //   this._this.emit(BusinessEventConstant.MSG_BOX, {
+    //     type: 'warning',
+    //     message: '无法拖拽，拖拽的目标区域有合并的单元格',
+    //   });
+    //   this._this.devMode && console.log('spancell');
+    //   return;
+    // }
 
     const SourceData = this._this.getDataByScope({
       leftTopCell: sourceCells.leftTopCell,

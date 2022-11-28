@@ -136,9 +136,12 @@ export default class SelectPowerPlugin {
   }
 
   public getNextCellByMove(_cell: SelectedCellType | null, arrow: ArrowType) {
-    const { cell, isSpan } = this._this.getSpanCellByCell({ cell: _cell });
-    if (cell && _cell) {
+    const { cells, isSpan } = this._this.getSpanCellByCell({ cell: _cell });
+    if (cells && _cell) {
+      const cell = deepClone(_cell);
       if (isSpan) {
+        cell.column = cells[0].column;
+        cell.row = cells[0].row;
         const { span, content } = this._this.getSpanCell(cell) as spanCell;
         const [r, c] = content.split('_').map(Number);
 
@@ -184,8 +187,10 @@ export default class SelectPowerPlugin {
       cell.row = Math.max(cell.row, 0);
       cell.column = Math.min(cell.column, this._this._data.w.length - 1);
       cell.row = Math.min(cell.row, this._this._data.h.length - 1);
+
+      return cell;
     }
-    return cell;
+    return _cell;
   }
 
   private registerKeyboardEvent() {

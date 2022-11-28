@@ -158,7 +158,7 @@ class Base extends Render {
     if (!cell && !cellScope) {
       return {
         isSpan: false,
-        cell: cell || null,
+        cells: cell ? [cell] : [],
       };
     }
     let w = 1;
@@ -189,7 +189,7 @@ class Base extends Render {
       });
     }
     let isSpan = false;
-    let result: null | SelectedCellType = cell as SelectedCellType;
+    let result: SelectedCellType[] = [];
     source.forEach((c) => {
       if (
         judgeCross(
@@ -198,16 +198,16 @@ class Base extends Render {
         )
       ) {
         isSpan = true;
-        result = {
+        result.push({
           row: c.location.row,
           column: c.location.column,
-        };
+        });
       }
     });
 
     return {
       isSpan,
-      cell: result,
+      cells: result,
     };
   }
 
