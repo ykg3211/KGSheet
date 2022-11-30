@@ -496,7 +496,9 @@ export default class EditCellPlugin {
       },
       innerFunc: handleMouseDownCursor.bind(this),
       outerFunc: () => {
-        document.body.style.cursor = 'default';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'default';
+        }
       },
     });
   }
@@ -504,9 +506,13 @@ export default class EditCellPlugin {
     // 处理鼠标悬浮改变样式的。  边框和右下角
     const handleOverCursor = (e: MouseEvent, [type, point]: [string, [number, number]]) => {
       if (type === 'grab') {
-        document.body.style.cursor = 'cell';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'cell';
+        }
       } else if (type === 'cell') {
-        document.body.style.cursor = 'grab';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'grab';
+        }
       }
     };
 
@@ -517,7 +523,9 @@ export default class EditCellPlugin {
       },
       innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
-        document.body.style.cursor = 'default';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'default';
+        }
       },
     });
 

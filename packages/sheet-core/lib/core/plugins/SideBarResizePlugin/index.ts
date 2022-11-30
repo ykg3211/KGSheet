@@ -134,7 +134,9 @@ export default class SideBarResizePlugin {
       },
       { isLeft }: { isLeft: boolean },
     ) => {
-      document.body.style.cursor = isLeft ? 'ns-resize' : 'ew-resize';
+      if (this._this.canvasDom) {
+        this._this.canvasDom.style.cursor = isLeft ? 'ns-resize' : 'ew-resize';
+      }
     };
 
     this._this.setEvent(EventConstant.MOUSE_MOVE, {
@@ -151,7 +153,9 @@ export default class SideBarResizePlugin {
       // @ts-ignore
       innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
-        document.body.style.cursor = 'default';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'default';
+        }
       },
     });
   }

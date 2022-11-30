@@ -108,11 +108,15 @@ export default class ScrollPlugin {
     const handleOverCursor = (e: MouseEvent) => {
       // @ts-ignore
       if (judgeOver([e._mouseX, e._mouseY], this.Xxywh)) {
-        document.body.style.cursor = 'grab';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'grab';
+        }
       }
       // @ts-ignore
       if (judgeOver([e._mouseX, e._mouseY], this.Yxywh)) {
-        document.body.style.cursor = 'grab';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'grab';
+        }
       }
     };
 
@@ -133,7 +137,9 @@ export default class ScrollPlugin {
       },
       innerFunc: handleOverCursor.bind(this),
       outerFunc: () => {
-        document.body.style.cursor = 'default';
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'default';
+        }
       },
     });
 

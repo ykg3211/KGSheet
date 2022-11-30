@@ -1,9 +1,9 @@
 // @ts-noc heck
 // 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
 
-import { PluginTypeEnum } from "..";
-import Base from "../../base/base";
-import { EventConstant } from "../base/event";
+import { PluginTypeEnum } from '..';
+import Base from '../../base/base';
+import { EventConstant } from '../base/event';
 
 export default class ClickPlugin {
   private _this: Base;
@@ -20,20 +20,20 @@ export default class ClickPlugin {
 
   private handleMouseDown() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_DOWN, e)
+      this._this.emit(EventConstant.MOUSE_DOWN, e);
       this._this.dispatchEvent(EventConstant.MOUSE_DOWN, e);
-    }
-    document.body.addEventListener('mousedown', handler);
+    };
+    this._this.canvasDom?.addEventListener('mousedown', handler);
 
     this._this.on(EventConstant.DESTROY, () => {
-      document.body.removeEventListener('mousedown', handler);
+      this._this.canvasDom?.removeEventListener('mousedown', handler);
     });
   }
   private handleMouseUp() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_UP, e)
+      this._this.emit(EventConstant.MOUSE_UP, e);
       this._this.dispatchEvent(EventConstant.MOUSE_UP, e);
-    }
+    };
     document.body.addEventListener('mouseup', handler);
 
     this._this.on(EventConstant.DESTROY, () => {
@@ -42,25 +42,25 @@ export default class ClickPlugin {
   }
   private handleMouseClick() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.CLICK, e)
+      this._this.emit(EventConstant.CLICK, e);
       this._this.dispatchEvent(EventConstant.CLICK, e);
-    }
-    document.body.addEventListener('click', handler);
+    };
+    this._this.canvasDom?.addEventListener('click', handler);
 
     this._this.on(EventConstant.DESTROY, () => {
-      document.body.removeEventListener('click', handler);
+      this._this.canvasDom?.removeEventListener('click', handler);
     });
   }
 
   private handleDBMouseClick() {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.DB_CLICK, e)
+      this._this.emit(EventConstant.DB_CLICK, e);
       this._this.dispatchEvent(EventConstant.DB_CLICK, e);
-    }
-    document.body.addEventListener('dblclick', handler);
+    };
+    this._this.canvasDom?.addEventListener('dblclick', handler);
 
     this._this.on(EventConstant.DESTROY, () => {
-      document.body.removeEventListener('dblclick', handler);
+      this._this.canvasDom?.removeEventListener('dblclick', handler);
     });
   }
 }
