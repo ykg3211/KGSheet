@@ -1,4 +1,4 @@
-import { CellTypeEnum, renderBarProps, renderCellProps } from '../../interfaces';
+import { CellTypeEnum, renderCellProps, renderCellPropsNoLocation } from '../../interfaces';
 import BaseEvent, { EventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
 export type rectType = [number, number, number, number];
@@ -43,7 +43,7 @@ export default class DrawLayer extends BaseEvent {
   public ctx: CanvasRenderingContext2D | null;
   public canvasDom: HTMLCanvasElement | null;
   protected components: Partial<
-    Record<keyof CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellProps) => void>
+    Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellPropsNoLocation) => void>
   >;
   public darkMode: boolean;
   constructor() {
@@ -74,8 +74,7 @@ export default class DrawLayer extends BaseEvent {
   }
 
   protected handleDefaultComponents() {
-    //@ts-ignore
-    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: renderCellProps) => {
+    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: renderCellPropsNoLocation) => {
       const { point, cell, w, h } = data;
 
       this.initStrokeStyle(ctx);
@@ -93,20 +92,11 @@ export default class DrawLayer extends BaseEvent {
       ctx.textAlign = 'left';
       let left = point[0];
       if (cell.style.textAlign) {
-        switch (cell.style.textAlign) {
-          case 'center':
-            ctx.textAlign = 'center';
-            left += w / 2;
-            break;
-          case 'left':
-            ctx.textAlign = 'left';
-            break;
-          case 'right':
-            ctx.textAlign = 'right';
-            left += w;
-            break;
-          default:
-            break;
+        ctx.textAlign = cell.style.textAlign;
+        if (cell.style.textAlign === 'center') {
+          left += w / 2;
+        } else if (cell.style.textAlign === 'right') {
+          left += w;
         }
       }
 
@@ -130,7 +120,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx.strokeRect(...v);
   }
 
-  private drawBorder(props: renderCellProps | renderBarProps) {
+  private drawBorder(props: renderCellPropsNoLocation) {
     if (!this.ctx) {
       return;
     }
@@ -149,11 +139,10 @@ export default class DrawLayer extends BaseEvent {
     this.ctx.stroke();
   }
 
-  protected drawCell(props: renderCellProps | renderBarProps, needBorder = false) {
+  protected drawCell(props: renderCellPropsNoLocation, needBorder = false) {
     if (!this.ctx) {
       return;
     }
-    //@ts-ignore
     const renderFunc = this.components[props.cell.type];
     if (renderFunc) {
       renderFunc(this.ctx, props);
@@ -163,7 +152,7 @@ export default class DrawLayer extends BaseEvent {
     }
   }
 
-  protected drawLeftTopCell(props: renderCellProps | renderBarProps) {
+  protected drawLeftTopCell(props: renderCellPropsNoLocation) {
     if (!this.ctx) {
       return;
     }

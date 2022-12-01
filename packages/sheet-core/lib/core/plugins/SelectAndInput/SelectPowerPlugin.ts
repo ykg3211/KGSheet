@@ -3,8 +3,8 @@ import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { combineCell, combineRect, deepClone, judgeCross, judgeInner } from '../../../utils';
 import { EventConstant } from '../base/event';
-import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import KeyboardPlugin from '../KeyboardPlugin';
+import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from './EditCellPlugin';
 import { spanCell } from '../../../interfaces';
 import { createDefaultStyle } from '../../../utils/defaultData';
@@ -32,7 +32,7 @@ export type selectedCellsType = SelectedCellType[][];
 export default class SelectPowerPlugin {
   public name: string;
   private _this: Base;
-  private KeyboardPlugin!: KeyBoardPlugin;
+  private KeyboardPlugin!: KeyboardPlugin;
 
   public selectedCells!: null | selectedCellsType;
   public cornerCells: CellCornerScopeType | undefined;
@@ -194,9 +194,9 @@ export default class SelectPowerPlugin {
   }
 
   private registerKeyboardEvent() {
-    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
-    if (KeyBoardPlugin) {
-      this.KeyboardPlugin = KeyBoardPlugin;
+    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
+    if (KeyboardPlugin) {
+      this.KeyboardPlugin = KeyboardPlugin;
 
       this.initSingleArrow();
       this.initCombineArrow();

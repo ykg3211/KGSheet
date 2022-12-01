@@ -1,64 +1,28 @@
-import React, { useContext, useMemo } from 'react';
-import Icon from '../../../icons/icon';
-import { Select, Tooltip } from 'antd';
-import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
+import React, { useContext, useRef } from 'react';
+import { Tooltip } from 'antd';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
 import { SheetContext } from '../../..';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 import Popover from '../popover';
+import { TooltipPlacement } from 'antd/es/tooltip';
 
 interface Props {
   tool: BaseTool;
-  color: string;
+  toolTipPlacement?: TooltipPlacement;
   style: React.CSSProperties;
 }
 
-const OptionsTool = ({ tool, style, color }: Props) => {
-  const { toolBar, flag } = useContext(SheetContext);
-
-  const backgroundColor = useMemo<string>(() => {
-    if (toolBar) {
-      return toolBar.getColor(colorType.white);
-    }
-    return 'rgba(0,0,0,0)';
-  }, [flag]);
-
+const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
+  const { color: getColor } = useContext(SheetContext);
+  const ref = useRef(null);
+  console.log(tool);
   return (
-    <Tooltip placement='top' title={tool.toolTip}>
-      <Popover trigger={<div>1231</div>}>
-        <div>1231</div>
+    <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
+      <Popover
+        color={getColor(colorType.white)}
+        triggerElm={<div style={{ color: getColor(colorType.black) }}>1231</div>}>
+        <div style={{ color: getColor(colorType.black) }}>1231</div>
       </Popover>
-      <Select
-        size='small'
-        bordered={false}
-        defaultValue='lucy'
-        style={Object.assign({ width: tool.width + 'px', color }, style)}
-        dropdownStyle={{
-          backgroundColor: backgroundColor,
-        }}
-        onChange={() => {
-          //
-        }}
-        options={[
-          {
-            value: 'jack',
-            label: 'Jack',
-          },
-          {
-            value: 'lucy',
-            label: 'Lucy',
-          },
-          {
-            value: 'disabled',
-            disabled: true,
-            label: 'Disabled',
-          },
-          {
-            value: 'Yiminghe',
-            label: 'yiminghe',
-          },
-        ]}
-      />
     </Tooltip>
   );
 };

@@ -168,10 +168,13 @@ class Base extends Render {
       w = cellScope.rightBottomCell.column - cellScope.leftTopCell.column + 1;
       h = cellScope.rightBottomCell.row - cellScope.leftTopCell.row + 1;
     }
-    let source: (spanCell & {
-      location: SelectedCellType;
-    })[] = [];
+    let source: Array<
+      spanCell & {
+        location: SelectedCellType;
+      }
+    > = [];
     if (isInView) {
+      // @ts-ignore
       source = this.renderSpanCellsArr.map((spanCell) => ({
         location: spanCell.location,
         ...spanCell.cell,
@@ -224,6 +227,7 @@ class Base extends Render {
       location: SelectedCellType;
     })[] = [];
     if (isInView) {
+      // @ts-ignore
       source = this.renderSpanCellsArr.map((spanCell) => ({
         location: spanCell.location,
         ...spanCell.cell,

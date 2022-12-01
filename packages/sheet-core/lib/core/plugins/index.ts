@@ -8,13 +8,14 @@ import SideBarResizePlugin from './SideBarResizePlugin';
 import SelectPowerPlugin from './SelectAndInput/SelectPowerPlugin';
 import EditCellPlugin from './SelectAndInput/EditCellPlugin';
 import RightClickPlugin from './RightClickPlugin';
-import KeyBoardPlugin from './KeyBoardPlugin';
+import KeyboardPlugin from './KeyboardPlugin';
 import BaseEventStack from './EventStack/base';
 import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
+import FontEditPlugin from './FontEditPlugin';
 
 export enum PluginTypeEnum {
-  KeyBoardPlugin = 'KeyBoardPlugin',
+  KeyboardPlugin = 'KeyboardPlugin',
   EventDispatch = 'EventDispatch',
   EventStack = 'EventStack',
   ExcelBaseFunction = 'ExcelBaseFunction',
@@ -27,10 +28,11 @@ export enum PluginTypeEnum {
   CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
   BlurFocusReset = 'BlurFocusReset',
+  FontEditPlugin = 'FontEditPlugin',
 }
 
 export interface PluginType {
-  [PluginTypeEnum.KeyBoardPlugin]?: KeyBoardPlugin;
+  [PluginTypeEnum.KeyboardPlugin]?: KeyboardPlugin;
   [PluginTypeEnum.EventDispatch]?: EventDispatch;
   [PluginTypeEnum.EventStack]?: BaseEventStack;
   [PluginTypeEnum.ExcelBaseFunction]?: ExcelBaseFunction;
@@ -43,6 +45,7 @@ export interface PluginType {
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
+  [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
 }
 
 export interface BasePluginType {
@@ -58,7 +61,7 @@ export default class Plugins {
     // 全局的交互事件收集派发插件， 必须在第一个
     this.register(EventDispatch);
     // 全局的键盘事件派发插件
-    this.register(KeyBoardPlugin);
+    this.register(KeyboardPlugin);
     // 全局的编辑撤销翻撤销事件栈。
     this.register(BaseEventStack);
     this.register(ExcelBaseFunction);

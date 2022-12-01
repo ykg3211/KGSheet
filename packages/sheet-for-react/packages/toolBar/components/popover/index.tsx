@@ -1,16 +1,17 @@
-import React from 'react';
-import { Popover as _Propover } from 'antd';
+import React, { useRef } from 'react';
+import { Popover as _Propover, PopoverProps } from 'antd';
 
-interface Props {
+interface Props extends PopoverProps {
   children: JSX.Element;
-  trigger: JSX.Element;
+  triggerElm: JSX.Element;
 }
 const Popover = (props: Props) => {
-  const { children, trigger, ...rest } = props;
+  const { children, triggerElm, ...rest } = props;
+  const popover = useRef(null);
 
   return (
-    <_Propover placement='bottomLeft' content={children} trigger='click' {...rest}>
-      {trigger}
+    <_Propover ref={popover} placement='bottomLeft' content={children} trigger='click' {...rest}>
+      {triggerElm}
     </_Propover>
   );
 };

@@ -22,11 +22,9 @@ export interface ToolsProps {
 
 export interface ToolsGroupConfig<T = BaseTool> {
   lines: number;
-  tools: T[];
+  tools: T[][];
 }
 
-export interface ToolsGroupType<T = BaseTool> {
+export interface ToolsGroupType extends ToolsGroupConfig {
   key: string;
-  lines: number;
-  tools: T[];
 }

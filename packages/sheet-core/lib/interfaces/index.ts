@@ -4,12 +4,13 @@ export enum CellTypeEnum {
   richText = 'richText',
   number = 'number',
   date = 'date',
-  money = 'money'
+  money = 'money',
 }
 
 export interface cellStyle {
   textAlign?: align;
   backgroundColor?: string;
+  fontWeight?: string;
   fontColor?: string;
   fontSize?: number;
   font?: string;
@@ -25,7 +26,7 @@ export interface rows {
 }
 
 export interface spanCell extends cell {
-  span: [number, number] // w, h
+  span: [number, number]; // w, h
 }
 
 export interface excelConfig {
@@ -33,23 +34,18 @@ export interface excelConfig {
   h: number[];
   cells: cell[][];
   //               'row_column'
-  spanCells: Record<string, spanCell>
+  spanCells: Record<string, spanCell>;
 }
 
 export interface renderCellProps {
   location: {
-    row: number,
-    column: number,
-  },
+    row: number;
+    column: number;
+  };
   point: number[];
   cell: spanCell;
   w: number;
   h: number;
 }
 
-export interface renderBarProps {
-  point: number[];
-  cell: cell;
-  w: number;
-  h: number;
-}
+export type renderCellPropsNoLocation = Pick<renderCellProps, 'point' | 'cell' | 'w' | 'h'>;

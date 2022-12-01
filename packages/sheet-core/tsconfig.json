@@ -24,8 +24,5 @@
     "isolatedModules": true,
     "baseUrl": "./",
     "sourceMap": true,
-  },
-  "include": [
-    "lib"
-  ]
+  }
 }

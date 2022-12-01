@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Icon from '../../../icons/icon';
 import { Tooltip } from 'antd';
-import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
+import { SheetContext } from '../../..';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
+import { TooltipPlacement } from 'antd/es/tooltip';
 
 interface Props {
   tool: BaseTool;
   style: React.CSSProperties;
-  color: string;
+  toolTipPlacement?: TooltipPlacement;
   needLabel?: boolean;
 }
 
-const ButtonTool = ({ tool, style, color, needLabel = false }: Props) => {
+const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }: Props) => {
+  const { color } = useContext(SheetContext);
   return (
-    <Tooltip placement='top' title={tool.toolTip}>
+    <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
       <span
         style={Object.assign(
           {
             ...style,
-            color,
+            color: color(colorType.black),
           },
           tool.style,
         )}
@@ -26,7 +29,7 @@ const ButtonTool = ({ tool, style, color, needLabel = false }: Props) => {
         onClick={() => {
           tool.click();
         }}>
-        <Icon icon={tool.icon} color={color}></Icon>
+        <Icon icon={tool.icon} color={color(colorType.black)}></Icon>
         {needLabel && <span className='kgsheet_btn_label'>{tool.label}</span>}
       </span>
     </Tooltip>

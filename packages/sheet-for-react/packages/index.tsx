@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useState } from 'react';
 import Container from './sheetContainer';
 import Tools from './toolBar';
@@ -7,9 +7,11 @@ import Excel, { ToolBar } from 'kgsheet';
 import { BusinessEventConstant } from 'kgsheet/dist/core/plugins/base/event';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 
 interface Sheet {
   flag: number;
+  color: (name: colorType) => string;
   sheet: Excel;
   setSheet: (v: Excel) => void;
   toolBar: ToolBar;
@@ -19,6 +21,7 @@ interface Sheet {
 export const SheetContext = React.createContext<Sheet>({
   flag: 0,
   sheet: null,
+  color: (name: colorType) => name,
   setSheet: () => {},
   toolBar: null,
   setToolBar: () => {},
@@ -31,6 +34,17 @@ function Main() {
   const refresh = () => {
     setFlag((v) => v + 1);
   };
+
+  const getColor = useCallback(
+    (v: colorType) => {
+      if (!toolBar) {
+        return v;
+      }
+
+      return toolBar.getColor(v);
+    },
+    [toolBar],
+  );
 
   useEffect(() => {
     if (sheet) {
@@ -68,6 +82,7 @@ function Main() {
     <SheetContext.Provider
       value={{
         flag,
+        color: getColor,
         sheet: sheet,
         setSheet: handleSheet,
         toolBar: toolBar,

@@ -5,8 +5,8 @@ import Base, { BaseDataType } from '../../base/base';
 import { RenderZIndex } from '../../base/constant';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
-import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import KeyboardPlugin from '../KeyboardPlugin';
+import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 
 /**
@@ -17,7 +17,7 @@ import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 export default class CopyAndPaste {
   public name: string;
   private _this: Base;
-  private KeyBoardPlugin!: KeyBoardPlugin;
+  private KeyboardPlugin!: KeyboardPlugin;
   private SelectPlugin!: SelectPowerPlugin;
   private ExcelBaseFunction!: ExcelBaseFunction;
   constructor(_this: Base) {
@@ -34,9 +34,9 @@ export default class CopyAndPaste {
       return;
     }
 
-    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
-    if (KeyBoardPlugin) {
-      this.KeyBoardPlugin = KeyBoardPlugin;
+    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
+    if (KeyboardPlugin) {
+      this.KeyboardPlugin = KeyboardPlugin;
     } else {
       console.error('CommonInputPlugin 依赖于 KeyboardPlugin, 请正确注册插件!');
       return;
@@ -65,7 +65,7 @@ export default class CopyAndPaste {
       }
     };
 
-    this.KeyBoardPlugin.register({
+    this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.c],
       callbacks: [
@@ -75,7 +75,7 @@ export default class CopyAndPaste {
       ],
     });
 
-    this.KeyBoardPlugin.register({
+    this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.v],
       callbacks: [

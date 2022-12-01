@@ -1,8 +1,8 @@
 import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
 import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
-import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import KeyboardPlugin from '../KeyboardPlugin';
+import { BASE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { EventConstant } from '../base/event';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
@@ -18,7 +18,7 @@ export default class BaseEventStack {
   private REVERSE_STACK: BaseEventType[][];
   public _this: Base;
   public name: string;
-  private KeyboardPlugin!: KeyBoardPlugin;
+  private KeyboardPlugin!: KeyboardPlugin;
 
   constructor(_this: Base) {
     this._this = _this;
@@ -31,9 +31,9 @@ export default class BaseEventStack {
   }
 
   private initPlugin() {
-    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
-    if (KeyBoardPlugin) {
-      this.KeyboardPlugin = KeyBoardPlugin;
+    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
+    if (KeyboardPlugin) {
+      this.KeyboardPlugin = KeyboardPlugin;
 
       this.KeyboardPlugin.register({
         baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],

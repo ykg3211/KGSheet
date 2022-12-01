@@ -25,7 +25,7 @@ interface KeyBoardEventDev {
   >;
 }
 
-export default class KeyBoardPlugin {
+export default class KeyboardPlugin {
   private _this: Base;
   public name: string;
   private baseKeyDownListener: (e: KeyboardEvent) => void;
@@ -34,7 +34,7 @@ export default class KeyBoardPlugin {
   public OperateState!: Record<BASE_KEYS_ENUM, boolean>;
 
   constructor(_this: Base) {
-    this.name = PluginTypeEnum.KeyBoardPlugin;
+    this.name = PluginTypeEnum.KeyboardPlugin;
     this._this = _this;
     this.initState();
     this.devs = {};
@@ -63,7 +63,7 @@ export default class KeyBoardPlugin {
   }
 
   private remove() {
-    this._this.devMode && console.log('remove: KeyBoardPlugin');
+    this._this.devMode && console.log('remove: KeyboardPlugin');
     document.body.removeEventListener('keydown', this.baseKeyDownListener);
     document.body.removeEventListener('keyup', this.baseKeyUpListener);
   }

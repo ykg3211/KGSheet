@@ -34,7 +34,9 @@ export default class Base extends BaseEvent {
       const group: ToolsGroupType = {
         ...g,
         key: 'tool_' + tag++,
-        tools: g.tools.map(this.dispatchTools.bind(this)),
+        tools: g.tools.map((group) => {
+          return group.map(this.dispatchTools.bind(this));
+        }),
       };
       result.push(group);
     });

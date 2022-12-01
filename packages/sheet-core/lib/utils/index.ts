@@ -1,3 +1,4 @@
+import { cell, excelConfig } from '../interfaces';
 import { SelectedCellType } from '../core/base/base';
 
 type numbers2 = [number, number];
@@ -102,4 +103,15 @@ export function getABC(num: number): string {
     result.unshift(temp);
   }
   return result.map((i) => String.fromCharCode(i + 65)).join('');
+}
+
+export function handleCell(source: excelConfig, trigger: (v: cell) => cell) {
+  const target = deepClone(source);
+  target.cells = target.cells.map((row) => {
+    return row.map((cell) => {
+      cell = trigger(cell);
+      return cell;
+    });
+  });
+  return target;
 }

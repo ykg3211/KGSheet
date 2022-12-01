@@ -1,4 +1,4 @@
-import Base from 'lib/core/base/base';
+import Base from '../../base/base';
 import { PluginTypeEnum } from '..';
 import { EventConstant } from '../base/event';
 

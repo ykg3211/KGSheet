@@ -1,3 +1,4 @@
+import { TooltipPlacement } from 'antd/es/tooltip';
 import { BaseTool, ToolTypeEnum } from 'kgsheet/dist/toolBar/tools/base';
 import React from 'react';
 import ButtonTool from './buttonTool';
@@ -6,7 +7,7 @@ import OptionsTool from './optionsTool';
 interface Props {
   tool: BaseTool;
   style: React.CSSProperties;
-  color: string;
+  toolTipPlacement?: TooltipPlacement;
   needLabel?: boolean;
 }
 

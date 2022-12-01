@@ -4,15 +4,15 @@ import { debounce, deepClone, judgeCross } from '../../../utils';
 import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
-import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import KeyboardPlugin from '../KeyboardPlugin';
+import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 
 export class InputDom {
   private DOM: HTMLTextAreaElement;
   private _this: Base;
   private cell: SelectedCellType;
   private ExcelBaseFunction!: ExcelBaseFunction;
-  private KeyBoardPlugin!: KeyBoardPlugin;
+  private KeyboardPlugin!: KeyboardPlugin;
   private minHeight!: number;
   private minWidth!: number;
   private enterEvent!: () => void;
@@ -43,17 +43,17 @@ export class InputDom {
       console.error('InputDom 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
 
-    const KeyBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
-    if (KeyBoardPlugin) {
-      this.KeyBoardPlugin = KeyBoardPlugin;
+    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
+    if (KeyboardPlugin) {
+      this.KeyboardPlugin = KeyboardPlugin;
       this.enterEvent = this._enterEvent.bind(this);
     } else {
-      console.error('InputDom 依赖于 KeyBoardPlugin, 请正确注册插件!');
+      console.error('InputDom 依赖于 KeyboardPlugin, 请正确注册插件!');
     }
   }
 
   private registerKeyboardEvent() {
-    this.KeyBoardPlugin.register({
+    this.KeyboardPlugin.register({
       baseKeys: [BASE_KEYS_ENUM.Meta],
       mainKeys: [OPERATE_KEYS_ENUM.Enter],
       callbacks: [this.enterEvent],
@@ -211,7 +211,7 @@ export class InputDom {
     this.DOM.removeEventListener('keydown', this._stopPropagation_arrow);
     this.DOM.removeEventListener('keyup', this._stopPropagation_arrow);
 
-    this.KeyBoardPlugin.uninstall({
+    this.KeyboardPlugin.uninstall({
       baseKeys: [],
       mainKeys: [OPERATE_KEYS_ENUM.Enter],
       callbacks: [this.enterEvent],

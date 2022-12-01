@@ -8,8 +8,8 @@ import { combineCell, deepClone, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
 import { BusinessEventConstant, EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
-import KeyBoardPlugin from '../KeyBoardPlugin';
-import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyBoardPlugin/constant';
+import KeyboardPlugin from '../KeyboardPlugin';
+import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin, { selectTypeEnum } from './SelectPowerPlugin';
 import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
@@ -21,7 +21,7 @@ export interface CellCornerScopeType {
 export default class EditCellPlugin {
   public name: string;
   private _this: Base;
-  private KeyboardPlugin!: KeyBoardPlugin;
+  private KeyboardPlugin!: KeyboardPlugin;
   private SelectPlugin!: SelectPowerPlugin;
   private ExcelBaseFunction!: ExcelBaseFunction;
   private editDomInstance!: null | InputDom;
@@ -81,7 +81,7 @@ export default class EditCellPlugin {
   }
 
   private registerKeyboardEvent() {
-    const KetBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyBoardPlugin);
+    const KetBoardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
     if (KetBoardPlugin) {
       this.KeyboardPlugin = KetBoardPlugin;
 

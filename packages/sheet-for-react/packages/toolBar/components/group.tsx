@@ -21,25 +21,27 @@ export default function Group({ group }: Props) {
   if (group.lines === 1) {
     return (
       <div className='kgsheet_toolBar_group_no_warp'>
-        {group.tools.map((tool) => {
-          return <Tools style={{ height: '48px' }} color={fontColor} tool={tool} key={tool.key} needLabel />;
+        {group.tools[0].map((tool) => {
+          return <Tools style={{ height: '48px' }} tool={tool} key={tool.key} needLabel />;
         })}
       </div>
     );
   }
 
-  const toolsLine = useMemo(() => {
-    const result = [[...group.tools], [...group.tools]];
-    return result;
-  }, [group]);
-
   return (
     <div className='kgsheet_toolBar_group'>
-      {toolsLine.map((_group, index) => {
+      {group.tools.map((_group, index) => {
         return (
           <div className='kgsheet_toolBar_group_inline' key={_group.map((g) => g.key).join('_') + index}>
             {_group.map((tool, i) => {
-              return <Tools style={{ height: '24px' }} color={fontColor} tool={tool} key={tool.key + '_' + i} />;
+              return (
+                <Tools
+                  toolTipPlacement={index === 0 ? 'top' : 'bottom'}
+                  style={{ height: '24px' }}
+                  tool={tool}
+                  key={tool.key + '_' + i}
+                />
+              );
             })}
           </div>
         );
