@@ -119,3 +119,9 @@ export function handleCell(source: ExcelConfig, trigger: (v: Cell) => Cell) {
   });
   return target;
 }
+
+export function mapObject<T>(obj: Record<any, T>, cb: (v: T) => T) {
+  Object.keys(obj).forEach((key) => {
+    obj[key] = cb(obj[key]);
+  });
+}

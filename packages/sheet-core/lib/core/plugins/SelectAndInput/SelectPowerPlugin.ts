@@ -1,7 +1,7 @@
 import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { combineCell, combineRect, deepClone, judgeCross, judgeInner } from '../../../utils';
+import { combineCell, combineRect, deepClone, judgeCross, judgeInner, mapObject } from '../../../utils';
 import { EventConstant } from '../base/event';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
@@ -493,6 +493,11 @@ export default class SelectPowerPlugin {
         cell.style = createDefaultStyle();
         return cell;
       });
+    });
+
+    mapObject(targetData.data.spanCells, (v) => {
+      v.style = createDefaultStyle();
+      return v;
     });
 
     this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
