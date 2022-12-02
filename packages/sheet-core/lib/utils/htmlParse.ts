@@ -1,4 +1,4 @@
-import { cell, CellTypeEnum, excelConfig } from '../interfaces';
+import { Cell, CellTypeEnum, ExcelConfig } from '../interfaces';
 
 interface TableElement {
   tag: string;
@@ -126,11 +126,11 @@ export function html2excel(html: string) {
   if (!tbodyNode) {
     return null;
   }
-  const cells: excelConfig['cells'] = [];
+  const cells: ExcelConfig['cells'] = [];
   const w: number[] = [];
   const h: number[] = [];
   tbodyNode.children.forEach((tr, r) => {
-    const row: cell[] = [];
+    const row: Cell[] = [];
     if (typeof tr !== 'string') {
       tr.children.forEach((td, c) => {
         if (typeof td !== 'string') {
@@ -144,7 +144,7 @@ export function html2excel(html: string) {
     }
     cells.push(row);
   });
-  const result: excelConfig = {
+  const result: ExcelConfig = {
     w: [],
     h: [],
     cells,

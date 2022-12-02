@@ -6,7 +6,7 @@ import { EventConstant } from '../base/event';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from './EditCellPlugin';
-import { spanCell } from '../../../interfaces';
+import { SpanCell } from '../../../interfaces';
 import { createDefaultStyle } from '../../../utils/defaultData';
 
 type ArrowType =
@@ -34,8 +34,7 @@ export default class SelectPowerPlugin {
   private _this: Base;
   private KeyboardPlugin!: KeyboardPlugin;
 
-  public selectedCells!: null | selectedCellsType;
-  public cornerCells: CellCornerScopeType | undefined;
+  public selectedCells: CellCornerScopeType | undefined; // 真正框选中的格子
 
   public _selectCell!: SelectedCellType | null; // 真正选中的格子
   public _startCell: SelectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
@@ -78,12 +77,10 @@ export default class SelectPowerPlugin {
     return this._startCell && this._endCell;
   }
 
+  // 获取选中的格子
   public getSelectCellsScope(): CellCornerScopeType | null {
-    if (this._startCell && this._endCell) {
-      return {
-        leftTopCell: this._startCell,
-        rightBottomCell: this._endCell,
-      };
+    if (this.selectedCells) {
+      return this.selectedCells;
     }
     return null;
   }
@@ -115,7 +112,7 @@ export default class SelectPowerPlugin {
           return;
         }
         this._borderPosition = border.cellPosition;
-        this.cornerCells = border.cellScope;
+        this.selectedCells = border.cellScope;
         if (this._borderPosition) {
           this.drawSelectedBorder(ctx, this._borderPosition);
         }
@@ -142,7 +139,7 @@ export default class SelectPowerPlugin {
       if (isSpan) {
         cell.column = cells[0].column;
         cell.row = cells[0].row;
-        const { span, content } = this._this.getSpanCell(cell) as spanCell;
+        const { span, content } = this._this.getSpanCell(cell) as SpanCell;
         const [r, c] = content.split('_').map(Number);
 
         switch (arrow) {

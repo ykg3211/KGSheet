@@ -1,5 +1,5 @@
 import { PluginTypeEnum } from '..';
-import { cell } from '../../../interfaces';
+import { Cell } from '../../../interfaces';
 import { debounce, deepClone, judgeCross } from '../../../utils';
 import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
@@ -17,7 +17,7 @@ export class InputDom {
   private minWidth!: number;
   private enterEvent!: () => void;
 
-  constructor(_this: Base, data: cell, cell: SelectedCellType) {
+  constructor(_this: Base, data: Cell, cell: SelectedCellType) {
     this._this = _this;
     this.DOM = document.createElement('textarea');
     this.cell = cell;
@@ -68,7 +68,7 @@ export class InputDom {
     this.DOM?.oninput?.(mainKeys);
   }
 
-  private setCommonStyle(originData: cell) {
+  private setCommonStyle(originData: Cell) {
     const cellStyle = originData.style;
 
     this.DOM.style.backgroundColor = cellStyle.backgroundColor ? cellStyle.backgroundColor : this._this.color('white');
@@ -122,7 +122,7 @@ export class InputDom {
     this.calcWidthHeight();
   }
 
-  private handleDomValue(originData: cell) {
+  private handleDomValue(originData: Cell) {
     this.DOM.value = originData.content;
     let preValue = this.DOM.value;
     const setEventStack = debounce((newV: string) => {

@@ -1,4 +1,4 @@
-import { cell, excelConfig, spanCell } from '../../../interfaces';
+import { Cell, ExcelConfig, SpanCell } from '../../../interfaces';
 import { BaseDataType } from '../../base/base';
 import { CellCornerScopeType } from './EditCellPlugin';
 
@@ -58,10 +58,10 @@ const calculateData = ({
   height,
 }: {
   arrow: regularArrowEnum;
-  sourceData: cell[][];
+  sourceData: Cell[][];
   width: number;
   height: number;
-}): cell[][] => {
+}): Cell[][] => {
   const result = new Array(height).fill(null).map(() => new Array(width).fill(null));
 
   if (arrow === regularArrowEnum.LEFT2RIGHT) {
@@ -101,7 +101,7 @@ export const handleRegularData = ({
   arrow: regularArrowEnum;
   sourceData: BaseDataType;
   scope: CellCornerScopeType;
-}): excelConfig => {
+}): ExcelConfig => {
   const w: number[] = handleW({
     arrow,
     sourceW: sourceData.data.w,
@@ -113,13 +113,13 @@ export const handleRegularData = ({
     height: Math.abs(scope.rightBottomCell.row - scope.leftTopCell.row + 1),
   });
 
-  const cells: cell[][] = calculateData({
+  const cells: Cell[][] = calculateData({
     arrow,
     sourceData: sourceData.data.cells,
     width: Math.abs(scope.rightBottomCell.column - scope.leftTopCell.column + 1),
     height: Math.abs(scope.rightBottomCell.row - scope.leftTopCell.row + 1),
   });
-  const spanCells: Record<string, spanCell> = sourceData.data.spanCells;
+  const spanCells: Record<string, SpanCell> = sourceData.data.spanCells;
 
   return {
     w,

@@ -1,4 +1,4 @@
-import { CellTypeEnum, renderCellProps, renderCellPropsNoLocation } from '../../interfaces';
+import { CellTypeEnum, RenderCellProps, RenderCellPropsNoLocation } from '../../interfaces';
 import BaseEvent, { EventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
 export type rectType = [number, number, number, number];
@@ -43,7 +43,7 @@ export default class DrawLayer extends BaseEvent {
   public ctx: CanvasRenderingContext2D | null;
   public canvasDom: HTMLCanvasElement | null;
   protected components: Partial<
-    Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: renderCellPropsNoLocation) => void>
+    Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
   >;
   public darkMode: boolean;
   constructor() {
@@ -74,9 +74,9 @@ export default class DrawLayer extends BaseEvent {
   }
 
   protected handleDefaultComponents() {
-    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: renderCellPropsNoLocation) => {
+    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => {
       const { point, cell, w, h } = data;
-
+      ctx.save();
       this.initStrokeStyle(ctx);
       ctx.fillStyle = cell.style.backgroundColor || this.color('white');
       if (!isNN(cell.style.backgroundColor)) {
@@ -87,7 +87,7 @@ export default class DrawLayer extends BaseEvent {
         return;
       }
       const size = cell.style.fontSize || 12;
-      ctx.font = `${size}px ${cell.style.font || 'Arial'}`;
+      ctx.font = `${cell.style.fontWeight || 'normal'} ${size}px ${cell.style.font || 'Arial'}`;
       ctx.fillStyle = cell.style.fontColor || this.color('black');
       ctx.textAlign = 'left';
       let left = point[0];
@@ -101,8 +101,9 @@ export default class DrawLayer extends BaseEvent {
       }
 
       clipCell(ctx, [point[0], point[1], w, h], () => {
-        ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2);
+        ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
       });
+      ctx.restore();
     };
   }
 
@@ -120,7 +121,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx.strokeRect(...v);
   }
 
-  private drawBorder(props: renderCellPropsNoLocation) {
+  private drawBorder(props: RenderCellPropsNoLocation) {
     if (!this.ctx) {
       return;
     }
@@ -139,7 +140,7 @@ export default class DrawLayer extends BaseEvent {
     this.ctx.stroke();
   }
 
-  protected drawCell(props: renderCellPropsNoLocation, needBorder = false) {
+  protected drawCell(props: RenderCellPropsNoLocation, needBorder = false) {
     if (!this.ctx) {
       return;
     }
@@ -152,7 +153,7 @@ export default class DrawLayer extends BaseEvent {
     }
   }
 
-  protected drawLeftTopCell(props: renderCellPropsNoLocation) {
+  protected drawLeftTopCell(props: RenderCellPropsNoLocation) {
     if (!this.ctx) {
       return;
     }

@@ -1,6 +1,6 @@
 import { EventConstant } from './plugins/base/event';
 import Base from './base/base';
-import { excelConfig } from '../interfaces';
+import { ExcelConfig } from '../interfaces';
 import { PluginTypeEnum } from './plugins';
 
 class Excel extends Base {
@@ -10,7 +10,7 @@ class Excel extends Base {
 
   public getData() {}
 
-  public setData(data: excelConfig) {
+  public setData(data: ExcelConfig) {
     if (data) {
       this.data = data;
     }

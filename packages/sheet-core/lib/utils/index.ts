@@ -1,4 +1,4 @@
-import { cell, excelConfig } from '../interfaces';
+import { Cell, ExcelConfig } from '../interfaces';
 import { SelectedCellType } from '../core/base/base';
 
 type numbers2 = [number, number];
@@ -105,13 +105,17 @@ export function getABC(num: number): string {
   return result.map((i) => String.fromCharCode(i + 65)).join('');
 }
 
-export function handleCell(source: excelConfig, trigger: (v: cell) => cell) {
+export function handleCell(source: ExcelConfig, trigger: (v: Cell) => Cell) {
   const target = deepClone(source);
   target.cells = target.cells.map((row) => {
     return row.map((cell) => {
       cell = trigger(cell);
       return cell;
     });
+  });
+  Object.keys(target.spanCells).forEach((key) => {
+    // @ts-ignore
+    target.spanCells[key] = trigger(target.spanCells[key]);
   });
   return target;
 }

@@ -3,7 +3,7 @@ import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { rectType } from '../../base/drawLayer';
-import { cell, spanCell } from '../../../interfaces';
+import { Cell, SpanCell } from '../../../interfaces';
 import { combineCell, deepClone, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
 import { BusinessEventConstant, EventConstant } from '../base/event';
@@ -449,7 +449,7 @@ export default class EditCellPlugin {
   private handleMouseDown() {
     // 处理鼠标点击事件
     const handleMouseDownCursor = (e: MouseEvent, [type, point]: [string, [number, number]]) => {
-      const cells = this.SelectPlugin.cornerCells;
+      const cells = this.SelectPlugin.selectedCells;
       const cell = this._this.getCellByPoint(point);
       if (!cells || !cell) {
         return;
@@ -705,9 +705,9 @@ export default class EditCellPlugin {
     });
 
     // 生成sourceData处的空数据
-    const SourceAfterCells: cell[][] = [];
+    const SourceAfterCells: Cell[][] = [];
     for (let row = sourceCells.leftTopCell.row; row <= sourceCells.rightBottomCell.row; row++) {
-      const temp: cell[] = [];
+      const temp: Cell[] = [];
       for (let column = sourceCells.leftTopCell.column; column <= sourceCells.rightBottomCell.column; column++) {
         temp.push(createDefaultCell(''));
       }
@@ -715,7 +715,7 @@ export default class EditCellPlugin {
     }
 
     // 如果有新的 生成spanCell。
-    const tempMap: Record<string, spanCell> = {};
+    const tempMap: Record<string, SpanCell> = {};
     const SourcePreSpanCells = deepClone(SourceData.data.spanCells);
     Object.keys(SourceData.data.spanCells).forEach((key) => {
       const newKey = key.split('_').map(Number);

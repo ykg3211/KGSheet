@@ -86,6 +86,8 @@ export default class Plugins {
     this.register(EditCellPlugin);
 
     this.register(RightClickPlugin);
+
+    this.register(FontEditPlugin);
   }
 
   public deregister(name?: PluginTypeEnum) {

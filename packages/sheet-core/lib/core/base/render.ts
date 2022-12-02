@@ -1,5 +1,5 @@
 // 这里的方法和值都是pretect ，为了方便插件开发，都先弄成public
-import { cellStyle, CellTypeEnum, excelConfig, renderCellProps, spanCell } from '../../interfaces';
+import { CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
@@ -23,13 +23,13 @@ export default class Render extends DrawLayer {
   public mouseX: number; // 鼠标x坐标
   public mouseY: number; // 鼠标y坐标
 
-  public _data: excelConfig; // 当前excel的数据
+  public _data: ExcelConfig; // 当前excel的数据
   public _scrollTop: number; // 滚动的参数
   public _scrollLeft: number; // 滚动的参数
 
   public renderDataScope: [[number, number], [number, number]];
-  public renderCellsArr: renderCellProps[][];
-  public renderSpanCellsArr: renderCellProps[];
+  public renderCellsArr: RenderCellProps[][];
+  public renderSpanCellsArr: RenderCellProps[];
 
   public render: () => void;
 
@@ -78,7 +78,7 @@ export default class Render extends DrawLayer {
   public get data() {
     return this._data;
   }
-  public set data(v: excelConfig) {
+  public set data(v: ExcelConfig) {
     this._data = v;
     this.render();
   }
@@ -215,7 +215,7 @@ export default class Render extends DrawLayer {
                 column: cIndex,
               },
               point: point.slice(),
-              cell: column as spanCell,
+              cell: column as SpanCell,
               w: this.data.w[cIndex],
               h: this.data.h[rIndex],
             });
@@ -377,7 +377,7 @@ export default class Render extends DrawLayer {
     let content = '';
     let x = point[0];
     let y = point[1];
-    const baseStyle: cellStyle = {
+    const baseStyle: CellStyle = {
       backgroundColor: this.color('sideBar'),
       fontColor: this.color('black'),
       textAlign: 'center',

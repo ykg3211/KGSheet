@@ -5,12 +5,12 @@ import { dispatchEventType, setEventType, clearEventType } from '../plugins/base
 import { deepClone, judgeCross, judgeOver } from '../../utils';
 import { rectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
-import { excelConfig, spanCell } from '../../interfaces';
+import { ExcelConfig, SpanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
-  data: excelConfig;
+  data: ExcelConfig;
 }
 
 export interface SelectedCellType {
@@ -169,7 +169,7 @@ class Base extends Render {
       h = cellScope.rightBottomCell.row - cellScope.leftTopCell.row + 1;
     }
     let source: Array<
-      spanCell & {
+      SpanCell & {
         location: SelectedCellType;
       }
     > = [];
@@ -223,7 +223,7 @@ class Base extends Render {
     isInView?: boolean;
     except?: string[];
   }) {
-    let source: (spanCell & {
+    let source: (SpanCell & {
       location: SelectedCellType;
     })[] = [];
     if (isInView) {
@@ -407,17 +407,27 @@ class Base extends Render {
       return row.slice(leftTopCell.column, rightBottomCell.column + 1);
     });
 
-    const spanCells: Record<string, spanCell> = {};
+    const spanCells: Record<string, SpanCell> = {};
 
-    for (let row = leftTopCell.row; row < rightBottomCell.row + 1; row++) {
-      for (let column = leftTopCell.column; column < rightBottomCell.column + 1; column++) {
-        if (this._data.spanCells[row + '_' + column]) {
-          spanCells[row + '_' + column] = this._data.spanCells[row + '_' + column];
-        }
+    Object.keys(this._data.spanCells).forEach((key) => {
+      const [row, column] = key.split('_').map(Number);
+      const spanCell = this._data.spanCells[key];
+      if (
+        judgeCross(
+          [column, row, spanCell.span[0], spanCell.span[1]],
+          [
+            leftTopCell.column,
+            leftTopCell.row,
+            rightBottomCell.column - leftTopCell.column + 1,
+            rightBottomCell.row - leftTopCell.row + 1,
+          ],
+        )
+      ) {
+        spanCells[key] = this._data.spanCells[key];
       }
-    }
+    });
 
-    let result: excelConfig = {
+    let result: ExcelConfig = {
       w: this._data.w.slice(leftTopCell.column, rightBottomCell.column + 1),
       h: this._data.h.slice(leftTopCell.row, rightBottomCell.row + 1),
       cells,
@@ -469,7 +479,7 @@ class Base extends Render {
    * getSpanCell
    */
   public getSpanCell(cell: SelectedCellType) {
-    return this._data.spanCells[cell.row + '_' + cell.column] as spanCell | undefined;
+    return this._data.spanCells[cell.row + '_' + cell.column] as SpanCell | undefined;
   }
 }
 

@@ -1,14 +1,14 @@
 import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
-import { excelConfig } from '../../../interfaces';
+import { ExcelConfig } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 import BaseEventStack from './base';
 import { EventConstant } from '../base/event';
 
 export interface BaseCellChangeType {
   scope: CellCornerScopeType;
-  pre_data: excelConfig;
-  after_data: excelConfig;
+  pre_data: ExcelConfig;
+  after_data: ExcelConfig;
   time_stamp?: Date;
 }
 

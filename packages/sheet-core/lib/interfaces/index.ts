@@ -7,7 +7,7 @@ export enum CellTypeEnum {
   money = 'money',
 }
 
-export interface cellStyle {
+export interface CellStyle {
   textAlign?: align;
   backgroundColor?: string;
   fontWeight?: string;
@@ -15,37 +15,39 @@ export interface cellStyle {
   fontSize?: number;
   font?: string;
 }
-export interface cell {
-  style: cellStyle;
+
+export interface Cell {
+  style: CellStyle;
   content: string;
   type: CellTypeEnum;
   isSpan?: boolean;
 }
+
 export interface rows {
-  cells: cell[];
+  cells: Cell[];
 }
 
-export interface spanCell extends cell {
+export interface SpanCell extends Cell {
   span: [number, number]; // w, h
 }
 
-export interface excelConfig {
+export interface ExcelConfig {
   w: number[];
   h: number[];
-  cells: cell[][];
+  cells: Cell[][];
   //               'row_column'
-  spanCells: Record<string, spanCell>;
+  spanCells: Record<string, SpanCell>;
 }
 
-export interface renderCellProps {
+export interface RenderCellProps {
   location: {
     row: number;
     column: number;
   };
   point: number[];
-  cell: spanCell;
+  cell: SpanCell;
   w: number;
   h: number;
 }
 
-export type renderCellPropsNoLocation = Pick<renderCellProps, 'point' | 'cell' | 'w' | 'h'>;
+export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' | 'w' | 'h'>;
