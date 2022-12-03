@@ -2,7 +2,7 @@ import Base from '../../base/base';
 import { deepClone, handleCell } from '../../../utils';
 import { PluginTypeEnum } from '..';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 import { Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
@@ -99,44 +99,43 @@ export default class FontEditPlugin {
   }
 
   private b() {
-    const cb = () => {
-      this._this.devMode && console.log('Meta + b');
-      const scope = this.SelectPowerPlugin.getSelectCellsScope();
-      if (!scope) {
-        return;
-      }
-      const { data: sourceData } = this._this.getDataByScope(scope);
-      console.log(scope);
-
-      const preAttributes = this.getSameAttributes(sourceData, scope);
-
-      let newWeight = '800';
-      if (preAttributes.fontWeight === '800') {
-        newWeight = 'normal';
-      }
-
-      const targetData = handleCell(sourceData, (cell) => {
-        cell.style.fontWeight = newWeight;
-        cell.style.backgroundColor = 'yellow';
-        return cell;
-      });
-
-      this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
-        scope,
-        pre_data: sourceData,
-        after_data: targetData,
-      });
-    };
-
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: OPERATE_KEYS_ENUM.b,
       callbacks: [
         (e) => {
           e.preventDefault();
-          cb();
+          this.blod();
         },
       ],
+    });
+  }
+
+  public blod() {
+    this._this.devMode && console.log('Meta + b');
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+
+    const preAttributes = this.getSameAttributes(sourceData, scope);
+
+    let newWeight = '800';
+    if (preAttributes.fontWeight === '800') {
+      newWeight = 'normal';
+    }
+
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.fontWeight = newWeight;
+      cell.style.backgroundColor = 'yellow';
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
     });
   }
 
@@ -146,7 +145,7 @@ export default class FontEditPlugin {
     };
 
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: OPERATE_KEYS_ENUM.b,
       callbacks: [
         (e) => {

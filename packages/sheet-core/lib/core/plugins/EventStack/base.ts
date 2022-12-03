@@ -2,7 +2,7 @@ import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
 import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { BASE_KEYS_ENUM, META } from '../KeyboardPlugin/constant';
 import { EventConstant } from '../base/event';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
@@ -36,7 +36,7 @@ export default class BaseEventStack {
       this.KeyboardPlugin = KeyboardPlugin;
 
       this.KeyboardPlugin.register({
-        baseKeys: [BASE_KEYS_ENUM.Shift, BASE_KEYS_ENUM.Meta],
+        baseKeys: [BASE_KEYS_ENUM.Shift, META],
         mainKeys: ['z', 'Z'],
         callbacks: [
           () => {
@@ -46,7 +46,7 @@ export default class BaseEventStack {
         ],
       });
       this.KeyboardPlugin.register({
-        baseKeys: [BASE_KEYS_ENUM.Meta],
+        baseKeys: [META],
         mainKeys: ['z', 'Z'],
         callbacks: [
           () => {

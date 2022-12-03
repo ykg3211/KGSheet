@@ -6,7 +6,7 @@ import { RenderZIndex } from '../../base/constant';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 
 /**
@@ -66,7 +66,7 @@ export default class CopyAndPaste {
     };
 
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: [OPERATE_KEYS_ENUM.c],
       callbacks: [
         () => {
@@ -76,7 +76,7 @@ export default class CopyAndPaste {
     });
 
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: [OPERATE_KEYS_ENUM.v],
       callbacks: [
         () => {

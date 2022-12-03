@@ -4,7 +4,7 @@ import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { combineCell, combineRect, deepClone, judgeCross, judgeInner, mapObject } from '../../../utils';
 import { EventConstant } from '../base/event';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from './EditCellPlugin';
 import { SpanCell } from '../../../interfaces';
 import { createDefaultStyle } from '../../../utils/defaultData';
@@ -214,7 +214,7 @@ export default class SelectPowerPlugin {
     };
 
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: [OPERATE_KEYS_ENUM.a],
       callbacks: [
         () => {

@@ -8,11 +8,22 @@ const baseToolBarConfig: BarSettingType = [
   },
   {
     lines: 2,
-    tools: [[ToolsEnum.FONT_SIZE, ToolsEnum.DARK_MODE], [ToolsEnum.DARK_MODE]],
+    tools: [
+      [ToolsEnum.FONT_SIZE, ToolsEnum.DARK_MODE],
+      [ToolsEnum.FONT_WEIGHT, ToolsEnum.FONT_DELETE_LINE, ToolsEnum.FONT_ITALIC, ToolsEnum.FONT_UNDER_LINE],
+    ],
   },
   {
     lines: 1,
-    tools: [[ToolsEnum.DARK_MODE]],
+    tools: [
+      [
+        ToolsEnum.DARK_MODE,
+        ToolsEnum.FONT_WEIGHT,
+        ToolsEnum.FONT_DELETE_LINE,
+        ToolsEnum.FONT_ITALIC,
+        ToolsEnum.FONT_UNDER_LINE,
+      ],
+    ],
   },
 ];
 

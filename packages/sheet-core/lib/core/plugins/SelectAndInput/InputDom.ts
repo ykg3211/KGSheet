@@ -5,7 +5,7 @@ import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { BASE_KEYS_ENUM, CONTENT_KEYS, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 
 export class InputDom {
   private DOM: HTMLTextAreaElement;
@@ -54,7 +54,7 @@ export class InputDom {
 
   private registerKeyboardEvent() {
     this.KeyboardPlugin.register({
-      baseKeys: [BASE_KEYS_ENUM.Meta],
+      baseKeys: [META],
       mainKeys: [OPERATE_KEYS_ENUM.Enter],
       callbacks: [this.enterEvent],
     });

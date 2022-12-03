@@ -8,6 +8,7 @@ interface ToolBarType {
   sheet: Excel;
   config?: config;
 }
+
 class ToolBar extends Base {
   constructor({ sheet, config }: ToolBarType) {
     super(sheet, config);

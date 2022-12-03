@@ -4,6 +4,12 @@ import { SelectedCellType } from '../core/base/base';
 type numbers2 = [number, number];
 type numbers4 = [number, number, number, number];
 
+export const isMacOS = (function () {
+  return /macintosh|mac os x/i.test(navigator.userAgent);
+})();
+
+export const META_KEY = isMacOS ? '⌘' : 'Ctrl';
+
 export function nextTick(fn: Function) {
   return new Promise((resolve) => {
     window.requestAnimationFrame(() => {

@@ -1,3 +1,4 @@
+import { META_KEY } from '../../../utils';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
 
@@ -5,7 +6,7 @@ export class Revert extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '撤销';
-    this.toolTip = '撤销(⌘+z)';
+    this.toolTip = `撤销(${META_KEY}+z)`;
     this.icon = 'sheet-iconcancel';
   }
 
@@ -19,7 +20,7 @@ export class AntiRevert extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
     this.label = '重做';
-    this.toolTip = '重做(⌘+shift+z)';
+    this.toolTip = `重做(${META_KEY}+shift+z)`;
     this.icon = 'sheet-iconredo';
   }
 
