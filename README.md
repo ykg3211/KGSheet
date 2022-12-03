@@ -1,6 +1,6 @@
 # `KGSheet`
 
-[在线demo](www.ykgykg.fun)
+[在线demo](http://ykgykg.fun/)
 
 ## RUN
 
