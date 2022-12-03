@@ -12,55 +12,34 @@ export default class ClickPlugin {
   constructor(_this: Base) {
     this._this = _this;
     this.name = PluginTypeEnum.ClickPlugin;
-    this.handleDBMouseClick();
-    this.handleMouseClick();
-    this.handleMouseDown();
-    this.handleMouseUp();
+
+    this.commonRegisterEvent('dblclick', EventConstant.DB_CLICK);
+    this.commonRegisterEvent('click', EventConstant.CLICK);
+    this.commonRegisterEvent('mousedown', EventConstant.MOUSE_DOWN);
+    this.commonRegisterEvent('mouseup', EventConstant.MOUSE_UP, true);
+
+    this.commonRegisterEvent('touchstart', EventConstant.TOUCH_START);
+    this.commonRegisterEvent('touchmove', EventConstant.TOUCH_MOVE);
+    this.commonRegisterEvent('touchend', EventConstant.TOUCH_END, true);
   }
 
-  private handleMouseDown() {
+  private commonRegisterEvent(event: any, key: EventConstant, isOnDom?: boolean = false) {
     const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_DOWN, e);
-      this._this.dispatchEvent(EventConstant.MOUSE_DOWN, e);
+      this._this.emit(key, e);
+      this._this.dispatchEvent(key, e);
     };
-    this._this.canvasDom?.addEventListener('mousedown', handler);
+    if (isOnDom) {
+      document.body?.addEventListener(event, handler);
+    } else {
+      this._this.canvasDom?.addEventListener(event, handler);
+    }
 
     this._this.on(EventConstant.DESTROY, () => {
-      this._this.canvasDom?.removeEventListener('mousedown', handler);
-    });
-  }
-  private handleMouseUp() {
-    const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.MOUSE_UP, e);
-      this._this.dispatchEvent(EventConstant.MOUSE_UP, e);
-    };
-    document.body.addEventListener('mouseup', handler);
-
-    this._this.on(EventConstant.DESTROY, () => {
-      document.body.removeEventListener('mouseup', handler);
-    });
-  }
-  private handleMouseClick() {
-    const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.CLICK, e);
-      this._this.dispatchEvent(EventConstant.CLICK, e);
-    };
-    this._this.canvasDom?.addEventListener('click', handler);
-
-    this._this.on(EventConstant.DESTROY, () => {
-      this._this.canvasDom?.removeEventListener('click', handler);
-    });
-  }
-
-  private handleDBMouseClick() {
-    const handler = (e: MouseEvent) => {
-      this._this.emit(EventConstant.DB_CLICK, e);
-      this._this.dispatchEvent(EventConstant.DB_CLICK, e);
-    };
-    this._this.canvasDom?.addEventListener('dblclick', handler);
-
-    this._this.on(EventConstant.DESTROY, () => {
-      this._this.canvasDom?.removeEventListener('dblclick', handler);
+      if (isOnDom) {
+        document.body?.removeEventListener(event, handler);
+      } else {
+        this._this.canvasDom?.removeEventListener(event, handler);
+      }
     });
   }
 }

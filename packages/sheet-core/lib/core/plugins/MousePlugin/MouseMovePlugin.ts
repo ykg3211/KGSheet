@@ -18,6 +18,7 @@ export default class MouseMovePlugin {
     this._mouseX = 0;
     this._mouseY = 0;
     this.handleMouseMove();
+    this.handleTouchMove();
   }
 
   protected get mouseX() {
@@ -50,10 +51,23 @@ export default class MouseMovePlugin {
       this._this.emit(EventConstant.MOUSE_MOVE, e);
       this._this.dispatchEvent(EventConstant.MOUSE_MOVE, e);
     };
-    this._this.canvasDom?.addEventListener('mousemove', handler);
+    document.body?.addEventListener('mousemove', handler);
 
     this._this.once(EventConstant.DESTROY, () => {
-      this._this.canvasDom?.removeEventListener('mousemove', handler);
+      document.body?.removeEventListener('mousemove', handler);
+    });
+  }
+
+  private handleTouchMove() {
+    const handler = (e: TouchEvent) => {
+      this._this.emit(EventConstant.TOUCH_MOVE, e);
+      // @ts-ignore
+      this._this.dispatchEvent(EventConstant.TOUCH_MOVE, e);
+    };
+    document.body?.addEventListener('touchmove', handler);
+
+    this._this.once(EventConstant.DESTROY, () => {
+      document.body?.removeEventListener('touchmove', handler);
     });
   }
 }

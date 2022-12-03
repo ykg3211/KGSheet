@@ -28,8 +28,67 @@ export default class ScrollPlugin {
     this.scrollBarXW = this._this.width;
     this.scrollBarYW = this._this.height;
     this.handleScroll();
+    this.initTouchScroll();
 
     this._this.addRenderFunction(RenderZIndex.SCROLL_BAR, [this.handleScrollBar.bind(this)]);
+  }
+
+  private initTouchScroll() {
+    let XMouseDownOriginX: number | null = null;
+    let YMouseDownOriginY: number | null = null;
+    const touchStartCB = (e: MouseEvent, point: [number, number]) => {
+      console.log('touchStartCB', point);
+    };
+    this._this.setEvent(EventConstant.TOUCH_START, {
+      type: EventZIndex.SCROLL_BAR,
+      judgeFunc: (e) => {
+        const point = this._this.transformXYInContainer(e);
+        if (!point) {
+          return false;
+        }
+        return point;
+      },
+      innerFunc: touchStartCB.bind(this),
+    });
+
+    const touchMoveCB = (e: MouseEvent) => {
+      console.log('touchMoveCB');
+      if (XMouseDownOriginX !== null) {
+        const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
+        this._this.scrollXY(
+          (gap / this._this.width) * (this._this.contentWidth + this._this.paddingLeft + this._this.overGapWidth),
+          0,
+        );
+        XMouseDownOriginX = e.pageX;
+      }
+      if (YMouseDownOriginY !== null) {
+        const gap = (e.pageY - YMouseDownOriginY) / this._this.scale;
+        this._this.scrollXY(
+          0,
+          (gap / this._this.height) * (this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight),
+        );
+        YMouseDownOriginY = e.pageY;
+      }
+    };
+
+    this._this.setEvent(EventConstant.TOUCH_MOVE, {
+      type: EventZIndex.SCROLL_BAR,
+      judgeFunc: () => {
+        return XMouseDownOriginX !== null || YMouseDownOriginY !== null;
+      },
+      innerFunc: touchMoveCB.bind(this),
+    });
+
+    const touchEndCB = () => {
+      XMouseDownOriginX = null;
+      YMouseDownOriginY = null;
+      console.log('touchEndCB');
+    };
+    this._this.setEvent(EventConstant.TOUCH_END, {
+      type: EventZIndex.SCROLL_BAR,
+      judgeFunc: () => XMouseDownOriginX !== null || YMouseDownOriginY !== null,
+      innerFunc: touchEndCB.bind(this),
+    });
   }
 
   // 初始化拖拽滚动条的逻辑；
@@ -58,7 +117,7 @@ export default class ScrollPlugin {
         XMouseDownOriginX = e.pageX;
       }
     };
-    this._this.setEvent(EventConstant.MOUSE_DOWN, {
+    this._this.setEvent([EventConstant.MOUSE_DOWN, EventConstant.TOUCH_START], {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
@@ -96,7 +155,7 @@ export default class ScrollPlugin {
       }
     };
 
-    this._this.setEvent(EventConstant.MOUSE_MOVE, {
+    this._this.setEvent([EventConstant.MOUSE_MOVE, EventConstant.TOUCH_MOVE], {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: () => {
         return XMouseDownOriginX !== null || YMouseDownOriginY !== null;
@@ -147,7 +206,7 @@ export default class ScrollPlugin {
       XMouseDownOriginX = null;
       YMouseDownOriginY = null;
     };
-    this._this.setEvent(EventConstant.MOUSE_UP, {
+    this._this.setEvent([EventConstant.MOUSE_UP, EventConstant.TOUCH_END], {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: () => XMouseDownOriginX !== null || YMouseDownOriginY !== null,
       innerFunc: scrollMouseUpCB.bind(this),

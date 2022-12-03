@@ -20,7 +20,7 @@ export interface EventStackType {
   outerFunc?: (e: MouseEvent, preData?: preData) => void | Array<(e: MouseEvent) => void>;
 }
 
-export type setEventType = (type: EventConstant, props: EventStackType) => void;
+export type setEventType = (type: EventConstant | EventConstant[], props: EventStackType) => void;
 export type clearEventType = (type: EventConstant, zIndex: EventZIndex) => void;
 export type dispatchEventType = (type: EventConstant, e: MouseEvent) => void;
 
@@ -58,21 +58,38 @@ export default class EventDispatch {
     this.eventStack[type][subType] = [];
   }
 
-  protected setEvent(type: EventConstant, props: EventStackType) {
-    if (!this.eventStack[type]) {
-      this.eventStack[type] = [];
+  protected setEvent(type: EventConstant | EventConstant[], props: EventStackType) {
+    if (!(type instanceof Array)) {
+      type = [type];
     }
-    // @ts-ignore
-    const pointer = this.eventStack[type][props.type];
-    if (pointer) {
-      pointer.push(props);
-    } else {
+
+    type.forEach((t) => {
+      if (!this.eventStack[t]) {
+        this.eventStack[t] = [];
+      }
       // @ts-ignore
-      this.eventStack[type][props.type] = [props];
-    }
+      const pointer = this.eventStack[t][props.type];
+      if (pointer) {
+        pointer.push(props);
+      } else {
+        // @ts-ignore
+        this.eventStack[t][props.type] = [props];
+      }
+    });
   }
 
   protected dispatchEvent(type: EventConstant, e: MouseEvent) {
+    // 用于处理触摸事件的
+    if (e instanceof TouchEvent) {
+      const touchAttrs = e.changedTouches[0] || {};
+      (e as any).clientX = touchAttrs.clientX;
+      (e as any).clientY = touchAttrs.clientY;
+      (e as any).pageX = touchAttrs.pageX;
+      (e as any).pageY = touchAttrs.pageY;
+      (e as any).screenX = touchAttrs.screenX;
+      (e as any).screenY = touchAttrs.screenY;
+    }
+
     const innerFuncArr: ((e: MouseEvent) => void)[] = [];
     const outerFuncArr: ((e: MouseEvent) => void)[] = [];
     let isFirst = true;
