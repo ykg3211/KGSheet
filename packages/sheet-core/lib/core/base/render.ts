@@ -142,6 +142,7 @@ export default class Render extends DrawLayer {
     if (!this.canvasDom) {
       return;
     }
+    this.devMode && console.log('Start render');
     this.contentWidth = 0;
     this.contentHeight = 0;
     this._preRenderFunc();

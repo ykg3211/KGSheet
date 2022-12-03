@@ -76,7 +76,6 @@ export default class DrawLayer extends BaseEvent {
   protected handleDefaultComponents() {
     this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => {
       const { point, cell, w, h } = data;
-      ctx.save();
       this.initStrokeStyle(ctx);
       ctx.fillStyle = cell.style.backgroundColor || this.color('white');
       if (!isNN(cell.style.backgroundColor)) {
@@ -104,7 +103,6 @@ export default class DrawLayer extends BaseEvent {
 
         ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
       });
-      ctx.restore();
     };
   }
 
