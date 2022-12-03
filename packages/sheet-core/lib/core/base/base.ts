@@ -114,6 +114,8 @@ class Base extends Render {
 
     this.canvasDom.width = dpr * cssWidth;
     this.canvasDom.height = dpr * cssHeight;
+
+    this.ctx?.scale(dpr * this.scale, dpr * this.scale);
   }
 
   /**

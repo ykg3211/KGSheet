@@ -3,7 +3,7 @@ import { CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from 
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import { getABC, _throttleByRequestAnimationFrame } from '../../utils';
+import { getABC, isSafari, _throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
 export default class Render extends DrawLayer {
@@ -35,6 +35,7 @@ export default class Render extends DrawLayer {
 
   public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
   public mouseCornerScroll: (point: [number, number]) => void;
+
   constructor() {
     super();
     this._scrollTop = 0;
@@ -134,9 +135,7 @@ export default class Render extends DrawLayer {
     if (!this.canvasDom) {
       return;
     }
-    let dpr = window.devicePixelRatio;
-    this.canvasDom.height = this.canvasDom?.height;
-    this.ctx?.scale(dpr * this.scale, dpr * this.scale);
+    this.ctx?.clearRect(0, 0, this.canvasDom.width, this.canvasDom.height);
   }
 
   public _renderFunc() {

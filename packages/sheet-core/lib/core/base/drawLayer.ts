@@ -86,21 +86,22 @@ export default class DrawLayer extends BaseEvent {
       if (cell.content === '') {
         return;
       }
-      const size = cell.style.fontSize || 12;
-      ctx.font = `${cell.style.fontWeight || 'normal'} ${size}px ${cell.style.font || 'Arial'}`;
-      ctx.fillStyle = cell.style.fontColor || this.color('black');
-      ctx.textAlign = 'left';
-      let left = point[0];
-      if (cell.style.textAlign) {
-        ctx.textAlign = cell.style.textAlign;
-        if (cell.style.textAlign === 'center') {
-          left += w / 2;
-        } else if (cell.style.textAlign === 'right') {
-          left += w;
-        }
-      }
 
       clipCell(ctx, [point[0], point[1], w, h], () => {
+        const size = cell.style.fontSize || 12;
+        ctx.font = `${cell.style.fontWeight || 'normal'} ${size}px ${cell.style.font || 'Arial'}`;
+        ctx.fillStyle = cell.style.fontColor || this.color('black');
+        ctx.textAlign = 'left';
+        let left = point[0];
+        if (cell.style.textAlign) {
+          ctx.textAlign = cell.style.textAlign;
+          if (cell.style.textAlign === 'center') {
+            left += w / 2;
+          } else if (cell.style.textAlign === 'right') {
+            left += w;
+          }
+        }
+
         ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
       });
       ctx.restore();

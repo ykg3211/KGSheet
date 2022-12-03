@@ -4,7 +4,7 @@ import { PluginTypeEnum } from '..';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
-import { Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
+import { Cell, CellStyle, ExcelConfig, SpanCell, TextDecoration } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 // 主要用于计算style
@@ -41,20 +41,18 @@ export default class FontEditPlugin {
     const needAttrs: Array<keyof CellStyle> = [
       'textAlign',
       'backgroundColor',
+      'textDecoration',
       'fontWeight',
       'fontColor',
       'fontSize',
       'font',
     ];
 
-    const attributes: Record<keyof CellStyle, any> = {
-      textAlign: INIT_V,
-      backgroundColor: INIT_V,
-      fontWeight: INIT_V,
-      fontColor: INIT_V,
-      fontSize: INIT_V,
-      font: INIT_V,
-    };
+    // @ts-ignore
+    const attributes: Record<keyof CellStyle, any> = {};
+    needAttrs.forEach((key) => {
+      attributes[key] = INIT_V;
+    });
 
     const skipMap: Record<string, boolean> = {};
 
@@ -95,10 +93,6 @@ export default class FontEditPlugin {
   }
 
   private initEvent() {
-    this.b();
-  }
-
-  private b() {
     this.KeyboardPlugin.register({
       baseKeys: [META],
       mainKeys: OPERATE_KEYS_ENUM.b,
@@ -106,6 +100,17 @@ export default class FontEditPlugin {
         (e) => {
           e.preventDefault();
           this.blod();
+        },
+      ],
+    });
+
+    this.KeyboardPlugin.register({
+      baseKeys: [META],
+      mainKeys: OPERATE_KEYS_ENUM.u,
+      callbacks: [
+        (e) => {
+          e.preventDefault();
+          this.underLine();
         },
       ],
     });
@@ -139,20 +144,30 @@ export default class FontEditPlugin {
     });
   }
 
-  private u() {
-    const cb = () => {
-      //
-    };
+  public underLine() {
+    this._this.devMode && console.log('Meta + u');
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
 
-    this.KeyboardPlugin.register({
-      baseKeys: [META],
-      mainKeys: OPERATE_KEYS_ENUM.b,
-      callbacks: [
-        (e) => {
-          e.preventDefault();
-          cb();
-        },
-      ],
+    const preAttributes = this.getSameAttributes(sourceData, scope);
+
+    let textDecoration: TextDecoration = 'underline';
+    if (preAttributes.textDecoration === 'underline') {
+      textDecoration = 'none';
+    }
+
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.textDecoration = textDecoration;
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
     });
   }
 }

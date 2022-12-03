@@ -8,6 +8,10 @@ export const isMacOS = (function () {
   return /macintosh|mac os x/i.test(navigator.userAgent);
 })();
 
+export const isSafari = (function () {
+  return /Safari/.test(navigator.userAgent);
+})();
+
 export const META_KEY = isMacOS ? '⌘' : 'Ctrl';
 
 export function nextTick(fn: Function) {

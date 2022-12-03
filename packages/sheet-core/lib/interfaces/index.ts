@@ -1,4 +1,5 @@
-export type align = 'left' | 'center' | 'right';
+export type Align = 'left' | 'center' | 'right';
+export type TextDecoration = 'underline' | 'line-through' | 'none';
 export enum CellTypeEnum {
   text = 'text',
   richText = 'richText',
@@ -8,12 +9,13 @@ export enum CellTypeEnum {
 }
 
 export interface CellStyle {
-  textAlign?: align;
+  textAlign?: Align;
   backgroundColor?: string;
   fontWeight?: string;
   fontColor?: string;
   fontSize?: number;
   font?: string;
+  textDecoration?: TextDecoration;
 }
 
 export interface Cell {
