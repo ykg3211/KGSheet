@@ -43,6 +43,11 @@ class Excel extends Base {
   public blodStyle() {
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.blod();
   }
+
+  // 合并单元格
+  public combineCells() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.combineCells();
+  }
 }
 
 export default Excel;

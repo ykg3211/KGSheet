@@ -666,6 +666,78 @@ export default class EditCellPlugin {
     return { leftTopCell, rightBottomCell } as CellCornerScopeType;
   }
 
+  public combineCells() {
+    const selectCells = this.SelectPlugin.getSelectCellsScope();
+    if (!selectCells) {
+      return;
+    }
+
+    const originSpancell = this._this.getSpanCell(selectCells.leftTopCell);
+    const sourceData = this._this.getDataByScope(selectCells);
+
+    // 取消合并
+    if (
+      originSpancell &&
+      originSpancell.span[0] === selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1 &&
+      originSpancell.span[1] === selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1
+    ) {
+      const originSpanCell = deepClone(
+        this._this.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column],
+      );
+      // @ts-ignore
+      delete originSpanCell.span;
+
+      const targetData = deepClone(sourceData);
+      targetData.data.cells = targetData.data.cells.map((row) => {
+        return row.map(() => {
+          return createDefaultCell();
+        });
+      });
+      targetData.data.cells[0][0] = originSpanCell;
+
+      delete targetData.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column];
+
+      this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+        scope: selectCells,
+        pre_data: sourceData.data,
+        after_data: targetData.data,
+      });
+      return;
+    }
+
+    if (Object.values(sourceData.data.spanCells).length > 0) {
+      // 有别的合并单元格，阻止合并
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: '无法合并，合并的目标区域有合并的单元格',
+      });
+      return;
+    }
+
+    // 合并
+    const newSpanCell: SpanCell = Object.assign(deepClone(sourceData.data.cells[0][0]), {
+      span: [
+        selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1,
+        selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1,
+      ],
+    } as {
+      span: [number, number];
+    });
+    const targetData = deepClone(sourceData);
+    targetData.data.cells = targetData.data.cells.map((row) => {
+      return row.map(() => {
+        return createDefaultCell();
+      });
+    });
+    targetData.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column] = newSpanCell;
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope: selectCells,
+      pre_data: sourceData.data,
+      after_data: targetData.data,
+    });
+  }
+
   private handleCopyCB() {
     if (!this.startCopyCell) {
       return;

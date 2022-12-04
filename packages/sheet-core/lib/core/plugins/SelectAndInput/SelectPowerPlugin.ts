@@ -62,7 +62,7 @@ export default class SelectPowerPlugin {
     this.strokeRectWidth = 5;
 
     this.registerKeyboardEvent();
-    this.initListener();
+    this.initMoveToView();
   }
 
   // 计算时选中的格子。主要是为了解决spanCell的。
@@ -96,7 +96,7 @@ export default class SelectPowerPlugin {
     this._this.un(EventConstant.SELECT_CELL_MOVE_TO_VIEW, this.moveToViewShadow);
   }
 
-  private initListener() {
+  private initMoveToView() {
     this.moveToViewShadow = this.moveToView.bind(this);
     this._this.on(EventConstant.SELECT_CELL_MOVE_TO_VIEW, this.moveToViewShadow);
   }

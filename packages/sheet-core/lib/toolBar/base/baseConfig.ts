@@ -15,15 +15,7 @@ const baseToolBarConfig: BarSettingType = [
   },
   {
     lines: 1,
-    tools: [
-      [
-        ToolsEnum.DARK_MODE,
-        ToolsEnum.FONT_WEIGHT,
-        ToolsEnum.FONT_DELETE_LINE,
-        ToolsEnum.FONT_ITALIC,
-        ToolsEnum.FONT_UNDER_LINE,
-      ],
-    ],
+    tools: [[ToolsEnum.COMBINE_CELLS]],
   },
 ];
 

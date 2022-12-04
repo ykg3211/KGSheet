@@ -480,7 +480,6 @@ export default class Render extends DrawLayer {
 
   private _mouseCornerScroll(point: [number, Number]) {
     // todo @yukaige
-    return;
     const [x, y] = point;
     const gap = 10;
     if (x < 100) {
