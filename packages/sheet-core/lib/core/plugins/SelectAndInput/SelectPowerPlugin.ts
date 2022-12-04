@@ -327,6 +327,14 @@ export default class SelectPowerPlugin {
     let isMouseDown_top_Cell = false;
     let isMouseDown_left_Cell = false;
     const mouseDownCB = (e: any, point: [number, number]) => {
+      // 借助这个方法来去除inputdom， 主要是移动端。 无需关心
+      try {
+        if (e instanceof TouchEvent) {
+          // @ts-ignore
+          this._this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom?.();
+        }
+      } catch (e) {}
+
       const cell = this._this.getCellByPoint(point);
       if (!cell) {
         return;
@@ -385,7 +393,7 @@ export default class SelectPowerPlugin {
       }
     };
 
-    this._this.setEvent(EventConstant.MOUSE_DOWN, {
+    this._this.setEvent([EventConstant.MOUSE_DOWN, EventConstant.TOUCH_START], {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
@@ -577,6 +585,7 @@ export default class SelectPowerPlugin {
   }
 
   private drawSideBarLine(ctx: CanvasRenderingContext2D, { anchor, w, h }: borderType) {
+    ctx.save();
     ctx.strokeStyle = '#4a89fe';
     ctx.lineWidth = 3;
     // 画x轴
@@ -598,9 +607,11 @@ export default class SelectPowerPlugin {
       ctx.lineTo(this._this.paddingLeft, y_2);
     }
     ctx.stroke();
+    ctx.restore();
   }
 
   private drawSelectedBorder(ctx: CanvasRenderingContext2D, { anchor, w, h }: borderType) {
+    ctx.save();
     ctx.strokeStyle = '#4a89fe';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -624,6 +635,7 @@ export default class SelectPowerPlugin {
       this.strokeRectWidth,
       this.strokeRectWidth,
     );
+    ctx.restore();
   }
 
   public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
