@@ -327,12 +327,6 @@ export default class SelectPowerPlugin {
     let isMouseDown_top_Cell = false;
     let isMouseDown_left_Cell = false;
     const mouseDownCB = (e: any, point: [number, number]) => {
-      // 借助这个方法来去除inputdom， 主要是移动端。 无需关心
-      try {
-        // @ts-ignore
-        this._this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom?.();
-      } catch (e) {}
-
       const cell = this._this.getCellByPoint(point);
       if (!cell) {
         return;

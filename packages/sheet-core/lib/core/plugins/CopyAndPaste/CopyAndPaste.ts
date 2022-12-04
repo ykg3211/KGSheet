@@ -3,7 +3,7 @@ import { deepClone } from '../../../utils';
 import { html2excel } from '../../../utils/htmlParse';
 import Base, { BaseDataType } from '../../base/base';
 import { RenderZIndex } from '../../base/constant';
-import { EventConstant } from '../base/event';
+import { BusinessEventConstant, EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
@@ -55,11 +55,13 @@ export default class CopyAndPaste {
 
   private initCopy() {
     const copy = () => {
-      const border = this.SelectPlugin.calcBorder();
+      this._this.devMode && console.log('copy');
+      const border = this.SelectPlugin.getSelectCellsScope();
+      console.log(border);
       if (border) {
         const data = this._this.getDataByScope({
-          leftTopCell: border.cellScope.leftTopCell,
-          rightBottomCell: border.cellScope.rightBottomCell,
+          leftTopCell: border.leftTopCell,
+          rightBottomCell: border.rightBottomCell,
         });
         this.copy(data);
       }
@@ -90,6 +92,15 @@ export default class CopyAndPaste {
   // "text/html"
   // "image/png"
   public async paste() {
+    if (!navigator.clipboard) {
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: 'HTTP协议不支持复制粘贴！',
+      });
+      return;
+    }
+
+    this._this.devMode && console.log('paste');
     let ClipboardItems;
     try {
       ClipboardItems = await navigator.clipboard.read();
@@ -167,6 +178,13 @@ export default class CopyAndPaste {
   }
 
   public copy(data: BaseDataType) {
+    if (!navigator.clipboard) {
+      this._this.emit(BusinessEventConstant.MSG_BOX, {
+        type: 'warning',
+        message: 'HTTP协议不支持复制粘贴！',
+      });
+      return;
+    }
     try {
       Object.keys(data.data.spanCells).forEach((key) => {
         let [row, column] = key.split('_').map(Number);
