@@ -3,7 +3,7 @@
 
 import Base from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { EventConstant } from '../base/event';
+import { BusinessEventConstant, EventConstant } from '../base/event';
 import { isNN } from '../../../utils';
 import { judgeOver } from '../../../utils';
 import { PluginTypeEnum } from '..';
@@ -34,13 +34,15 @@ export default class ScrollPlugin {
   }
 
   private initTouchScroll() {
-    let XMouseDownOriginX: number | null = null;
-    let YMouseDownOriginY: number | null = null;
+    let isStartMove = false;
+    const initPoint = [0, 0];
     const touchStartCB = (e: MouseEvent, point: [number, number]) => {
-      console.log('touchStartCB', point);
+      isStartMove = true;
+      initPoint[0] = e.pageX;
+      initPoint[1] = e.pageY;
     };
     this._this.setEvent(EventConstant.TOUCH_START, {
-      type: EventZIndex.SCROLL_BAR,
+      type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
         if (!point) {
@@ -52,41 +54,27 @@ export default class ScrollPlugin {
     });
 
     const touchMoveCB = (e: MouseEvent) => {
-      console.log('touchMoveCB');
-      if (XMouseDownOriginX !== null) {
-        const gap = (e.pageX - XMouseDownOriginX) / this._this.scale;
-        this._this.scrollXY(
-          (gap / this._this.width) * (this._this.contentWidth + this._this.paddingLeft + this._this.overGapWidth),
-          0,
-        );
-        XMouseDownOriginX = e.pageX;
-      }
-      if (YMouseDownOriginY !== null) {
-        const gap = (e.pageY - YMouseDownOriginY) / this._this.scale;
-        this._this.scrollXY(
-          0,
-          (gap / this._this.height) * (this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight),
-        );
-        YMouseDownOriginY = e.pageY;
-      }
+      const X = e.pageX;
+      const Y = e.pageY;
+      this._this.scrollXY(initPoint[0] - X, initPoint[1] - Y);
+      initPoint[0] = e.pageX;
+      initPoint[1] = e.pageY;
     };
 
     this._this.setEvent(EventConstant.TOUCH_MOVE, {
-      type: EventZIndex.SCROLL_BAR,
+      type: EventZIndex.TABLE_CELLS,
       judgeFunc: () => {
-        return XMouseDownOriginX !== null || YMouseDownOriginY !== null;
+        return isStartMove;
       },
       innerFunc: touchMoveCB.bind(this),
     });
 
     const touchEndCB = () => {
-      XMouseDownOriginX = null;
-      YMouseDownOriginY = null;
-      console.log('touchEndCB');
+      isStartMove = false;
     };
     this._this.setEvent(EventConstant.TOUCH_END, {
-      type: EventZIndex.SCROLL_BAR,
-      judgeFunc: () => XMouseDownOriginX !== null || YMouseDownOriginY !== null,
+      type: EventZIndex.TABLE_CELLS,
+      judgeFunc: () => isStartMove,
       innerFunc: touchEndCB.bind(this),
     });
   }

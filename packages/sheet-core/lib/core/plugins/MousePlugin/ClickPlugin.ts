@@ -23,7 +23,7 @@ export default class ClickPlugin {
     this.commonRegisterEvent('touchend', EventConstant.TOUCH_END, true);
   }
 
-  private commonRegisterEvent(event: any, key: EventConstant, isOnDom?: boolean = false) {
+  private commonRegisterEvent(event: any, key: EventConstant, isOnDom: boolean = false) {
     const handler = (e: MouseEvent) => {
       this._this.emit(key, e);
       this._this.dispatchEvent(key, e);

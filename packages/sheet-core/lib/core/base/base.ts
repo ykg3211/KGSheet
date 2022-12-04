@@ -25,6 +25,9 @@ class Base extends Render {
   public dispatchEvent!: dispatchEventType;
   public pluginsMap: PluginType;
 
+  private originOverflowY: any;
+  private originOverflowX: any;
+
   constructor(dom: HTMLElement) {
     super();
     this.ToolBar = null;
@@ -39,6 +42,8 @@ class Base extends Render {
     dom.appendChild(this.canvasDom);
 
     this.initDarkMode();
+
+    this.handleOverflow();
   }
 
   /**
@@ -46,6 +51,17 @@ class Base extends Render {
    */
   public deregister() {
     this.pluginsInstance.deregister();
+  }
+
+  private handleOverflow() {
+    this.originOverflowY = document.body.style.overflowY;
+    this.originOverflowX = document.body.style.overflowX;
+    document.body.style.overflowY = 'hidden';
+    document.body.style.overflowX = 'hidden';
+    this.on(EventConstant.DESTROY, () => {
+      document.body.style.overflowY = this.originOverflowY;
+      document.body.style.overflowX = this.originOverflowX;
+    });
   }
 
   private initDarkMode() {

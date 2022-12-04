@@ -80,15 +80,17 @@ export default class EventDispatch {
 
   protected dispatchEvent(type: EventConstant, e: MouseEvent) {
     // 用于处理触摸事件的
-    if (e instanceof TouchEvent) {
-      const touchAttrs = e.changedTouches[0] || {};
-      (e as any).clientX = touchAttrs.clientX;
-      (e as any).clientY = touchAttrs.clientY;
-      (e as any).pageX = touchAttrs.pageX;
-      (e as any).pageY = touchAttrs.pageY;
-      (e as any).screenX = touchAttrs.screenX;
-      (e as any).screenY = touchAttrs.screenY;
-    }
+    try {
+      if (e instanceof TouchEvent) {
+        const touchAttrs = e.changedTouches[0] || {};
+        (e as any).clientX = touchAttrs.clientX;
+        (e as any).clientY = touchAttrs.clientY;
+        (e as any).pageX = touchAttrs.pageX;
+        (e as any).pageY = touchAttrs.pageY;
+        (e as any).screenX = touchAttrs.screenX;
+        (e as any).screenY = touchAttrs.screenY;
+      }
+    } catch (e) {}
 
     const innerFuncArr: ((e: MouseEvent) => void)[] = [];
     const outerFuncArr: ((e: MouseEvent) => void)[] = [];
