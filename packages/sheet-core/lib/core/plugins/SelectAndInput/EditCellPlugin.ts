@@ -373,9 +373,11 @@ export default class EditCellPlugin {
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.SCROLL_BAR,
       judgeFunc: (e) => {
-        if (this.editDomInstance && !(e as any).path.includes(this.editDomInstance)) {
-          this.removeDom();
-        }
+        try {
+          if (this.editDomInstance && e.target === this._this.canvasDom) {
+            this.removeDom();
+          }
+        } catch (e) {}
         return false;
       },
       innerFunc: () => {},
