@@ -669,18 +669,28 @@ export default class EditCellPlugin {
   public combineCells() {
     const selectCells = this.SelectPlugin.getSelectCellsScope();
     if (!selectCells) {
+      // 没有选中单元格，
+      this._this.devMode && console.log('合并单元格：需要先选中单元格');
+      return;
+    }
+    if (
+      selectCells.rightBottomCell.column - selectCells.leftTopCell.column === 0 &&
+      selectCells.rightBottomCell.row - selectCells.leftTopCell.row === 0
+    ) {
+      // 只选中了一个单元格，
+      this._this.devMode && console.log('合并单元格：不能只选中一个单元格');
       return;
     }
 
-    const originSpancell = this._this.getSpanCell(selectCells.leftTopCell);
+    const originSpanCell = this._this.getSpanCell(selectCells.leftTopCell);
     const sourceData = this._this.getDataByScope(selectCells);
 
-    // 取消合并
     if (
-      originSpancell &&
-      originSpancell.span[0] === selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1 &&
-      originSpancell.span[1] === selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1
+      originSpanCell &&
+      originSpanCell.span[0] === selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1 &&
+      originSpanCell.span[1] === selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1
     ) {
+      // 取消合并
       const originSpanCell = deepClone(
         this._this.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column],
       );
@@ -714,7 +724,7 @@ export default class EditCellPlugin {
       return;
     }
 
-    // 合并
+    // 可以合并
     const newSpanCell: SpanCell = Object.assign(deepClone(sourceData.data.cells[0][0]), {
       span: [
         selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1,

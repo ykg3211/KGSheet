@@ -44,6 +44,7 @@ class Base extends Render {
     this.initDarkMode();
 
     this.handleOverflow();
+    this.disableLeftBack();
   }
 
   /**
@@ -92,6 +93,11 @@ class Base extends Render {
       window.removeEventListener('resize', func);
     });
   }
+
+  /**
+   * 禁用左滑返回
+   */
+  private disableLeftBack() {}
 
   // 计算边框
   public calBorder(startCell: SelectedCellType, endCell: SelectedCellType) {

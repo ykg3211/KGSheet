@@ -311,9 +311,7 @@ export default class Render extends DrawLayer {
       if (!cell.style.backgroundColor) {
         cell.style.backgroundColor = this.color('white');
       }
-      if (cell.style.backgroundColor !== this.color('white')) {
-        cell.style.backgroundColor = this.color('white');
-      }
+
       this.renderSpanCellsArr.push({
         location: {
           row: y,
