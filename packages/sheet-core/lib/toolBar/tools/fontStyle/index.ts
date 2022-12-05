@@ -55,7 +55,7 @@ export class FontDeleteLine extends ButtonBase {
   }
 
   public click() {
-    this.sheet.clearStyle();
+    this.sheet.deleteLine();
   }
 }
 export class FontItalic extends ButtonBase {
@@ -79,6 +79,6 @@ export class FontUnderLine extends ButtonBase {
   }
 
   public click() {
-    this.sheet.clearStyle();
+    this.sheet.underLine();
   }
 }

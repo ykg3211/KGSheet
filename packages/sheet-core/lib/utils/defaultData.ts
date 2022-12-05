@@ -47,7 +47,6 @@ const createDefaultData = (w: number = 10, h: number = 100) => {
     }
     result.cells.push(temp);
   }
-
   return result;
 };
 

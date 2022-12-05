@@ -44,6 +44,16 @@ class Excel extends Base {
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.blod();
   }
 
+  // 删除线
+  public deleteLine() {
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.deleteLine();
+  }
+
+  // 下划线
+  public underLine() {
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.underLine();
+  }
+
   // 合并单元格
   public combineCells() {
     this.getPlugin(PluginTypeEnum.EditCellPlugin)?.combineCells();

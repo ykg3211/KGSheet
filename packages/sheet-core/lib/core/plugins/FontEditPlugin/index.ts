@@ -133,7 +133,32 @@ export default class FontEditPlugin {
 
     const targetData = handleCell(sourceData, (cell) => {
       cell.style.fontWeight = newWeight;
-      cell.style.backgroundColor = 'yellow';
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
+    });
+  }
+
+  public deleteLine() {
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+
+    const preAttributes = this.getSameAttributes(sourceData, scope);
+
+    let textDecoration: TextDecoration = 'line-through';
+    if (preAttributes.textDecoration === 'line-through') {
+      textDecoration = 'none';
+    }
+
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.textDecoration = textDecoration;
       return cell;
     });
 

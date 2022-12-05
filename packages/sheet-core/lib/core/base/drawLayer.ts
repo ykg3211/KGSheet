@@ -1,4 +1,4 @@
-import { CellTypeEnum, RenderCellProps, RenderCellPropsNoLocation } from '../../interfaces';
+import { CellTypeEnum, RenderCellPropsNoLocation, Cell } from '../../interfaces';
 import BaseEvent, { EventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
 export type rectType = [number, number, number, number];
@@ -99,6 +99,33 @@ export default class DrawLayer extends BaseEvent {
           } else if (cell.style.textAlign === 'right') {
             left += w;
           }
+        }
+
+        if (cell.style.textDecoration && cell.style.textDecoration !== 'none') {
+          let top = point[1] + h / 2;
+          const contentWidth = ctx.measureText(cell.content).width;
+          let _left = left;
+          let _right = left;
+          if (cell.style.textDecoration === 'line-through') {
+          } else if (cell.style.textDecoration === 'underline') {
+            top += size / 2 - 2;
+          }
+          if (cell.style.textAlign === 'left') {
+            _right += contentWidth;
+          } else if (cell.style.textAlign === 'center') {
+            _left -= contentWidth / 2;
+            _right += contentWidth / 2;
+          } else if (cell.style.textAlign === 'right') {
+            _left -= contentWidth;
+          }
+          _left -= 3;
+          _right += 3;
+          ctx.beginPath();
+          ctx.strokeStyle = cell.style.fontColor || this.color('black');
+          ctx.lineWidth = 1;
+          ctx.moveTo(_left, top);
+          ctx.lineTo(_right, top);
+          ctx.stroke();
         }
 
         ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
