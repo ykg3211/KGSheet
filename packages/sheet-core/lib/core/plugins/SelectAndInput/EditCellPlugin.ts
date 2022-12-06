@@ -544,6 +544,7 @@ export default class EditCellPlugin {
       }
 
       this.currentCell = cell;
+      this._this.getPlugin(PluginTypeEnum.CornerAutoMove)?.start();
       this._this.render();
     };
     this._this.setEvent(EventConstant.MOUSE_MOVE, {

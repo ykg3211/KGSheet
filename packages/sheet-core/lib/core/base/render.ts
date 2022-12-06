@@ -34,7 +34,6 @@ export default class Render extends DrawLayer {
   public render: () => void;
 
   public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
-  public mouseCornerScroll: (point: [number, number]) => void;
 
   constructor() {
     super();
@@ -62,7 +61,6 @@ export default class Render extends DrawLayer {
     this.renderCellsArr = [];
 
     this.render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
-    this.mouseCornerScroll = _throttleByRequestAnimationFrame(this._mouseCornerScroll.bind(this));
 
     this.on(EventConstant.RENDER, this.render);
 
@@ -474,23 +472,6 @@ export default class Render extends DrawLayer {
         this.scrollTop = this.scrollTop + deltaY;
       }
     }
-  }
-
-  private _mouseCornerScroll(point: [number, Number]) {
-    // todo @yukaige
-    const [x, y] = point;
-    const gap = 10;
-    if (x < 100) {
-      this.scrollXY(-gap, 0);
-    }
-    if (y < 100) {
-      this.scrollXY(0, -gap);
-    }
-    if (x > this._width - 100) {
-      this.scrollXY(gap, 0);
-    }
-    if (y > this._height - 100) {
-      this.scrollXY(0, gap);
-    }
+    this.render();
   }
 }

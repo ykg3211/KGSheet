@@ -14,10 +14,10 @@ export const isSafari = (function () {
 
 export const META_KEY = isMacOS ? '⌘' : 'Ctrl';
 
-export function nextTick(fn: Function) {
+export function nextTick(fn?: Function) {
   return new Promise((resolve) => {
     window.requestAnimationFrame(() => {
-      fn();
+      fn?.();
       resolve(null);
     });
   });

@@ -13,6 +13,7 @@ import BaseEventStack from './EventStack/base';
 import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
+import CornerAutoMove from './CornerAutoMove';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -29,6 +30,7 @@ export enum PluginTypeEnum {
   RightClickPlugin = 'RightClickPlugin',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
+  CornerAutoMove = 'CornerAutoMove',
 }
 
 export interface PluginType {
@@ -46,6 +48,7 @@ export interface PluginType {
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
+  [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
 }
 
 export interface BasePluginType {
@@ -88,6 +91,8 @@ export default class Plugins {
     this.register(RightClickPlugin);
 
     this.register(FontEditPlugin);
+
+    this.register(CornerAutoMove);
   }
 
   public deregister(name?: PluginTypeEnum) {

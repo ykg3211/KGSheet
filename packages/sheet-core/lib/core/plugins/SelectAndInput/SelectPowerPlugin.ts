@@ -442,7 +442,7 @@ export default class SelectPowerPlugin {
         }
       }
 
-      this._this.mouseCornerScroll(point);
+      this._this.getPlugin(PluginTypeEnum.CornerAutoMove)?.start();
 
       this._this.render();
     };
