@@ -36,31 +36,43 @@ class Excel extends Base {
 
   // 清除样式
   public clearStyle() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.clearStyle();
   }
 
   // 粗体
   public blodStyle() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.blod();
+  }
+
+  // 粗体
+  public setFontSize(v: number) {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.setFontSize(v);
   }
 
   // 删除线
   public deleteLine() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.deleteLine();
   }
 
   // 斜体
   public italic() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.italic();
   }
 
   // 下划线
   public underLine() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.underLine();
   }
 
   // 合并单元格
   public combineCells() {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.EditCellPlugin)?.combineCells();
   }
 }

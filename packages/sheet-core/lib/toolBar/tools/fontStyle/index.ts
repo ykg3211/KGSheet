@@ -1,7 +1,7 @@
 import { META_KEY } from '../../../utils';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
-import OptionBase from '../base/optionBase';
+import OptionBase, { OptionsType } from '../base/optionBase';
 
 export class FontSize extends OptionBase {
   constructor(props: ToolsProps) {
@@ -12,12 +12,13 @@ export class FontSize extends OptionBase {
       label: num + '',
       value: num + '',
     }));
+    this.valueLabel = '12';
     this.value = '12';
     this.width = 62;
   }
 
-  public click() {
-    //
+  public click(item: OptionsType) {
+    this.sheet.setFontSize(+item.value);
   }
 }
 

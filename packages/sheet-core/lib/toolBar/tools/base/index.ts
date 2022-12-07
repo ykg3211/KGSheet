@@ -30,5 +30,5 @@ export class BaseTool {
     this.style = {};
   }
 
-  public click() {}
+  public click(v?: any) {}
 }

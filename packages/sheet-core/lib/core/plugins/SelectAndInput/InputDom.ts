@@ -68,8 +68,8 @@ export class InputDom {
     this.DOM?.oninput?.(mainKeys);
   }
 
-  private setCommonStyle(originData: Cell) {
-    const cellStyle = originData.style;
+  private setCommonStyle(cell: Cell) {
+    const cellStyle = cell.style;
 
     this.DOM.style.backgroundColor = cellStyle.backgroundColor ? cellStyle.backgroundColor : this._this.color('white');
     Object.keys(cellStyle).forEach((key) => {
@@ -77,7 +77,9 @@ export class InputDom {
       this.DOM.style[key] = cellStyle[key];
     });
     this.DOM.style.font = cellStyle.font || '';
+    this.DOM.style.fontStyle += cellStyle.italic && 'italic';
     this.DOM.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
+    this.DOM.style.fontWeight = cellStyle.fontWeight || 'normal';
     this.DOM.style.textAlign = cellStyle.textAlign || '';
     this.DOM.style.color = cellStyle.fontColor || this._this.color('black');
     this.DOM.style.position = 'absolute';
@@ -87,6 +89,14 @@ export class InputDom {
     this.DOM.style.border = '1px solid #4a89fe';
     this.DOM.style.resize = 'none';
     this.DOM.style.overflow = 'hidden';
+
+    const textDecoration = [];
+    cell.style.deleteLine && textDecoration.push('line-through');
+    cell.style.underLine && textDecoration.push('underline');
+    this.DOM.style.textDecoration = textDecoration.join(' ');
+
+    // 光标颜色
+    this.DOM.style.caretColor = this._this.color('black');
   }
 
   public resetEditDomPosition(x: number, y: number, w: number, h: number) {

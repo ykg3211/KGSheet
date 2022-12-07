@@ -224,4 +224,24 @@ export default class FontEditPlugin {
       after_data: targetData,
     });
   }
+
+  public setFontSize(v: number) {
+    this._this.devMode && console.log('Meta + u');
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.fontSize = v;
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
+    });
+  }
 }

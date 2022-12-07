@@ -598,7 +598,7 @@ export default class EditCellPlugin {
     return this.editDomInstance;
   }
 
-  private removeDom() {
+  public removeDom() {
     if (this.editDomInstance) {
       this.editDomInstance.remove();
       this.editDomInstance = null;

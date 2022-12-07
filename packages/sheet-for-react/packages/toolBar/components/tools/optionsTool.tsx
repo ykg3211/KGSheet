@@ -1,13 +1,14 @@
 import React, { useContext, useRef } from 'react';
 import { Tooltip } from 'antd';
-import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
+import OptionBase from 'kgsheet/dist/toolBar/tools/base/optionBase';
 import { SheetContext } from '../../..';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 import Popover from '../popover';
 import { TooltipPlacement } from 'antd/es/tooltip';
+import Icon from '../../../icons/icon';
 
 interface Props {
-  tool: BaseTool;
+  tool: OptionBase;
   toolTipPlacement?: TooltipPlacement;
   style: React.CSSProperties;
 }
@@ -15,14 +16,36 @@ interface Props {
 const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
   const { color: getColor } = useContext(SheetContext);
   const ref = useRef(null);
-  console.log(tool);
+
+  const clickItem = (item: any) => {
+    tool.click(item);
+  };
+
   return (
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
-      <Popover
-        color={getColor(colorType.white)}
-        triggerElm={<div style={{ color: getColor(colorType.black) }}>1231</div>}>
-        <div style={{ color: getColor(colorType.black) }}>1231</div>
-      </Popover>
+      <div ref={ref}>
+        <Popover
+          color={getColor(colorType.white)}
+          triggerElm={
+            <div className='kgsheet_option' style={{ color: getColor(colorType.black), width: '80px' }}>
+              <span>{tool.valueLabel}</span>
+              <Icon fontSize={16} icon='sheet-iconarrow-down' color={getColor(colorType.black)}></Icon>
+            </div>
+          }>
+          <div style={{ color: getColor(colorType.black) }}>
+            {tool.options.map((v) => (
+              <div
+                className='kgsheet_option_btn'
+                onClick={() => {
+                  clickItem(v);
+                }}
+                key={v.value}>
+                {v.label}
+              </div>
+            ))}
+          </div>
+        </Popover>
+      </div>
     </Tooltip>
   );
 };

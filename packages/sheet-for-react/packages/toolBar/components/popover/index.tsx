@@ -7,10 +7,14 @@ interface Props extends PopoverProps {
 }
 const Popover = (props: Props) => {
   const { children, triggerElm, ...rest } = props;
-  const popover = useRef(null);
 
   return (
-    <_Propover ref={popover} placement='bottomLeft' content={children} trigger='click' {...rest}>
+    <_Propover
+      overlayClassName='kgsheet_option_popover'
+      placement='bottomLeft'
+      content={children}
+      trigger='click'
+      {...rest}>
       {triggerElm}
     </_Propover>
   );
