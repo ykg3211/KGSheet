@@ -12,6 +12,7 @@ export enum EventConstant {
   TOUCH_START = 'touch_start',
   TOUCH_END = 'touch_end',
   TOUCH_MOVE = 'touch_move',
+  RESIZE = 'resize',
   MOUSE_HOVER_EVENT = 'mouse_hover_event',
   SELECT_CELL_MOVE_TO_VIEW = 'select_cell_move_to_view',
   BLUR_FOCUS_RESET_PARAMS = 'blur_focus_reset_params',

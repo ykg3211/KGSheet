@@ -15,7 +15,9 @@ export interface CellStyle {
   fontColor?: string;
   fontSize?: number;
   font?: string;
-  textDecoration?: TextDecoration;
+  deleteLine?: boolean;
+  underLine?: boolean;
+  italic?: boolean;
 }
 
 export interface Cell {

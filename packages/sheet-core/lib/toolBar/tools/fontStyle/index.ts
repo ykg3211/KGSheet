@@ -67,7 +67,7 @@ export class FontItalic extends ButtonBase {
   }
 
   public click() {
-    this.sheet.clearStyle();
+    this.sheet.italic();
   }
 }
 export class FontUnderLine extends ButtonBase {

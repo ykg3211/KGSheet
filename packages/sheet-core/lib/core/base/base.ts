@@ -85,6 +85,10 @@ class Base extends Render {
    */
   private initResize(dom: HTMLElement) {
     const func = () => {
+      this.emit(EventConstant.RESIZE, {
+        width: dom.offsetWidth,
+        height: dom.offsetHeight,
+      });
       this.handleDPR(dom);
       this.render();
     };

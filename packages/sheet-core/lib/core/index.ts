@@ -49,6 +49,11 @@ class Excel extends Base {
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.deleteLine();
   }
 
+  // 斜体
+  public italic() {
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.italic();
+  }
+
   // 下划线
   public underLine() {
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.underLine();

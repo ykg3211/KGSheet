@@ -14,7 +14,8 @@ export default class CornerAutoMove {
   public name: string;
   private mouseX: number;
   private mouseY: number;
-  private borderGap: number; // 会触发滑动的边距
+  private borderGapX: number; // 会触发滑动的边距
+  private borderGapY: number; // 会触发滑动的边距
   private isStart: boolean;
   private needStop: boolean;
 
@@ -25,7 +26,8 @@ export default class CornerAutoMove {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.borderGap = 150;
+    this.borderGapX = 50;
+    this.borderGapY = 50;
     this.isStart = false;
     this.needStop = false;
 
@@ -44,10 +46,22 @@ export default class CornerAutoMove {
     };
     document.body.addEventListener('mouseup', mouseupCB);
 
+    const resizeCB = () => {
+      const offsetHeight = this._this.canvasDom?.offsetHeight || 0;
+      const offsetWidth = this._this.canvasDom?.offsetWidth || 0;
+      this.borderGapX = Math.max((offsetWidth * 6) / 100, 50);
+      this.borderGapY = Math.max((offsetHeight * 6) / 100, 50);
+    };
+
+    this._this.on(EventConstant.RESIZE, resizeCB);
+
     this._this.on(EventConstant.DESTROY, () => {
+      this._this.un(EventConstant.RESIZE, resizeCB);
       document.body.removeEventListener('mousemove', mousemoveCB);
       document.body.removeEventListener('mouseup', mouseupCB);
     });
+
+    resizeCB();
   }
 
   public start() {
@@ -90,11 +104,11 @@ export default class CornerAutoMove {
       return false;
     }
 
-    const domOffsetLeft = this._this.canvasDom.offsetLeft + this.borderGap;
-    const domOffsetRight = this._this.canvasDom.offsetLeft + this._this.canvasDom.offsetWidth - this.borderGap;
+    const domOffsetLeft = this._this.canvasDom.offsetLeft + this.borderGapX;
+    const domOffsetRight = this._this.canvasDom.offsetLeft + this._this.canvasDom.offsetWidth - this.borderGapX;
 
-    const domOffsetTop = this._this.canvasDom.offsetTop + this.borderGap;
-    const domOffsetBottom = this._this.canvasDom.offsetTop + this._this.canvasDom.offsetHeight - this.borderGap;
+    const domOffsetTop = this._this.canvasDom.offsetTop + this.borderGapY;
+    const domOffsetBottom = this._this.canvasDom.offsetTop + this._this.canvasDom.offsetHeight - this.borderGapX;
     let offsetX = 0;
     let offsetY = 0;
     // if (x < domOffsetLeft || x > domOffsetRight) {

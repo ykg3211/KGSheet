@@ -78,9 +78,7 @@ export default class DrawLayer extends BaseEvent {
       const { point, cell, w, h } = data;
       this.initStrokeStyle(ctx);
       ctx.fillStyle = cell.style.backgroundColor || this.color('white');
-      if (!isNN(cell.style.backgroundColor)) {
-        ctx.fillRect(point[0], point[1], w, h);
-      }
+      ctx.fillRect(point[0], point[1], w, h);
 
       if (cell.content === '') {
         return;
@@ -88,7 +86,9 @@ export default class DrawLayer extends BaseEvent {
 
       clipCell(ctx, [point[0], point[1], w, h], () => {
         const size = cell.style.fontSize || 12;
-        ctx.font = `${cell.style.fontWeight || 'normal'} ${size}px ${cell.style.font || 'Arial'}`;
+        ctx.font = `${cell.style.fontWeight || 'normal'} ${cell.style.italic ? 'italic' : ''} ${size}px ${
+          cell.style.font || 'Arial'
+        }`;
         ctx.fillStyle = cell.style.fontColor || this.color('black');
         ctx.textAlign = 'left';
         let left = point[0];
@@ -101,15 +101,11 @@ export default class DrawLayer extends BaseEvent {
           }
         }
 
-        if (cell.style.textDecoration && cell.style.textDecoration !== 'none') {
+        if (cell.style.underLine || cell.style.deleteLine) {
           let top = point[1] + h / 2;
           const contentWidth = ctx.measureText(cell.content).width;
           let _left = left;
           let _right = left;
-          if (cell.style.textDecoration === 'line-through') {
-          } else if (cell.style.textDecoration === 'underline') {
-            top += size / 2 - 2;
-          }
           if (cell.style.textAlign === 'left') {
             _right += contentWidth;
           } else if (cell.style.textAlign === 'center') {
@@ -120,12 +116,24 @@ export default class DrawLayer extends BaseEvent {
           }
           _left -= 3;
           _right += 3;
-          ctx.beginPath();
-          ctx.strokeStyle = cell.style.fontColor || this.color('black');
-          ctx.lineWidth = 1;
-          ctx.moveTo(_left, top);
-          ctx.lineTo(_right, top);
-          ctx.stroke();
+
+          if (cell.style.deleteLine) {
+            ctx.beginPath();
+            ctx.strokeStyle = cell.style.fontColor || this.color('black');
+            ctx.lineWidth = 1;
+            ctx.moveTo(_left, top);
+            ctx.lineTo(_right, top);
+            ctx.stroke();
+          }
+          if (cell.style.underLine) {
+            top += size / 2 - 2;
+            ctx.beginPath();
+            ctx.strokeStyle = cell.style.fontColor || this.color('black');
+            ctx.lineWidth = 1;
+            ctx.moveTo(_left, top);
+            ctx.lineTo(_right, top);
+            ctx.stroke();
+          }
         }
 
         ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);

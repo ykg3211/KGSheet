@@ -1,10 +1,10 @@
 import Base from '../../base/base';
-import { deepClone, handleCell } from '../../../utils';
+import { handleCell } from '../../../utils';
 import { PluginTypeEnum } from '..';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
-import { Cell, CellStyle, ExcelConfig, SpanCell, TextDecoration } from '../../../interfaces';
+import { Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 // 主要用于计算style
@@ -41,11 +41,13 @@ export default class FontEditPlugin {
     const needAttrs: Array<keyof CellStyle> = [
       'textAlign',
       'backgroundColor',
-      'textDecoration',
       'fontWeight',
       'fontColor',
       'fontSize',
       'font',
+      'deleteLine',
+      'underLine',
+      'italic',
     ];
 
     // @ts-ignore
@@ -152,13 +154,13 @@ export default class FontEditPlugin {
 
     const preAttributes = this.getSameAttributes(sourceData, scope);
 
-    let textDecoration: TextDecoration = 'line-through';
-    if (preAttributes.textDecoration === 'line-through') {
-      textDecoration = 'none';
+    let deleteLine: boolean = true;
+    if (preAttributes.deleteLine === true) {
+      deleteLine = false;
     }
 
     const targetData = handleCell(sourceData, (cell) => {
-      cell.style.textDecoration = textDecoration;
+      cell.style.deleteLine = deleteLine;
       return cell;
     });
 
@@ -179,13 +181,40 @@ export default class FontEditPlugin {
 
     const preAttributes = this.getSameAttributes(sourceData, scope);
 
-    let textDecoration: TextDecoration = 'underline';
-    if (preAttributes.textDecoration === 'underline') {
-      textDecoration = 'none';
+    let underLine: boolean = true;
+    if (preAttributes.underLine === true) {
+      underLine = false;
     }
 
     const targetData = handleCell(sourceData, (cell) => {
-      cell.style.textDecoration = textDecoration;
+      cell.style.underLine = underLine;
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
+    });
+  }
+
+  public italic() {
+    this._this.devMode && console.log('Meta + u');
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+
+    const preAttributes = this.getSameAttributes(sourceData, scope);
+
+    let italic: boolean = true;
+    if (preAttributes.italic === true) {
+      italic = false;
+    }
+
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.italic = italic;
       return cell;
     });
 

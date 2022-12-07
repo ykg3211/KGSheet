@@ -306,9 +306,6 @@ export default class Render extends DrawLayer {
       if (point[0] > this.width || point[0] + _w < 0 || point[1] > this.height || point[1] + _h < 0) {
         return;
       }
-      if (!cell.style.backgroundColor) {
-        cell.style.backgroundColor = this.color('white');
-      }
 
       this.renderSpanCellsArr.push({
         location: {
