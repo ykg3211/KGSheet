@@ -14,11 +14,13 @@ export class FontSize extends OptionBase {
     }));
     this.valueLabel = '12';
     this.value = '12';
-    this.width = 62;
   }
 
   public click(item: OptionsType) {
+    this.label = item.label;
+    this.value = item.value;
     this.sheet.setFontSize(+item.value);
+    this.toolBar.emit('refresh');
   }
 }
 

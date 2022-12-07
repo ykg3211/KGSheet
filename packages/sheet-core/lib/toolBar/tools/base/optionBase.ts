@@ -16,6 +16,5 @@ export default class OptionBase extends BaseTool {
     this.options = [];
     this.value = '';
     this.valueLabel = '';
-    this.width = 48;
   }
 }

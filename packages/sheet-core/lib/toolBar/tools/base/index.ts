@@ -14,14 +14,12 @@ export class BaseTool {
   public toolTip: string;
   public key: string;
   public class: string;
-  public width: number; // 实际是min-width。计算宽度用的。两行的时候用
   public style: Partial<CSSStyleDeclaration>;
 
   constructor({ sheet, toolBar, key }: ToolsProps) {
     this.sheet = sheet;
     this.toolBar = toolBar;
 
-    this.width = 0;
     this.key = key;
     this.icon = '';
     this.label = '';

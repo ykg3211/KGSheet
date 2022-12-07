@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useMemo } from 'react';
-import { ToolBar } from 'kgsheet';
+import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../';
-import { useState } from 'react';
 import BaseLayout from './components/baseLayout';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
 

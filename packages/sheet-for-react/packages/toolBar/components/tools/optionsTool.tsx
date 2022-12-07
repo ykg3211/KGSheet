@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Tooltip } from 'antd';
 import OptionBase from 'kgsheet/dist/toolBar/tools/base/optionBase';
 import { SheetContext } from '../../..';
@@ -16,8 +16,10 @@ interface Props {
 const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
   const { color: getColor } = useContext(SheetContext);
   const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   const clickItem = (item: any) => {
+    setVisible(false);
     tool.click(item);
   };
 
@@ -25,6 +27,10 @@ const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
       <div ref={ref}>
         <Popover
+          open={visible}
+          onOpenChange={(v) => {
+            setVisible(v);
+          }}
           color={getColor(colorType.white)}
           triggerElm={
             <div className='kgsheet_option' style={{ color: getColor(colorType.black), width: '80px' }}>
