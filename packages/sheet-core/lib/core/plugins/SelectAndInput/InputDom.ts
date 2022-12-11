@@ -99,6 +99,19 @@ export class InputDom {
     this.DOM.style.caretColor = this._this.color('black');
   }
 
+  private setSize({ width, height }: { width?: number; height?: number }) {
+    const maxWidth = this._this.width - this._this.paddingLeft - this._this.scrollBarWidth;
+    const maxHeight = this._this.height - this._this.paddingTop - this._this.scrollBarWidth;
+    if (width) {
+      this.DOM.style.width = width + 'px';
+      // this.DOM.style.width = Math.min(maxWidth, width) + 'px';
+    }
+    if (height) {
+      this.DOM.style.height = height + 'px';
+      // this.DOM.style.height = Math.min(maxHeight, height) + 'px';
+    }
+  }
+
   public resetEditDomPosition(x: number, y: number, w: number, h: number) {
     if (!this.DOM || !this._this.canvasDom) {
       return;
@@ -116,8 +129,10 @@ export class InputDom {
     x = Math.min(this._this.canvasDom.offsetLeft + width - _scrollBarWidth - w + 3, x);
     y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y);
 
-    this.DOM.style.width = (w - 2) * this._this.scale + 'px';
-    this.DOM.style.height = (h - 2) * this._this.scale + 'px';
+    this.setSize({
+      width: (w - 2) * this._this.scale,
+      height: (h - 2) * this._this.scale,
+    });
     this.minWidth = (w - 2) * this._this.scale;
     this.minHeight = (h - 2) * this._this.scale;
 
@@ -184,7 +199,9 @@ export class InputDom {
   }
 
   private calcWidthHeight() {
-    this.DOM.style.height = Math.max(this.DOM.scrollHeight, this.minHeight) + 'px';
+    this.setSize({
+      height: Math.max(this.DOM.scrollHeight, this.minHeight),
+    });
   }
 
   private _stopPropagation(e: Event) {

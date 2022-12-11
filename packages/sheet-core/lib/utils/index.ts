@@ -89,6 +89,18 @@ export const deepClone: <T>(raw: T) => T = (v: any) => {
   return v ? JSON.parse(JSON.stringify(v)) : v;
 };
 
+export const isSameArray: (array_1: Array<any>, array_2: Array<any>) => boolean = (array_1, array_2) => {
+  let isSame = true;
+  array_1.some((v, i) => {
+    if (v !== array_2[i]) {
+      isSame = false;
+      return true;
+    }
+    return false;
+  });
+  return isSame;
+};
+
 export function debounce(func: any, t: number) {
   let time: null | number = null;
   return (...arg: any) => {

@@ -18,7 +18,7 @@ export default function Group({ group }: Props) {
     return 'rgba(0,0,0,0)';
   }, [flag, toolBar]);
 
-  if (group.lines === 1) {
+  if (group.tools.length === 1) {
     return (
       <div className='kgsheet_toolBar_group_no_warp'>
         {group.tools[0].map((tool) => {

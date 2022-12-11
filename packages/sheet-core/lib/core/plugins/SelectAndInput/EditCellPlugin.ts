@@ -4,7 +4,7 @@ import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { rectType } from '../../base/drawLayer';
 import { Cell, SpanCell } from '../../../interfaces';
-import { combineCell, deepClone, judgeOver } from '../../../utils';
+import { combineCell, deepClone, isSameArray, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
 import { BusinessEventConstant, EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
@@ -389,16 +389,32 @@ export default class EditCellPlugin {
     this.handleMouseUp();
   }
 
-  private initEditBoxDom(cell: SelectedCellType) {
+  private initEditBoxDom(cell: SelectedCellType, isDBClick = false) {
+    this._this.devMode && console.log('InitEditBoxDom', cell);
     const { cells } = this._this.getSpanCellByCell({ cell });
     if (cells.length > 0) {
       cell = cells[0];
     }
+    const position = this._this.getRectByCell(cell);
+
+    /**
+     * 解决双击过程中移动鼠标之后，会将dom挂载在最后的单元格的bug。
+     */
+    if (isDBClick) {
+      const selectCells = this.SelectPlugin.getSelectCellsScope();
+      if (!selectCells) {
+        return;
+      }
+      if (isDBClick) {
+        const _border = this._this.calBorder(selectCells.leftTopCell, selectCells.rightBottomCell);
+        if (!isSameArray(_border, position)) {
+          return;
+        }
+      }
+    }
     if (this._this.canvasDom) {
       this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
       this.editCell = cell;
-
-      const position = this._this.getRectByCell(this.editCell);
 
       position[0] += this._this.canvasDom.offsetLeft;
       position[1] += this._this.canvasDom.offsetTop;
@@ -415,7 +431,7 @@ export default class EditCellPlugin {
 
   private handleDBClick() {
     const dbClickCB = (e: any, cell: SelectedCellType) => {
-      this.initEditBoxDom(cell);
+      this.initEditBoxDom(cell, true);
     };
     this._this.setEvent(EventConstant.DB_CLICK, {
       type: EventZIndex.TABLE_CELLS,

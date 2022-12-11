@@ -4,7 +4,7 @@ import { PluginTypeEnum } from '..';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
-import { Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
+import { Align, Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 // 主要用于计算style
@@ -235,6 +235,24 @@ export default class FontEditPlugin {
 
     const targetData = handleCell(sourceData, (cell) => {
       cell.style.fontSize = v;
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
+    });
+  }
+  public textAlign(textAlign: Align) {
+    this._this.devMode && console.log('Meta + u');
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style.textAlign = textAlign;
       return cell;
     });
 

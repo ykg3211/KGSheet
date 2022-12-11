@@ -21,7 +21,6 @@ export interface ToolsProps {
 }
 
 export interface ToolsGroupConfig<T = BaseTool> {
-  lines: number;
   tools: T[][];
 }
 

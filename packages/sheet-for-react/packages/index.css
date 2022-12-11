@@ -90,6 +90,7 @@
 
 .kgsheet_option_popover .ant-popover-inner-content {
   padding: 2px;
+  user-select: none;
 }
 
 .kgsheet_option_btn {

@@ -3,6 +3,7 @@ import { DarkMode } from './darkMode';
 import { FontDeleteLine, FontItalic, FontSize, FontUnderLine, FontWeight } from './fontStyle';
 import { AntiRevert, Revert } from './revert';
 import { CombineCells } from './combineCells';
+import { TextAlignLeft, TextAlignCenter, TextAlignRight } from './textAlign';
 
 export enum ToolsEnum {
   REVERT = 'revert',
@@ -15,6 +16,9 @@ export enum ToolsEnum {
   FONT_ITALIC = 'font_italic',
   FONT_UNDER_LINE = 'font_under_line',
   COMBINE_CELLS = 'combine_cells',
+  TEXT_ALIGN_LEFT = 'text_align_left',
+  TEXT_ALIGN_CENTER = 'text_align_center',
+  TEXT_ALIGN_RIGHT = 'text_align_right',
 }
 
 const ToolsMap: Record<string, any> = {
@@ -28,6 +32,9 @@ const ToolsMap: Record<string, any> = {
   [ToolsEnum.FONT_ITALIC]: FontItalic,
   [ToolsEnum.FONT_UNDER_LINE]: FontUnderLine,
   [ToolsEnum.COMBINE_CELLS]: CombineCells,
+  [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft,
+  [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter,
+  [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight,
 };
 
 export default function getTools(name: string) {

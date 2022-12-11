@@ -1,6 +1,6 @@
 import { EventConstant } from './plugins/base/event';
 import Base from './base/base';
-import { ExcelConfig } from '../interfaces';
+import { Align, ExcelConfig } from '../interfaces';
 import { PluginTypeEnum } from './plugins';
 import { isMacOS } from '../utils';
 
@@ -74,6 +74,12 @@ class Excel extends Base {
   public combineCells() {
     this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.EditCellPlugin)?.combineCells();
+  }
+
+  // 对齐
+  public textAlign(textAlign: Align) {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.textAlign(textAlign);
   }
 }
 
