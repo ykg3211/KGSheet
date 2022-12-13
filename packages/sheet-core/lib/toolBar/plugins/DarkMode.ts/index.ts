@@ -1,6 +1,6 @@
 import Base from '../../base';
 import { ToolsPluginTypeEnum } from '..';
-import { ToolsEventConstant } from '../../interface';
+import { ToolsEventConstant } from '../../../core/plugins/base/event';
 
 export enum colorType {
   white = 'white',

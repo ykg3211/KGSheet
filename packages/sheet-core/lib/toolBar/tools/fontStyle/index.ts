@@ -1,3 +1,4 @@
+import { ToolsEventConstant } from '../../../core/plugins/base/event';
 import { META_KEY } from '../../../utils';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
@@ -20,7 +21,7 @@ export class FontSize extends OptionBase {
     this.label = item.label;
     this.value = item.value;
     this.sheet.setFontSize(+item.value);
-    this.toolBar.emit('refresh');
+    this.toolBar.emit(ToolsEventConstant.REFRESH);
   }
 }
 

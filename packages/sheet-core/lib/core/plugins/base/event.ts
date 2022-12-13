@@ -1,3 +1,8 @@
+import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
+
+export enum ToolsEventConstant {
+  REFRESH = 'refresh',
+}
 export enum EventConstant {
   RENDER = 'render',
   EXCEL_CHANGE = 'excel_change',
@@ -16,19 +21,33 @@ export enum EventConstant {
   MOUSE_HOVER_EVENT = 'mouse_hover_event',
   SELECT_CELL_MOVE_TO_VIEW = 'select_cell_move_to_view',
   BLUR_FOCUS_RESET_PARAMS = 'blur_focus_reset_params',
+  SELECT_CELLS_CHANGE = 'select_cells_change',
 }
-
 export enum BusinessEventConstant {
   MSG_BOX = 'message_box',
 }
 
+type EventParamsTypes = {
+  [EventConstant.SELECT_CELLS_CHANGE]: CellCornerScopeType | undefined;
+  [EventConstant.BLUR_FOCUS_RESET_PARAMS]: number;
+};
+
+type EventParamsAllTypes = EventParamsTypes &
+  Omit<Record<EventConstant, any>, keyof EventParamsTypes> &
+  Omit<Record<ToolsEventConstant, any>, keyof EventParamsTypes> &
+  Omit<Record<BusinessEventConstant, any>, keyof EventParamsTypes>;
+
+type EventNameType = EventConstant | BusinessEventConstant | ToolsEventConstant;
+type EventParamsType<T extends EventNameType> = EventParamsAllTypes[T];
+
 export default class BaseEvent {
-  protected deps: Record<string, ((data?: any) => void)[]>;
+  protected deps: Record<string, ((data?: any) => void | any)[]>;
+
   constructor() {
     this.deps = {};
   }
 
-  on(name: string, func: (data?: any) => void) {
+  on<T extends EventNameType>(name: T, func: (data?: EventParamsType<T>) => void | any) {
     if (this.deps[name]) {
       this.deps[name].push(func);
     } else {
@@ -36,7 +55,7 @@ export default class BaseEvent {
     }
   }
 
-  once(name: string, func: (data?: any) => void) {
+  once<T extends EventNameType>(name: T, func: (data?: EventParamsType<T>) => void | any) {
     const _func = (data: any) => {
       func(data);
       this.un(name, _func);
@@ -48,7 +67,7 @@ export default class BaseEvent {
     }
   }
 
-  un(name?: string, func?: (data?: any) => void) {
+  un<T extends EventNameType>(name?: T, func?: (data?: EventParamsType<T>) => void | any) {
     if (!name) {
       this.deps = {};
       return;
@@ -60,7 +79,7 @@ export default class BaseEvent {
     }
   }
 
-  emit(name: string, data?: any) {
+  emit<T extends EventNameType>(name: T, data?: EventParamsType<T>) {
     if (this.deps[name]) {
       this.deps[name].forEach((fn) => fn(data));
     }

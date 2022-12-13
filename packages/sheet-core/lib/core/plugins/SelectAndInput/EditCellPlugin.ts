@@ -421,7 +421,7 @@ export default class EditCellPlugin {
 
       this.createEditBox(this.editCell, position);
 
-      this.SelectPlugin._selectCell = cell;
+      this.SelectPlugin.selectCell = cell;
       this.SelectPlugin._endCell = cell;
 
       this._this.render();

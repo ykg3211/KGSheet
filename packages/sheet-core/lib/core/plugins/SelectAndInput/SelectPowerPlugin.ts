@@ -1,7 +1,7 @@
 import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { combineCell, combineRect, deepClone, judgeCross, judgeInner, mapObject } from '../../../utils';
+import { combineCell, combineRect, deepClone, isSame, judgeCross, judgeInner, mapObject } from '../../../utils';
 import { EventConstant } from '../base/event';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
@@ -34,9 +34,9 @@ export default class SelectPowerPlugin {
   private _this: Base;
   private KeyboardPlugin!: KeyboardPlugin;
 
-  public selectedCells: CellCornerScopeType | undefined; // 真正框选中的格子
+  public _selectedCells: CellCornerScopeType | undefined; // 真正框选中的格子
 
-  public _selectCell!: SelectedCellType | null; // 真正选中的格子
+  public selectCell!: SelectedCellType | null; // 真正选中的格子
   public _startCell: SelectedCellType | null; // 下面的是用来画框框的 选择 一开始的格子
   public _endCell: SelectedCellType | null; // 下面的是用来画框框的 选择 结尾的格子
   public _borderPosition: borderType | null | undefined; // 当前绘制的边框的位置信息
@@ -66,11 +66,15 @@ export default class SelectPowerPlugin {
   }
 
   // 计算时选中的格子。主要是为了解决spanCell的。
-  public get selectCell() {
-    return this._selectCell;
+  public get selectedCells() {
+    return this._selectedCells;
   }
-  public set selectCell(v) {
-    this._selectCell = v;
+  public set selectedCells(v) {
+    if (!isSame(this._selectedCells, v)) {
+      console.log('SelectCellsChanged', v);
+      this._this.emit(EventConstant.SELECT_CELLS_CHANGE, v);
+    }
+    this._selectedCells = v;
   }
 
   public get isSelect() {

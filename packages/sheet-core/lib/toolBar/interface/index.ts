@@ -6,10 +6,6 @@ import { ToolsEnum } from '../tools';
 
 export type BarSettingType = Array<ToolsGroupConfig<ToolsEnum>>;
 
-export enum ToolsEventConstant {
-  REFRESH = 'refresh',
-}
-
 export interface config {
   barSetting: BarSettingType;
 }

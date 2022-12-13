@@ -41,6 +41,53 @@ export function judgeInner([_x, _y, _w, _h]: numbers4, [x, y, w, h]: numbers4) {
   return _x >= x && _y >= y && _x + _w <= x + w && _y + _h <= y + h;
 }
 
+// object 的比对函数
+export function isSame(left?: Record<string, any>, right?: Record<string, any>) {
+  if (!left || !right) {
+    return left === right;
+  }
+  const rightKeys: Record<string, boolean> = {};
+  let same = true;
+  Object.keys(right).forEach((key) => {
+    rightKeys[key] = true;
+  });
+
+  Object.keys(left).some((key) => {
+    if (rightKeys[key]) {
+      delete rightKeys[key];
+      const l = left[key];
+      const r = right[key];
+      if (typeof l !== typeof r) {
+        same = false;
+        return true;
+      } else {
+        if (typeof l === 'object') {
+          const tempSame = isSame(l, r);
+          if (!tempSame) {
+            same = false;
+            return true;
+          }
+        } else {
+          if (l !== r) {
+            same = false;
+            return true;
+          }
+        }
+      }
+    } else {
+      same = false;
+      return true;
+    }
+    return false;
+  });
+
+  if (Object.keys(rightKeys).length > 0) {
+    return false;
+  }
+
+  return same;
+}
+
 export function combineRect([_x, _y, _w, _h]: numbers4, [x, y, w, h]: numbers4) {
   const startPoint = [Math.min(_x, x), Math.min(_y, y)];
   const endPoint = [Math.max(_x + _w, x + w), Math.max(_y + _h, y + h)];

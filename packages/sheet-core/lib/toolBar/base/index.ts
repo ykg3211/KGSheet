@@ -1,7 +1,7 @@
 import { deepClone } from '../../utils';
 import Excel from '../../core';
-import BaseEvent from '../../core/plugins/base/event';
-import { BarSettingType, config, ToolsEventConstant, ToolsGroupType } from '../interface';
+import BaseEvent, { ToolsEventConstant } from '../../core/plugins/base/event';
+import { BarSettingType, config, ToolsGroupType } from '../interface';
 import getTools from '../tools';
 import baseToolBarConfig from './baseConfig';
 import Plugins, { PluginType, ToolsPluginTypeEnum } from '../plugins';
