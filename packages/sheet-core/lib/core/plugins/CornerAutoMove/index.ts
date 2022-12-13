@@ -26,8 +26,8 @@ export default class CornerAutoMove {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.borderGapX = 50;
-    this.borderGapY = 50;
+    this.borderGapX = 0;
+    this.borderGapY = 0;
     this.isStart = false;
     this.needStop = false;
 
@@ -46,22 +46,10 @@ export default class CornerAutoMove {
     };
     document.body.addEventListener('mouseup', mouseupCB);
 
-    const resizeCB = () => {
-      const offsetHeight = this._this.canvasDom?.offsetHeight || 0;
-      const offsetWidth = this._this.canvasDom?.offsetWidth || 0;
-      this.borderGapX = Math.max((offsetWidth * 6) / 100, 50);
-      this.borderGapY = Math.max((offsetHeight * 6) / 100, 50);
-    };
-
-    this._this.on(EventConstant.RESIZE, resizeCB);
-
     this._this.on(EventConstant.DESTROY, () => {
-      this._this.un(EventConstant.RESIZE, resizeCB);
       document.body.removeEventListener('mousemove', mousemoveCB);
       document.body.removeEventListener('mouseup', mouseupCB);
     });
-
-    resizeCB();
   }
 
   public start() {
@@ -104,22 +92,13 @@ export default class CornerAutoMove {
       return false;
     }
 
-    const domOffsetLeft = this._this.canvasDom.offsetLeft + this.borderGapX;
+    const domOffsetLeft = this._this.canvasDom.offsetLeft + this._this.paddingLeft + this.borderGapX;
     const domOffsetRight = this._this.canvasDom.offsetLeft + this._this.canvasDom.offsetWidth - this.borderGapX;
 
-    const domOffsetTop = this._this.canvasDom.offsetTop + this.borderGapY;
+    const domOffsetTop = this._this.canvasDom.offsetTop + this._this.paddingTop + this.borderGapY;
     const domOffsetBottom = this._this.canvasDom.offsetTop + this._this.canvasDom.offsetHeight - this.borderGapX;
     let offsetX = 0;
     let offsetY = 0;
-    // if (x < domOffsetLeft || x > domOffsetRight) {
-    //   offsetX = 20;
-    //   // offsetX = (x - this._this.canvasDom.offsetLeft - this._this.canvasDom.offsetWidth / 2) / 40;
-    // }
-
-    // if (y < domOffsetTop || y > domOffsetBottom) {
-    //   offsetY = 20;
-    //   // offsetY = (y - this._this.canvasDom.offsetTop - this._this.canvasDom.offsetHeight / 2) / 40;
-    // }
 
     if (x < domOffsetLeft) {
       offsetX = -20;
