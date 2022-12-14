@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Icon from '../../../icons/icon';
 import { Tooltip } from 'antd';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
@@ -15,21 +15,28 @@ interface Props {
 
 const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }: Props) => {
   const { color } = useContext(SheetContext);
+
+  const className = useMemo(() => {
+    return [tool.class, tool.active ? 'kgsheet_active_color' : 'kgsheet_btn'].join(' ');
+  }, [tool.class, tool.active]);
+
+  const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(colorType.black);
+
   return (
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
       <span
         style={Object.assign(
           {
             ...style,
-            color: color(colorType.black),
+            color: fontColor,
           },
           tool.style,
         )}
-        className={'kgsheet_btn ' + tool.class}
+        className={className}
         onClick={() => {
           tool.click();
         }}>
-        <Icon icon={tool.icon} color={color(colorType.black)}></Icon>
+        <Icon icon={tool.icon} color={fontColor}></Icon>
         {needLabel && <span className='kgsheet_btn_label'>{tool.label}</span>}
       </span>
     </Tooltip>

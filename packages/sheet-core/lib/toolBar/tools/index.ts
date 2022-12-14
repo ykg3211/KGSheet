@@ -21,7 +21,23 @@ export enum ToolsEnum {
   TEXT_ALIGN_RIGHT = 'text_align_right',
 }
 
-const ToolsMap: Record<string, any> = {
+export interface ToolsMapType {
+  [ToolsEnum.REVERT]: Revert;
+  [ToolsEnum.ANTI_REVERT]: AntiRevert;
+  [ToolsEnum.FONT_SIZE]: FontSize;
+  [ToolsEnum.DARK_MODE]: DarkMode;
+  [ToolsEnum.CLEAR_STYLE]: ClearStyle;
+  [ToolsEnum.FONT_WEIGHT]: FontWeight;
+  [ToolsEnum.FONT_DELETE_LINE]: FontDeleteLine;
+  [ToolsEnum.FONT_ITALIC]: FontItalic;
+  [ToolsEnum.FONT_UNDER_LINE]: FontUnderLine;
+  [ToolsEnum.COMBINE_CELLS]: CombineCells;
+  [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft;
+  [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter;
+  [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight;
+}
+
+const ToolsMap = {
   [ToolsEnum.REVERT]: Revert,
   [ToolsEnum.ANTI_REVERT]: AntiRevert,
   [ToolsEnum.FONT_SIZE]: FontSize,
@@ -37,6 +53,6 @@ const ToolsMap: Record<string, any> = {
   [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight,
 };
 
-export default function getTools(name: string) {
+export default function getTools(name: ToolsEnum) {
   return ToolsMap[name] || Revert;
 }

@@ -110,7 +110,8 @@ export default class Plugins {
 
     if (this._this.pluginsMap[name]) {
       //@ts-ignore
-      this._this.pluginsMap[name]?.remove?.();
+      console.error(name + '：插件重复注册！');
+      return;
     }
 
     this._this.pluginsMap[name] = newPlugin;

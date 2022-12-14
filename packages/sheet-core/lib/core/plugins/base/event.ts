@@ -2,6 +2,7 @@ import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 export enum ToolsEventConstant {
   REFRESH = 'refresh',
+  REFRESH_ATTRIBUTES_STATE = 'refresh_attributes_state',
 }
 export enum EventConstant {
   RENDER = 'render',

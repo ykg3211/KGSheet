@@ -1,12 +1,15 @@
 import Base from '../base';
-import DarkMode from './DarkMode.ts';
+import DarkMode from './DarkMode';
+import UpdateState from './UpdateState';
 
 export enum ToolsPluginTypeEnum {
   DarkMode = 'DarkMode',
+  UpdateState = 'UpdateState',
 }
 
 export interface PluginType {
   [ToolsPluginTypeEnum.DarkMode]?: DarkMode;
+  [ToolsPluginTypeEnum.UpdateState]?: UpdateState;
 }
 
 export interface BasePluginType {
@@ -21,6 +24,7 @@ export default class Plugins {
     this._this = _this;
 
     this.register(DarkMode);
+    this.register(UpdateState);
   }
 
   public deregister(name?: ToolsPluginTypeEnum) {
@@ -37,8 +41,8 @@ export default class Plugins {
     const name = newPlugin.name as ToolsPluginTypeEnum;
 
     if (this._this.pluginsMap[name]) {
-      //@ts-ignore
-      this._this.pluginsMap[name]?.remove?.();
+      console.error(name + '：插件重复注册！');
+      return;
     }
 
     this._this.pluginsMap[name] = newPlugin;

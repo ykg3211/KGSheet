@@ -15,12 +15,14 @@ export class BaseTool {
   public key: string;
   public class: string;
   public style: Partial<CSSStyleDeclaration>;
+  public active: boolean;
 
   constructor({ sheet, toolBar, key }: ToolsProps) {
     this.sheet = sheet;
     this.toolBar = toolBar;
 
     this.key = key;
+    this.active = false;
     this.icon = '';
     this.label = '';
     this.toolTip = '';

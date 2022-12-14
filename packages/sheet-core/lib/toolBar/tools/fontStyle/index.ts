@@ -21,6 +21,7 @@ export class FontSize extends OptionBase {
     this.label = item.label;
     this.value = item.value;
     this.sheet.setFontSize(+item.value);
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
     this.toolBar.emit(ToolsEventConstant.REFRESH);
   }
 }
@@ -35,6 +36,7 @@ export class FontColor extends ButtonBase {
 
   public click() {
     this.sheet.clearStyle();
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 
@@ -48,6 +50,7 @@ export class FontWeight extends ButtonBase {
 
   public click() {
     this.sheet.blodStyle();
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontDeleteLine extends ButtonBase {
@@ -60,6 +63,7 @@ export class FontDeleteLine extends ButtonBase {
 
   public click() {
     this.sheet.deleteLine();
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontItalic extends ButtonBase {
@@ -72,6 +76,7 @@ export class FontItalic extends ButtonBase {
 
   public click() {
     this.sheet.italic();
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontUnderLine extends ButtonBase {
@@ -84,5 +89,6 @@ export class FontUnderLine extends ButtonBase {
 
   public click() {
     this.sheet.underLine();
+    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

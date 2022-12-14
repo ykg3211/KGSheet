@@ -2,14 +2,14 @@ import { deepClone } from '../../utils';
 import Excel from '../../core';
 import BaseEvent, { ToolsEventConstant } from '../../core/plugins/base/event';
 import { BarSettingType, config, ToolsGroupType } from '../interface';
-import getTools from '../tools';
+import getTools, { ToolsEnum, ToolsMapType } from '../tools';
 import baseToolBarConfig from './baseConfig';
 import Plugins, { PluginType, ToolsPluginTypeEnum } from '../plugins';
 
 export default class Base extends BaseEvent {
   public sheet: Excel;
   protected Tools: ToolsGroupType[];
-  protected ToolsMap: Record<string, any>;
+  protected ToolsMap: Partial<Record<ToolsEnum, any>>;
   private _tag: number;
   public pluginsInstance: Plugins;
   public pluginsMap: PluginType;
@@ -47,7 +47,11 @@ export default class Base extends BaseEvent {
     return this.pluginsMap[name];
   }
 
-  private dispatchTools(type: string) {
+  public getTool<T extends ToolsEnum>(type: T) {
+    return this.ToolsMap[type] as ToolsMapType[T];
+  }
+
+  private dispatchTools(type: ToolsEnum) {
     if (!this.ToolsMap[type]) {
       const Tool = getTools(type);
       if (!Tool) {

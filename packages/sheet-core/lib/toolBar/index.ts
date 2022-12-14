@@ -2,7 +2,7 @@ import Excel from '../core';
 import Base from './base';
 import { config } from './interface';
 import { ToolsPluginTypeEnum } from './plugins';
-import { colorType } from './plugins/DarkMode.ts';
+import { colorType } from './plugins/DarkMode';
 
 interface ToolBarType {
   sheet: Excel;

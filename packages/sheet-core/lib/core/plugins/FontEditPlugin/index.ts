@@ -9,7 +9,7 @@ import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 // 主要用于计算style
 const INIT_V = 'init_v'; // 初始态
-const NOT_SAME = 'not_same'; // 一堆cell的属性不同的标志
+export const NOT_SAME = 'not_same'; // 一堆cell的属性不同的标志
 
 export default class FontEditPlugin {
   private _this: Base;
