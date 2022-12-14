@@ -29,7 +29,7 @@ export enum BusinessEventConstant {
 
 type EventParamsTypes = {
   [EventConstant.SELECT_CELLS_CHANGE]: CellCornerScopeType | undefined;
-  [EventConstant.BLUR_FOCUS_RESET_PARAMS]: number;
+  [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 
 type EventParamsAllTypes = EventParamsTypes &

@@ -4,7 +4,7 @@ import Container from './sheetContainer';
 import Tools from './toolBar';
 import './icons/iconfont.js';
 import Excel, { ToolBar } from 'kgsheet';
-import { BusinessEventConstant } from 'kgsheet/dist/core/plugins/base/event';
+import { BusinessEventConstant, ToolsEventConstant } from 'kgsheet/dist/core/plugins/base/event';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
@@ -48,7 +48,7 @@ function Main() {
 
   useEffect(() => {
     if (sheet) {
-      sheet.on('refresh', refresh);
+      sheet.on(ToolsEventConstant.REFRESH, refresh);
       sheet.on(BusinessEventConstant.MSG_BOX, ({ type, message: msg }) => {
         // @ts-ignore
         message?.[type]?.({
@@ -66,7 +66,7 @@ function Main() {
       });
       setToolBar(instance);
 
-      instance.on?.('refresh', refresh);
+      instance.on?.(ToolsEventConstant.REFRESH, refresh);
     }
   }, [sheet]);
 
