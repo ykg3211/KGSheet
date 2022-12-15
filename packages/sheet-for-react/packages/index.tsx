@@ -7,7 +7,7 @@ import Excel, { ToolBar } from 'kgsheet';
 import { BusinessEventConstant, ToolsEventConstant } from 'kgsheet/dist/core/plugins/base/event';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
 
 interface Sheet {
   flag: number;

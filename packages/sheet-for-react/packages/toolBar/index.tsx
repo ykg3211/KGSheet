@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../';
 import BaseLayout from './components/baseLayout';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
 
 function Tools() {
   const { toolBar, flag } = useContext(SheetContext);

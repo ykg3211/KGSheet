@@ -3,7 +3,7 @@ import Icon from '../../../icons/icon';
 import { Tooltip } from 'antd';
 import { BaseTool } from 'kgsheet/dist/toolBar/tools/base';
 import { SheetContext } from '../../..';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode.ts';
+import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
 import { TooltipPlacement } from 'antd/es/tooltip';
 
 interface Props {
