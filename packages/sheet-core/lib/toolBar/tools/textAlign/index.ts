@@ -1,8 +1,5 @@
-import { ToolsEventConstant } from '../../../core/plugins/base/event';
-import { META_KEY } from '../../../utils';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
-import OptionBase, { OptionsType } from '../base/optionBase';
 
 export class TextAlignLeft extends ButtonBase {
   constructor(props: ToolsProps) {
@@ -14,7 +11,6 @@ export class TextAlignLeft extends ButtonBase {
 
   public click() {
     this.sheet.textAlign('left');
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 
@@ -28,7 +24,6 @@ export class TextAlignCenter extends ButtonBase {
 
   public click() {
     this.sheet.textAlign('center');
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class TextAlignRight extends ButtonBase {
@@ -41,6 +36,5 @@ export class TextAlignRight extends ButtonBase {
 
   public click() {
     this.sheet.textAlign('right');
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

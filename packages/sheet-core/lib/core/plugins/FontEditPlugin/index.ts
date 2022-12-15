@@ -6,6 +6,7 @@ import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
 import { Align, Cell, CellStyle, ExcelConfig, SpanCell } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
+import { ToolsEventConstant } from '../base/event';
 
 // 主要用于计算style
 const INIT_V = 'init_v'; // 初始态
@@ -143,6 +144,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public deleteLine() {
@@ -169,6 +171,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public underLine() {
@@ -196,6 +199,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public italic() {
@@ -223,6 +227,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public setFontSize(v: number) {
@@ -243,6 +248,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
   public textAlign(textAlign: Align) {
     this._this.devMode && console.log('Meta + u');
@@ -261,5 +267,6 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

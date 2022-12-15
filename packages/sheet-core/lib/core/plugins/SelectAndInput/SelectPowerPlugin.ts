@@ -2,7 +2,7 @@ import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { combineCell, combineRect, deepClone, isSame, judgeCross, judgeInner, mapObject } from '../../../utils';
-import { EventConstant } from '../base/event';
+import { EventConstant, ToolsEventConstant } from '../base/event';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from './EditCellPlugin';
@@ -509,6 +509,7 @@ export default class SelectPowerPlugin {
       pre_data: sourceData.data,
       after_data: targetData.data,
     });
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public calcBorder() {

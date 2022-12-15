@@ -26,20 +26,6 @@ export class FontSize extends OptionBase {
   }
 }
 
-export class FontColor extends ButtonBase {
-  constructor(props: ToolsProps) {
-    super(props);
-    this.label = '清除格式';
-    this.toolTip = '清除格式';
-    this.icon = 'sheet-iconerase';
-  }
-
-  public click() {
-    this.sheet.clearStyle();
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
-  }
-}
-
 export class FontWeight extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
@@ -50,7 +36,6 @@ export class FontWeight extends ButtonBase {
 
   public click() {
     this.sheet.blodStyle();
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontDeleteLine extends ButtonBase {
@@ -63,7 +48,6 @@ export class FontDeleteLine extends ButtonBase {
 
   public click() {
     this.sheet.deleteLine();
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontItalic extends ButtonBase {
@@ -76,7 +60,6 @@ export class FontItalic extends ButtonBase {
 
   public click() {
     this.sheet.italic();
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
 export class FontUnderLine extends ButtonBase {
@@ -89,6 +72,5 @@ export class FontUnderLine extends ButtonBase {
 
   public click() {
     this.sheet.underLine();
-    this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

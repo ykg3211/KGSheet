@@ -1,4 +1,4 @@
-import { EventConstant } from './plugins/base/event';
+import { EventConstant, ToolsEventConstant } from './plugins/base/event';
 import Base from './base/base';
 import { Align, ExcelConfig } from '../interfaces';
 import { PluginTypeEnum } from './plugins';

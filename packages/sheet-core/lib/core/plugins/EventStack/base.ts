@@ -3,7 +3,7 @@ import Base from '../../base/base';
 import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, META } from '../KeyboardPlugin/constant';
-import { EventConstant } from '../base/event';
+import { EventConstant, ToolsEventConstant } from '../base/event';
 
 type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
 export interface BaseEventType {
@@ -78,6 +78,9 @@ export default class BaseEventStack {
       }
       this.REVERSE_STACK.push(pres);
     }
+
+    // 用来刷新toolBar上按钮的状态的
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   public anti_reverse() {
@@ -89,5 +92,8 @@ export default class BaseEventStack {
       });
       this.EVENT_STACK.push(pres);
     }
+
+    // 用来刷新toolBar上按钮的状态的
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

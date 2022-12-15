@@ -51,6 +51,14 @@ export default class UpdateState {
     // deleteLine
     toolBar.getTool(ToolsEnum.FONT_DELETE_LINE).active =
       preAttributes.deleteLine !== NOT_SAME && !!preAttributes.deleteLine;
+    // fontWeight
+    toolBar.getTool(ToolsEnum.FONT_WEIGHT).active =
+      preAttributes.fontWeight !== NOT_SAME && preAttributes.fontWeight === '800';
+    // italic
+    toolBar.getTool(ToolsEnum.FONT_ITALIC).active = preAttributes.italic !== NOT_SAME && !!preAttributes.italic;
+    // deleteLine
+    toolBar.getTool(ToolsEnum.FONT_UNDER_LINE).active =
+      preAttributes.underLine !== NOT_SAME && !!preAttributes.underLine;
 
     // TEXT_ALIGN_LEFT
     toolBar.getTool(ToolsEnum.TEXT_ALIGN_LEFT).active = preAttributes.textAlign === 'left';

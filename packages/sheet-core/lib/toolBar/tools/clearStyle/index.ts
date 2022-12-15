@@ -1,3 +1,4 @@
+import { ToolsEventConstant } from '../../../core/plugins/base/event';
 import { ToolsProps } from '../../interface';
 import ButtonBase from '../base/buttonBase';
 
