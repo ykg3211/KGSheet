@@ -1,8 +1,7 @@
 {
   "name": "rush",
   "scripts": {
-    "start": "npm run build & npm run dev",
-    "dev": "sh ./dev.sh",
+    "start": "npm run build & sh ./dev.sh",
     "build": "rush build:watch --to-except react-demo"
   }
 }
