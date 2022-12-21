@@ -6,7 +6,7 @@ import { rectType } from '../../base/drawLayer';
 import { Cell, SpanCell } from '../../../interfaces';
 import { combineCell, deepClone, isSameArray, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
-import { BusinessEventConstant, EventConstant } from '../base/event';
+import { BusinessEventConstant, EventConstant, ToolsEventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
@@ -729,6 +729,9 @@ export default class EditCellPlugin {
         pre_data: sourceData.data,
         after_data: targetData.data,
       });
+
+      // 用来计算toolBar的按钮状态的
+      this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
       return;
     }
 
@@ -763,6 +766,9 @@ export default class EditCellPlugin {
       pre_data: sourceData.data,
       after_data: targetData.data,
     });
+
+    // 用来计算toolBar的按钮状态的
+    this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
   private handleCopyCB() {

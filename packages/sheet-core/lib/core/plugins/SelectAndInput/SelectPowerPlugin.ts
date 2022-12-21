@@ -71,7 +71,7 @@ export default class SelectPowerPlugin {
   }
   public set selectedCells(v) {
     if (!isSame(this._selectedCells, v)) {
-      console.log('SelectCellsChanged', v);
+      this._this.devMode && console.log('SelectCellsChanged', v);
       this._this.emit(EventConstant.SELECT_CELLS_CHANGE, v);
     }
     this._selectedCells = v;
@@ -509,6 +509,7 @@ export default class SelectPowerPlugin {
       pre_data: sourceData.data,
       after_data: targetData.data,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 

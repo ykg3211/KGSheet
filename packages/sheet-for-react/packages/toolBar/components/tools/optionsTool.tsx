@@ -41,7 +41,10 @@ const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
           <div style={{ color: getColor(colorType.black) }}>
             {tool.options.map((v) => (
               <div
-                className='kgsheet_option_btn'
+                className={
+                  'kgsheet_option_btn ' +
+                  (tool.value === v.value ? 'kgsheet_option_btn_active' : 'kgsheet_option_btn_normal')
+                }
                 onClick={() => {
                   clickItem(v);
                 }}

@@ -79,7 +79,7 @@ export default class BaseEventStack {
       this.REVERSE_STACK.push(pres);
     }
 
-    // 用来刷新toolBar上按钮的状态的
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
@@ -93,7 +93,7 @@ export default class BaseEventStack {
       this.EVENT_STACK.push(pres);
     }
 
-    // 用来刷新toolBar上按钮的状态的
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }

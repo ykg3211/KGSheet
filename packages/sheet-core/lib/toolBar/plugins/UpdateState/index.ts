@@ -2,7 +2,7 @@ import Base from '../../base';
 import { ToolsPluginTypeEnum } from '..';
 import { EventConstant, ToolsEventConstant } from '../../../core/plugins/base/event';
 import { PluginTypeEnum } from '../../../core/plugins';
-import { CellStyle } from '../../../interfaces';
+import { CellStyle, ExcelConfig } from '../../../interfaces';
 import { NOT_SAME } from '../../../core/plugins/FontEditPlugin';
 import { ToolsEnum } from '../../../toolBar/tools';
 import { CellCornerScopeType } from '../../../core/plugins/SelectAndInput/EditCellPlugin';
@@ -39,14 +39,19 @@ export default class UpdateState {
     const { data: sourceData } = sheet.getDataByScope(cells);
 
     const preAttributes = FontEditPlugin.getSameAttributes(sourceData, cells);
+    this.handleSpanCells(sourceData);
     this.dispatchAttributes(preAttributes);
 
     sheet.emit(ToolsEventConstant.REFRESH);
   }
 
   private dispatchAttributes(preAttributes: CellStyle | Record<keyof CellStyle, 'not_same'>) {
-    console.log('preAttributes: 计算tools上的按钮的状态', preAttributes);
+    this._this.sheet.devMode && console.log('preAttributes: 计算tools上的按钮的状态', preAttributes);
     const toolBar = this._this;
+
+    // deleteLine
+    toolBar.getTool(ToolsEnum.FONT_SIZE).value =
+      preAttributes.fontSize !== NOT_SAME ? preAttributes.fontSize + '' : '12';
 
     // deleteLine
     toolBar.getTool(ToolsEnum.FONT_DELETE_LINE).active =
@@ -66,6 +71,19 @@ export default class UpdateState {
     toolBar.getTool(ToolsEnum.TEXT_ALIGN_CENTER).active = preAttributes.textAlign === 'center';
     // TEXT_ALIGN_RIGHT
     toolBar.getTool(ToolsEnum.TEXT_ALIGN_RIGHT).active = preAttributes.textAlign === 'right';
+  }
+
+  private handleSpanCells(sourceData: ExcelConfig) {
+    const spanCellKeys = Object.keys(sourceData.spanCells);
+    if (spanCellKeys.length !== 1) {
+      this._this.getTool(ToolsEnum.COMBINE_CELLS)._active = false;
+      return;
+    }
+
+    const spanCell = sourceData.spanCells[spanCellKeys[0]];
+    if (spanCell.span[1] === sourceData.cells.length && spanCell.span[0] === sourceData.cells[0].length) {
+      this._this.getTool(ToolsEnum.COMBINE_CELLS)._active = true;
+    }
   }
 
   public remove() {

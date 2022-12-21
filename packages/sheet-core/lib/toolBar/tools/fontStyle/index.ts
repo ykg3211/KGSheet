@@ -14,12 +14,12 @@ export class FontSize extends OptionBase {
       value: num + '',
     }));
     this.valueLabel = '12';
-    this.value = '12';
+    this._value = '12';
   }
 
   public click(item: OptionsType) {
     this.label = item.label;
-    this.value = item.value;
+    this._value = item.value;
     this.sheet.setFontSize(+item.value);
     this.toolBar.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
     this.toolBar.emit(ToolsEventConstant.REFRESH);

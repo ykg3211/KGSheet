@@ -12,4 +12,10 @@ export class CombineCells extends ButtonBase {
   public click() {
     this.sheet.combineCells();
   }
+
+  public set _active(v: boolean) {
+    this.label = v ? '解除合并单元格' : '合并单元格';
+    this.toolTip = v ? '解除合并单元格' : '合并单元格';
+    this.active = v;
+  }
 }

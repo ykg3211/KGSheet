@@ -144,6 +144,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
@@ -171,6 +172,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
@@ -199,6 +201,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
@@ -227,6 +230,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 
@@ -248,6 +252,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
   public textAlign(textAlign: Align) {
@@ -267,6 +272,7 @@ export default class FontEditPlugin {
       pre_data: sourceData,
       after_data: targetData,
     });
+    // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
 }
