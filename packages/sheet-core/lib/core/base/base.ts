@@ -340,20 +340,6 @@ class Base extends Render {
         return false;
       });
     } else {
-      // 计算中间的常规cell
-
-      // renderSpanCellsArr.forEach(item => {
-      //   if (judgeOver(point, [item.point[0], item.point[1], item.w, item.h])) {
-      //     selectedCell = {
-      //       row: item.location.row,
-      //       column: item.location.column,
-      //     };
-      //   }
-      // })
-      // if (selectedCell) {
-      //   return selectedCell;
-      // }
-
       renderCellsArr.some((row) => {
         if (row.length > 0) {
           if (point[1] >= row[0].point[1] && point[1] < row[0].point[1] + row[0].h) {

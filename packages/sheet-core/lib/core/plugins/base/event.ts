@@ -10,6 +10,7 @@ export enum EventConstant {
   DARK_MODE_CHANGE = 'dark_mode_change',
   DESTROY = 'destroy',
   DB_CLICK = 'dblclick',
+  RIGHT_CLICK = 'rightClick',
   CLICK = 'click',
   SCALE_CHANGE = 'scale_change',
   MOUSE_DOWN = 'mouse_down',
@@ -30,6 +31,7 @@ export enum BusinessEventConstant {
 
 type EventParamsTypes = {
   [EventConstant.SELECT_CELLS_CHANGE]: CellCornerScopeType | undefined;
+  [EventConstant.RIGHT_CLICK]: MouseEvent;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 
