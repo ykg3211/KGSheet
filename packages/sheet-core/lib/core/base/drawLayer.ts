@@ -1,4 +1,4 @@
-import { CellTypeEnum, RenderCellPropsNoLocation, Cell } from '../../interfaces';
+import { CellTypeEnum, RenderCellPropsNoLocation, Cell, BaseSheetSetting } from '../../interfaces';
 import BaseEvent, { EventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
 export type rectType = [number, number, number, number];
@@ -40,31 +40,38 @@ export const lightColorSum: colorType = {
 };
 
 export default class DrawLayer extends BaseEvent {
+  public sheetConfig: BaseSheetSetting;
   public ctx: CanvasRenderingContext2D | null;
   public canvasDom: HTMLCanvasElement | null;
+
+  public devMode: boolean; // 是不是调试模式
+  public darkMode: boolean;
   protected components: Partial<
     Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
   >;
-  public darkMode: boolean;
-  constructor() {
+  constructor(config: BaseSheetSetting) {
     super();
-
+    this.sheetConfig = config;
     this.ctx = null;
     this.canvasDom = null;
     this.components = {};
-    this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
+
+    if (config.darkMode === 'auto') {
+      this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
+    } else {
+      this.darkMode = Boolean(config.darkMode);
+    }
+
+    this.devMode = Boolean(config.devMode);
     this.handleDefaultComponents();
   }
 
-  // 是不是调试模式
-  public get devMode() {
-    return true;
-  }
-
   public toggleDarkMode(v?: boolean) {
-    this.darkMode = v === undefined ? !this.darkMode : v;
-    this.emit(EventConstant.DARK_MODE_CHANGE);
-    this.emit(EventConstant.RENDER);
+    if (this.sheetConfig.darkMode === 'auto') {
+      this.darkMode = v === undefined ? !this.darkMode : v;
+      this.emit(EventConstant.DARK_MODE_CHANGE);
+      this.emit(EventConstant.RENDER);
+    }
   }
 
   public color(name: keyof colorType, needReverse: boolean = false) {

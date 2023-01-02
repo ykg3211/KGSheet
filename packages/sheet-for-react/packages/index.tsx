@@ -32,7 +32,7 @@ export const SheetContext = React.createContext<Sheet>({
 
 export interface SheetProps {
   defaultData?: ExcelConfig;
-  config?: SheetSetting;
+  config?: Omit<SheetSetting, 'dom'>;
 }
 
 function Main({ defaultData, config }: SheetProps) {
@@ -101,7 +101,7 @@ function Main({ defaultData, config }: SheetProps) {
           <Tools />
         </div>
         <div className='kgsheet_content'>
-          <Container />
+          <Container config={config} defaultData={defaultData} />
         </div>
       </div>
     </SheetContext.Provider>

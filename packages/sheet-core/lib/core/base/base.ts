@@ -5,7 +5,7 @@ import { dispatchEventType, setEventType, clearEventType } from '../plugins/base
 import { deepClone, judgeCross, judgeOver } from '../../utils';
 import { rectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
-import { ExcelConfig, SpanCell } from '../../interfaces';
+import { ExcelConfig, BaseSheetSetting, SpanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
 
 export interface BaseDataType {
@@ -19,7 +19,7 @@ export interface SelectedCellType {
 }
 class Base extends Render {
   public ToolBar: ToolBar | null;
-  public pluginsInstance: Plugins;
+  public pluginsInstance!: Plugins;
   public setEvent!: setEventType;
   public clearEvent!: clearEventType;
   public dispatchEvent!: dispatchEventType;
@@ -28,12 +28,17 @@ class Base extends Render {
   private originOverflowY: any;
   private originOverflowX: any;
 
-  constructor(dom: HTMLElement) {
-    super();
+  constructor(config: BaseSheetSetting) {
+    super(config);
+    const dom = config.dom instanceof HTMLElement ? config.dom : document.getElementById(config.dom);
     this.ToolBar = null;
+    this.pluginsMap = {};
+    if (!dom) {
+      console.error('必须要指定一个DOM！');
+      return;
+    }
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
-    this.pluginsMap = {};
     this.handleDPR(dom);
     this.initResize(dom);
 

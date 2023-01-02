@@ -6,7 +6,7 @@ import { ToolsEnum } from '../tools';
 export type BarSettingType = Array<ToolsGroupConfig<ToolsEnum>>;
 
 export interface config {
-  barSetting: BarSettingType;
+  barSetting?: BarSettingType;
 }
 
 export interface ToolsProps {

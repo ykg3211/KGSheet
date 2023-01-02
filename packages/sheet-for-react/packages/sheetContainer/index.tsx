@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import Excel, { createDefaultData } from 'kgsheet';
+import React, { useContext, useEffect, useRef } from 'react';
+import Excel, { BaseSheetSetting, createDefaultData } from 'kgsheet';
 import { SheetContext, SheetProps } from '..';
 
 function Container({ defaultData, config }: SheetProps) {
@@ -8,7 +8,10 @@ function Container({ defaultData, config }: SheetProps) {
   const { setSheet } = useContext(SheetContext);
   useEffect(() => {
     if (once.current) {
-      const instance = new Excel(container.current);
+      const instance = new Excel({
+        dom: container.current,
+        ...config,
+      } as BaseSheetSetting);
       setSheet(instance);
       const data = defaultData || createDefaultData(30, 500);
       instance.setData(data);

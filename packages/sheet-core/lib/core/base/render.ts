@@ -1,5 +1,5 @@
 // 这里的方法和值都是pretect ，为了方便插件开发，都先弄成public
-import { CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from '../../interfaces';
+import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
@@ -35,8 +35,8 @@ export default class Render extends DrawLayer {
 
   public renderFuncArr: ((ctx: CanvasRenderingContext2D) => void)[][];
 
-  constructor() {
-    super();
+  constructor(config: BaseSheetSetting) {
+    super(config);
     this._scrollTop = 0;
     this._scrollLeft = 0;
     this._width = 0;

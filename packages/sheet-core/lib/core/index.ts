@@ -1,12 +1,12 @@
-import { EventConstant, ToolsEventConstant } from './plugins/base/event';
+import { EventConstant } from './plugins/base/event';
 import Base from './base/base';
-import { Align, ExcelConfig } from '../interfaces';
+import { Align, ExcelConfig, BaseSheetSetting } from '../interfaces';
 import { PluginTypeEnum } from './plugins';
 import { isMacOS } from '../utils';
 
 class Excel extends Base {
-  constructor(dom: any) {
-    super(dom);
+  constructor(config: BaseSheetSetting) {
+    super(config);
 
     this.devMode && console.log('System: ' + isMacOS ? 'macos' : 'windows');
   }
