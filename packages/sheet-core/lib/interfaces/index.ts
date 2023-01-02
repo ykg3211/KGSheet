@@ -1,3 +1,5 @@
+import { config as BarSettingType } from '../toolBar/interface';
+
 export type Align = 'left' | 'center' | 'right';
 export type TextDecoration = 'underline' | 'line-through' | 'none';
 export enum CellTypeEnum {
@@ -55,3 +57,9 @@ export interface RenderCellProps {
 }
 
 export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' | 'w' | 'h'>;
+
+export interface SheetSetting extends BarSettingType {
+  devMode: boolean;
+  darkMode: boolean | 'auto';
+  readOnly: boolean;
+}

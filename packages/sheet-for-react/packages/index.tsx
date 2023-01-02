@@ -8,6 +8,9 @@ import { BusinessEventConstant, ToolsEventConstant } from 'kgsheet/dist/core/plu
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
 import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
+import { ExcelConfig, SheetSetting } from 'kgsheet/dist/interfaces';
+
+export * from 'kgsheet';
 
 interface Sheet {
   flag: number;
@@ -27,7 +30,12 @@ export const SheetContext = React.createContext<Sheet>({
   setToolBar: () => {},
 });
 
-function Main() {
+export interface SheetProps {
+  defaultData?: ExcelConfig;
+  config?: SheetSetting;
+}
+
+function Main({ defaultData, config }: SheetProps) {
   const [sheet, setSheet] = useState<Excel | null>(null);
   const [toolBar, setToolBar] = useState<ToolBar | null>(null);
   const [flag, setFlag] = useState(0);

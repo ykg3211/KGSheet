@@ -1,5 +1,4 @@
 import Excel from '../../core';
-import ToolBar from '..';
 import Base from '../base';
 import { BaseTool } from '../tools/base';
 import { ToolsEnum } from '../tools';
