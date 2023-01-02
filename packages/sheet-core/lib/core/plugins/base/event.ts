@@ -1,8 +1,12 @@
+import { ShowPanelProps } from '../../../RightClickPanel/interface';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 export enum ToolsEventConstant {
   REFRESH = 'refresh',
   REFRESH_ATTRIBUTES_STATE = 'refresh_attributes_state',
+}
+export enum RightClickPanelConstant {
+  SHOW_PANEL = 'show_panel',
 }
 export enum EventConstant {
   RENDER = 'render',
@@ -10,6 +14,7 @@ export enum EventConstant {
   DARK_MODE_CHANGE = 'dark_mode_change',
   DESTROY = 'destroy',
   DB_CLICK = 'dblclick',
+  RIGHT_CLICK = 'rightClick',
   CLICK = 'click',
   SCALE_CHANGE = 'scale_change',
   MOUSE_DOWN = 'mouse_down',
@@ -30,15 +35,18 @@ export enum BusinessEventConstant {
 
 type EventParamsTypes = {
   [EventConstant.SELECT_CELLS_CHANGE]: CellCornerScopeType | undefined;
+  [EventConstant.RIGHT_CLICK]: MouseEvent;
+  [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 
 type EventParamsAllTypes = EventParamsTypes &
   Omit<Record<EventConstant, any>, keyof EventParamsTypes> &
+  Omit<Record<RightClickPanelConstant, any>, keyof EventParamsTypes> &
   Omit<Record<ToolsEventConstant, any>, keyof EventParamsTypes> &
   Omit<Record<BusinessEventConstant, any>, keyof EventParamsTypes>;
 
-type EventNameType = EventConstant | BusinessEventConstant | ToolsEventConstant;
+type EventNameType = EventConstant | BusinessEventConstant | ToolsEventConstant | RightClickPanelConstant;
 type EventParamsType<T extends EventNameType> = EventParamsAllTypes[T];
 
 export default class BaseEvent {

@@ -14,6 +14,7 @@ import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
+import RightClickPanelPlugin from '../../RightClickPanel';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -28,6 +29,7 @@ export enum PluginTypeEnum {
   EditCellPlugin = 'EditCellPlugin',
   CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
+  RightClickPanelPlugin = 'RightClickPanelPlugin',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
   CornerAutoMove = 'CornerAutoMove',
@@ -46,6 +48,7 @@ export interface PluginType {
   [PluginTypeEnum.EditCellPlugin]?: EditCellPlugin;
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
+  [PluginTypeEnum.RightClickPanelPlugin]?: RightClickPanelPlugin;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
@@ -89,6 +92,7 @@ export default class Plugins {
     this.register(EditCellPlugin);
 
     this.register(RightClickPlugin);
+    this.register(RightClickPanelPlugin);
 
     this.register(FontEditPlugin);
 

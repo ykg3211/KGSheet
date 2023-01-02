@@ -58,7 +58,7 @@ export default class DrawLayer extends BaseEvent {
 
   // 是不是调试模式
   public get devMode() {
-    return false;
+    return true;
   }
 
   public toggleDarkMode(v?: boolean) {
