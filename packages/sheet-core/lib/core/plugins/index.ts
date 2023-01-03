@@ -14,7 +14,7 @@ import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
-import RightClickPanelPlugin from '../../RightClickPanel';
+import RightClickPanelPlugin from '../../rightClickPanel';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',

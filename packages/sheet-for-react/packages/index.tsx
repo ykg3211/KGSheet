@@ -3,12 +3,16 @@ import { useState } from 'react';
 import Container from './sheetContainer';
 import Tools from './toolBar';
 import './icons/iconfont.js';
-import Excel, { ToolBar } from 'kgsheet';
-import { BusinessEventConstant, ToolsEventConstant } from 'kgsheet/dist/core/plugins/base/event';
+import Excel, {
+  ToolBar,
+  BusinessEventConstant,
+  ToolsEventConstant,
+  colorType,
+  ExcelConfig,
+  SheetSetting,
+} from 'kgsheet';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
-import { ExcelConfig, SheetSetting } from 'kgsheet/dist/interfaces';
 
 export * from 'kgsheet';
 
@@ -58,10 +62,16 @@ function Main({ defaultData, config }: SheetProps) {
     if (sheet) {
       sheet.on(ToolsEventConstant.REFRESH, refresh);
       sheet.on(BusinessEventConstant.MSG_BOX, ({ type, message: msg }) => {
-        // @ts-ignore
-        message?.[type]?.({
-          content: msg,
-        });
+        if (config.message) {
+          config.message({
+            type,
+            message: msg,
+          });
+        } else {
+          message?.[type]?.({
+            content: msg,
+          });
+        }
       });
     }
   }, [sheet]);

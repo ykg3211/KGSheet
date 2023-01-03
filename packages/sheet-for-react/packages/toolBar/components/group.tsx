@@ -1,5 +1,4 @@
-import { ToolsGroupType } from 'kgsheet/dist/toolBar/interface';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
+import { ToolsGroupType, colorType } from 'kgsheet';
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../..';
 import Tools from './tools';

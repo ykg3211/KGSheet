@@ -1,5 +1,5 @@
 import { TooltipPlacement } from 'antd/es/tooltip';
-import { BaseTool, ToolTypeEnum } from 'kgsheet/dist/toolBar/tools/base';
+import { BaseTool, ToolTypeEnum } from 'kgsheet';
 import React from 'react';
 import ButtonTool from './buttonTool';
 import OptionsTool from './optionsTool';

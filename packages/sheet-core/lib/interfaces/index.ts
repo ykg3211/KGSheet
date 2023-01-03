@@ -60,6 +60,7 @@ export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' |
 
 export interface BaseSheetSetting extends BarSettingType {
   dom: HTMLElement | string;
+  message?: (v: { type: 'info' | 'success' | 'error' | 'warning'; message: string }) => void;
   devMode?: boolean;
   darkMode?: boolean | 'auto';
   readOnly?: boolean;

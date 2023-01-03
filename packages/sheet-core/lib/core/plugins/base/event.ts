@@ -1,4 +1,4 @@
-import { ShowPanelProps } from '../../../RightClickPanel/interface';
+import { ShowPanelProps } from '../../../rightClickPanel/interface';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 export enum ToolsEventConstant {
