@@ -2,6 +2,7 @@ import { ToolsProps } from '../../interface';
 
 export enum ToolTypeEnum {
   BUTTON = 'button',
+  COLOR = 'color',
   OPTION = 'option',
 }
 
