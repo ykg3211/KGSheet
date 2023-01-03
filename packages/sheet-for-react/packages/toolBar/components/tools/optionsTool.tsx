@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from 'react';
-import OptionBase, { colorType } from 'kgsheet';
+import { OptionBase, colorType } from 'kgsheet';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../../..';
 import Popover from '../popover';
