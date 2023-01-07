@@ -36,6 +36,7 @@ export enum BusinessEventConstant {
 type EventParamsTypes = {
   [EventConstant.SELECT_CELLS_CHANGE]: CellCornerScopeType | undefined;
   [EventConstant.RIGHT_CLICK]: MouseEvent;
+  [EventConstant.DARK_MODE_CHANGE]: boolean;
   [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };

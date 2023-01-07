@@ -7,7 +7,7 @@ const baseToolBarConfig: BarSettingType = [
   },
   {
     tools: [
-      [ToolsEnum.FONT_SIZE],
+      [ToolsEnum.FONT_SIZE, ToolsEnum.FONT_COLOR, ToolsEnum.BACKGROUND_COLOR],
       [ToolsEnum.FONT_WEIGHT, ToolsEnum.FONT_DELETE_LINE, ToolsEnum.FONT_ITALIC, ToolsEnum.FONT_UNDER_LINE],
     ],
   },

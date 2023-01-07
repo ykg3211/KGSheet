@@ -275,4 +275,22 @@ export default class FontEditPlugin {
     // 用来计算toolBar的按钮状态的
     this._this.ToolBar?.emit(ToolsEventConstant.REFRESH_ATTRIBUTES_STATE);
   }
+
+  public changeColor(color: string, isFont = true) {
+    const scope = this.SelectPowerPlugin.getSelectCellsScope();
+    if (!scope) {
+      return;
+    }
+    const { data: sourceData } = this._this.getDataByScope(scope);
+    const targetData = handleCell(sourceData, (cell) => {
+      cell.style[isFont ? 'fontColor' : 'backgroundColor'] = color;
+      return cell;
+    });
+
+    this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.cellsChange({
+      scope,
+      pre_data: sourceData,
+      after_data: targetData,
+    });
+  }
 }

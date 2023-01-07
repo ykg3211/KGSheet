@@ -2,7 +2,7 @@ import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
 import { ExcelConfig } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
-import BaseEventStack from './base';
+import BaseEventStack, { BaseEventType } from './base';
 import { EventConstant } from '../base/event';
 
 export interface BaseCellChangeType {
@@ -65,6 +65,26 @@ export default class ExcelBaseFunction {
       pre_data,
       after_data,
     });
+  }
+
+  // 废弃
+  public set(props: Omit<BaseCellsChangeEventStackType, 'pre_data'>[]) {
+    const time_stamp = new Date();
+    const stash: BaseEventType[] = [];
+    props.forEach(({ scope, after_data }) => {
+      const { data: pre_data } = this._this.getDataByScope(scope);
+      stash.push({
+        params: {
+          scope,
+          pre_data,
+          after_data,
+          time_stamp,
+        },
+        // @ts-ignore
+        func: this.cells_change.bind(this),
+      });
+    });
+    this.EventStackPlugin.push(stash);
   }
 
   public cellsChange({ scope, pre_data, after_data }: BaseCellsChangeEventStackType, immediate = true) {

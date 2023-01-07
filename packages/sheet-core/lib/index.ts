@@ -14,7 +14,8 @@ export type { ToolsGroupType } from './toolBar/interface';
 
 export { BaseTool, ToolTypeEnum } from './toolBar/tools/base';
 
-import OptionBase from './toolBar/tools/base/optionBase';
-export { OptionBase };
+export { default as OptionBase } from './toolBar/tools/base/optionBase';
+
+export { default as ColorBase } from './toolBar/tools/base/colorBase';
 
 export type { SheetSetting, BaseSheetSetting, ExcelConfig } from './interfaces/index';

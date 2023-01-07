@@ -16,7 +16,7 @@ const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }
   const { color } = useContext(SheetContext);
 
   const className = useMemo(() => {
-    return [tool.class, tool.active ? 'kgsheet_active_color' : 'kgsheet_btn'].join(' ');
+    return [tool.class, 'kgsheet_btn kgsheet_base_btn', tool.active ? 'kgsheet_active_color' : ''].join(' ');
   }, [tool.class, tool.active]);
 
   const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(colorType.black);

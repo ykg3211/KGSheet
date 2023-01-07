@@ -4,6 +4,7 @@ import { FontDeleteLine, FontItalic, FontSize, FontUnderLine, FontWeight } from 
 import { AntiRevert, Revert } from './revert';
 import { CombineCells } from './combineCells';
 import { TextAlignLeft, TextAlignCenter, TextAlignRight } from './textAlign';
+import { FontColor, BackgroundColor } from './color';
 
 export enum ToolsEnum {
   REVERT = 'revert',
@@ -19,6 +20,8 @@ export enum ToolsEnum {
   TEXT_ALIGN_LEFT = 'text_align_left',
   TEXT_ALIGN_CENTER = 'text_align_center',
   TEXT_ALIGN_RIGHT = 'text_align_right',
+  FONT_COLOR = 'font_color',
+  BACKGROUND_COLOR = 'background_color',
 }
 
 export interface ToolsMapType {
@@ -35,6 +38,8 @@ export interface ToolsMapType {
   [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft;
   [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter;
   [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight;
+  [ToolsEnum.FONT_COLOR]: FontColor;
+  [ToolsEnum.BACKGROUND_COLOR]: BackgroundColor;
 }
 
 const ToolsMap = {
@@ -51,6 +56,8 @@ const ToolsMap = {
   [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft,
   [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter,
   [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight,
+  [ToolsEnum.FONT_COLOR]: FontColor,
+  [ToolsEnum.BACKGROUND_COLOR]: BackgroundColor,
 };
 
 export default function getTools(name: ToolsEnum) {

@@ -81,6 +81,12 @@ class Excel extends Base {
     this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
     this.getPlugin(PluginTypeEnum.FontEditPlugin)?.textAlign(textAlign);
   }
+
+  // 字体颜色 / 背景颜色
+  public changeColor(color: string, isFont = true) {
+    this.getPlugin(PluginTypeEnum.EditCellPlugin)?.removeDom();
+    this.getPlugin(PluginTypeEnum.FontEditPlugin)?.changeColor(color, isFont);
+  }
 }
 
 export default Excel;

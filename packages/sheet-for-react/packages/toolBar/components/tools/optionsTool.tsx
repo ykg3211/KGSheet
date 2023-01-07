@@ -32,7 +32,9 @@ const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
           }}
           color={getColor(colorType.white)}
           triggerElm={
-            <div className='kgsheet_option' style={{ color: getColor(colorType.black), width: '80px' }}>
+            <div
+              className='kgsheet_base_btn kgsheet_option'
+              style={{ color: getColor(colorType.black), width: '80px' }}>
               <span>{tool.valueLabel}</span>
               <Icon fontSize={16} icon='sheet-iconarrow-down' color={getColor(colorType.black)}></Icon>
             </div>

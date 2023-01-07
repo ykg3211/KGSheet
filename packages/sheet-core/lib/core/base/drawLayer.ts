@@ -23,7 +23,7 @@ export interface colorType {
 
 export const darkColorSum: colorType = {
   white: '#0a0c0b',
-  black: '#FFFFFF',
+  black: '#ffffff',
   sideBar: '#202121',
   scrollBar: '#4f5150',
   babfc3: '#3a3c3b',
@@ -31,7 +31,7 @@ export const darkColorSum: colorType = {
 };
 
 export const lightColorSum: colorType = {
-  white: '#FFFFFF',
+  white: '#ffffff',
   black: '#0a0c0b',
   sideBar: '#f4f5f6',
   scrollBar: '#dadada',
@@ -69,7 +69,7 @@ export default class DrawLayer extends BaseEvent {
   public toggleDarkMode(v?: boolean) {
     if (this.sheetConfig.darkMode === 'auto') {
       this.darkMode = v === undefined ? !this.darkMode : v;
-      this.emit(EventConstant.DARK_MODE_CHANGE);
+      this.emit(EventConstant.DARK_MODE_CHANGE, this.darkMode);
       this.emit(EventConstant.RENDER);
     }
   }
@@ -152,15 +152,6 @@ export default class DrawLayer extends BaseEvent {
   private initStrokeStyle(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = this.color('line');
     ctx.lineWidth = 1;
-  }
-
-  public drawRect(v: rectType) {
-    if (!this.ctx) {
-      return;
-    }
-    this.ctx.strokeStyle = 'red';
-    this.ctx.lineWidth = 3;
-    this.ctx.strokeRect(...v);
   }
 
   private drawBorder(props: RenderCellPropsNoLocation) {

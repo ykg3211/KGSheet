@@ -1,27 +1,27 @@
 import { ToolsProps } from '../../interface';
 import { BaseTool, ToolTypeEnum } from '.';
+import { EventConstant } from '../../../core/plugins/base/event';
 
-const translateColor = (colors: string[]) => {
-  return colors.map((item) => {
-    return (
-      '#' +
-      item
-        .split(',')
-        .map(Number)
-        .map((num) => {
-          const v = num.toString(16);
-          if (v.length === 1) {
-            return '0' + v;
-          }
-          return v;
-        })
-        .join('')
-    );
-  });
-};
-
+// const translateColor = (colors: string[]) => {
+//   return colors.map((item) => {
+//     return (
+//       '#' +
+//       item
+//         .split(',')
+//         .map(Number)
+//         .map((num) => {
+//           const v = num.toString(16);
+//           if (v.length === 1) {
+//             return '0' + v;
+//           }
+//           return v;
+//         })
+//         .join('')
+//     );
+//   });
+// };
 const DefaultColors = [
-  ['#ffffff', '#DEE0E3', '#8F959E', '#373C43', '#1F2329'],
+  ['#ffffff', '#dee0e3', '#8f959e', '#373c43', '#0a0c0b'],
   ['#e1eaff', '#bacefd', '#3370ff', '#245bdb', '#133c9a'],
   ['#d9f3fd', '#7edafb', '#049fd7', '#037eaa', '#006185'],
   ['#d5f6f2', '#64e8d6', '#04b49c', '#036356', '#024b41'],
@@ -34,15 +34,44 @@ const DefaultColors = [
   ['#ece2fe', '#ad82f7', '#6425d0', '#380d82', '#270561'],
 ];
 
+const toggleArray = (arr: any[][]) => {
+  const result: any[][] = [];
+  const maxLength = arr.reduce((length, subArr) => {
+    return Math.max(subArr.length, length);
+  }, 0);
+  let i = 0;
+  while (i < maxLength) {
+    const temp: any[] = [];
+    arr.forEach((subArr) => {
+      temp.push(subArr[i]);
+    });
+    result.push(temp);
+    i++;
+  }
+  return result;
+};
+
 export default class ColorBase extends BaseTool {
   public isActive: boolean; // 是用来存储是不是被触发的， 用于一些样式按钮。
-  public colorStores: Array<Array<string>>;
+  public colorStore: Array<Array<string>>;
+  public recentColorStore: Array<string>;
+  public value: string;
 
   constructor(props: ToolsProps) {
     super(props);
     this.type = ToolTypeEnum.COLOR;
     this.isActive = false;
+    this.recentColorStore = [];
+    this.value = this.sheet.color('black');
+    this.initDarkModeChange();
+    this.colorStore = DefaultColors;
+  }
 
-    this.colorStores = DefaultColors;
+  private initDarkModeChange() {
+    this.sheet.on(EventConstant.DARK_MODE_CHANGE, () => {
+      if (this.value === this.sheet.color('white')) {
+        this.value = this.sheet.color('black');
+      }
+    });
   }
 }
