@@ -80,7 +80,7 @@ export default Sheet;
 | devMode | 开发模式，开启之后会输出日志，方便调试 | `boolean` | `false` | false
 | darkMode | 黑夜模式，支持黑、白和跟随系统 | `boolean ｜ 'auto'` | `'auto'` | false
 | readOnly | 是否开启只读  | `boolean` | `false` | false 
-| message | 表格输出的一些提示方法，用户可以自定义设置 | (v: { type: 'info' | 'success' | 'error' | 'warning'; message: string }) => void | `false` | false 
+| message | 表格输出的一些提示方法，用户可以自定义设置 | (v: { type: 'info' \| 'success' \| 'error' \| 'warning'; message: string }) => void | `false` | false 
 | barSetting | sheet顶部功能区配置 | `Array<ToolsGroupConfig<ToolsEnum>>` |  | false
 
 ##### ToolsGroupConfig
