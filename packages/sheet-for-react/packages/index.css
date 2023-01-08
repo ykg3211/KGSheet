@@ -208,6 +208,11 @@
   position: relative;
 }
 
+.kgsheet_recent_color_row {
+  padding: 5px;
+  display: flex;
+}
+
 .kgsheet_color_panel:hover::before {
   content: "";
   width: calc(100% + 6px);
@@ -219,13 +224,34 @@
   border-radius: 4px;
 }
 
-.kgsheet_color_panel_selected::after {
-  content: '⎷';
-  width: 100%;
-  height: 100%;
+.kgsheet_color_panel_selected {
+  font-size: 18px;
   position: absolute;
-  left: 0px;
   top: 0px;
+  left: -1px;
+}
+
+.kgsheet_more_color {
+  width: calc(100% - 18px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 9px;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.kgsheet_more_color_label {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kgsheet_more_color_input {
+  width: 0;
+  height: 0;
+  visibility: hidden;
 }
 
 /* antd */

@@ -11,9 +11,14 @@ export class FontColor extends ColorBase {
 
   public click(v: string): void {
     this.value = v;
-    this.recentColorStore.unshift(v);
+    this.pushRecent(v);
     this.sheet.changeColor(v, true);
   }
+
+  // public changeColor(v: string) {
+  //   this.baseChangeColor(v);
+  //   // this.sheet.changeColor(v, true);
+  // }
 }
 
 export class BackgroundColor extends ColorBase {
@@ -26,7 +31,12 @@ export class BackgroundColor extends ColorBase {
 
   public click(v: string): void {
     this.value = v;
-    this.recentColorStore.unshift(v);
+    this.pushRecent(v);
     this.sheet.changeColor(v, false);
   }
+
+  // public changeColor(v: string) {
+  //   this.baseChangeColor(v);
+  //   // this.sheet.changeColor(v, false);
+  // }
 }

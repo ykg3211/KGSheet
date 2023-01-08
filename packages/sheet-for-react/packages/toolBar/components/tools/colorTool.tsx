@@ -15,6 +15,7 @@ interface Props {
 const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
   const { color: getColor } = useContext(SheetContext);
   const [visible, setVisible] = useState(false);
+  const inputColor = useRef(null);
 
   const clickItem = (item: any) => {
     setVisible(false);
@@ -44,21 +45,59 @@ const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
               <Icon fontSize={10} icon='sheet-iconarrow-down' color={getColor(colorType.black)}></Icon>
             </div>
           }>
-          <div className='kgsheet_color_store_container' style={{ color: getColor(colorType.black) }}>
-            {tool.colorStore.map((colors, i) => (
-              <div key={i} className='kgsheet_color_store_row'>
-                {colors.map((color) => (
-                  <div
-                    key={color}
-                    onClick={() => {
-                      clickItem(color);
-                    }}
-                    className='kgsheet_color_panel'
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+          <div>
+            <div className='kgsheet_color_store_container' style={{ color: getColor(colorType.black) }}>
+              {tool.colorStore.map((colors, i) => (
+                <div key={i} className='kgsheet_color_store_row'>
+                  {colors.map((color) => (
+                    <div
+                      key={color}
+                      onClick={() => {
+                        clickItem(color);
+                      }}
+                      className='kgsheet_color_panel'
+                      style={{ backgroundColor: color }}>
+                      {color === tool.value && (
+                        <Icon className='kgsheet_color_panel_selected' fontSize={18} icon='sheet-iconselect'></Icon>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className='kgsheet_recent_color_row'>
+              {tool.recentColorStore.map((color, i) => (
+                <div
+                  key={color}
+                  onClick={() => {
+                    clickItem(color);
+                  }}
+                  className='kgsheet_color_panel'
+                  style={{ backgroundColor: color }}>
+                  {color === tool.value && (
+                    <Icon className='kgsheet_color_panel_selected' fontSize={18} icon='sheet-iconselect'></Icon>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div
+              className='kgsheet_more_color kgsheet_base_btn'
+              onClick={() => {
+                inputColor.current.click();
+              }}>
+              <div className='kgsheet_more_color_label'>
+                <span style={{ color: getColor(colorType.black) }}>更多颜色</span>
+                <Icon color={getColor(colorType.black)} fontSize={14} icon='sheet-iconarrow-right'></Icon>
               </div>
-            ))}
+              <input
+                ref={inputColor}
+                className='kgsheet_more_color_input'
+                onChange={() => {
+                  tool.changeColor(inputColor.current.value);
+                }}
+                type='color'
+              />
+            </div>
           </div>
         </Popover>
       </div>

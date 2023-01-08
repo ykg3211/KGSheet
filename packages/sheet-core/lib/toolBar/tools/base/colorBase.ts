@@ -1,6 +1,7 @@
 import { ToolsProps } from '../../interface';
+import { throttle } from '../../../utils';
 import { BaseTool, ToolTypeEnum } from '.';
-import { EventConstant } from '../../../core/plugins/base/event';
+import { EventConstant, ToolsEventConstant } from '../../../core/plugins/base/event';
 
 // const translateColor = (colors: string[]) => {
 //   return colors.map((item) => {
@@ -56,6 +57,8 @@ export default class ColorBase extends BaseTool {
   public colorStore: Array<Array<string>>;
   public recentColorStore: Array<string>;
   public value: string;
+  public maxRecent: number;
+  private refreshTool: () => void;
 
   constructor(props: ToolsProps) {
     super(props);
@@ -64,7 +67,24 @@ export default class ColorBase extends BaseTool {
     this.recentColorStore = [];
     this.value = this.sheet.color('black');
     this.initDarkModeChange();
+    this.maxRecent = 11;
     this.colorStore = DefaultColors;
+
+    this.refreshTool = throttle(() => {
+      this.sheet.emit(ToolsEventConstant.REFRESH);
+    }, 17);
+  }
+
+  protected pushRecent(v: string) {
+    this.recentColorStore = this.recentColorStore.filter((color) => color !== v);
+    this.recentColorStore.unshift(v);
+    this.recentColorStore.splice(11);
+  }
+
+  public changeColor(v: string) {
+    this.value = v;
+    this.recentColorStore[0] = v;
+    this.refreshTool();
   }
 
   private initDarkModeChange() {

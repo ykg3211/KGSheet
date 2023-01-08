@@ -148,6 +148,27 @@ export const isSameArray: (array_1: Array<any>, array_2: Array<any>) => boolean 
   return isSame;
 };
 
+export function throttle(func: any, t: number) {
+  let ready: boolean = true;
+  let time: null | number = null;
+  return (...arg: any) => {
+    if (time) {
+      clearTimeout(time);
+    }
+    if (ready) {
+      ready = false;
+      func(...arg);
+      setTimeout(() => {
+        ready = true;
+      }, t);
+    } else {
+      time = setTimeout(() => {
+        func(...arg);
+      }, t);
+    }
+  };
+}
+
 export function debounce(func: any, t: number) {
   let time: null | number = null;
   return (...arg: any) => {
