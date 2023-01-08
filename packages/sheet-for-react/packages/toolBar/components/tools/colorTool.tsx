@@ -65,6 +65,11 @@ const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
                 </div>
               ))}
             </div>
+            {Boolean(tool.recentColorStore.length) && (
+              <span className='kgsheet_recent_color_span' style={{ color: getColor(colorType.black) }}>
+                最近使用
+              </span>
+            )}
             <div className='kgsheet_recent_color_row'>
               {tool.recentColorStore.map((color, i) => (
                 <div

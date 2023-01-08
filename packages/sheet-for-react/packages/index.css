@@ -231,14 +231,19 @@
   left: -1px;
 }
 
+.kgsheet_recent_color_span {
+  margin: 8px;
+  font-size: 12px;
+}
+
 .kgsheet_more_color {
-  width: calc(100% - 18px);
+  width: calc(100% - 10px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: 9px;
+  margin-left: 5px;
   margin-bottom: 10px;
-  padding: 5px;
+  padding: 5px 3px;
 }
 
 .kgsheet_more_color_label {

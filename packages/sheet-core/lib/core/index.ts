@@ -11,7 +11,9 @@ class Excel extends Base {
     this.devMode && console.log('System: ' + isMacOS ? 'macos' : 'windows');
   }
 
-  public getData() {}
+  public getData() {
+    return this.data;
+  }
 
   public setData(data: ExcelConfig) {
     if (data) {

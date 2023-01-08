@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 import { useState } from 'react';
 import Container from './sheetContainer';
 import Tools from './toolBar';
@@ -39,10 +39,17 @@ export interface SheetProps {
   config?: Omit<SheetSetting, 'dom'>;
 }
 
-function Main({ defaultData, config }: SheetProps) {
+const Main = React.forwardRef(({ defaultData, config }: SheetProps, ref) => {
   const [sheet, setSheet] = useState<Excel | null>(null);
   const [toolBar, setToolBar] = useState<ToolBar | null>(null);
   const [flag, setFlag] = useState(0);
+
+  useImperativeHandle(ref, () => ({
+    getData: () => {
+      return sheet?.getData?.();
+    },
+  }));
+
   const refresh = () => {
     setFlag((v) => v + 1);
   };
@@ -116,6 +123,6 @@ function Main({ defaultData, config }: SheetProps) {
       </div>
     </SheetContext.Provider>
   );
-}
+});
 
 export default Main;
