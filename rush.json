@@ -7,14 +7,14 @@
 		{
 			"packageName": "kgsheet",
 			"projectFolder": "packages/sheet-core",
-			"reviewCategory": "production",
+			"reviewCategory": "tools",
 			"shouldPublish": true,
 			"tags": ["frontend-team"]
 		},
 		{
 			"packageName": "kgsheet-for-react",
 			"projectFolder": "packages/sheet-for-react",
-			"reviewCategory": "production",
+			"reviewCategory": "tools",
 			"shouldPublish": true,
 			"tags": ["frontend-team"]
 		},

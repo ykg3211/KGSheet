@@ -22,7 +22,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ykg3211/KGSheet.git"
+    "url": "https://github.com/ykg3211/KGSheet.git",
+    "defaultBranch": "master",
+    "defaultRemote": "origin"
   },
   "bugs": {
     "url": "https://github.com/ykg3211/KGSheet/issues"
