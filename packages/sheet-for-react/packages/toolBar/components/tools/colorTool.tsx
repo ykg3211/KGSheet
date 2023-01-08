@@ -24,18 +24,18 @@ const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
 
   return (
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
-      <div className='kgsheet_base_btn kgsheet_color_btn_container'>
+      <div className={'kgsheet_base_btn kgsheet_color_btn_container' + (tool.disabled ? ' kgsheet_btn_disabled' : '')}>
         <div
           className='kgsheet_color_btn'
           style={{ color: getColor(colorType.black) }}
           onClick={() => {
-            clickItem(tool.value);
+            !tool.disabled && clickItem(tool.value);
           }}>
           <Icon fontSize={16} icon={tool.icon} color={getColor(colorType.black)}></Icon>
           <span style={{ backgroundColor: tool.value }} className='kgsheet_color_bar'></span>
         </div>
         <Popover
-          open={visible}
+          open={tool.disabled ? false : visible}
           onOpenChange={(v) => {
             setVisible(v);
           }}

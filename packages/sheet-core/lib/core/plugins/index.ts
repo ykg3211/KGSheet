@@ -86,15 +86,15 @@ export default class Plugins {
 
     // 选中单元格插件
     this.register(SelectPowerPlugin);
-    this.register(CopyAndPaste);
+    !this._this.config.readOnly && this.register(CopyAndPaste);
 
     // 选中之后输入单元格的插件
-    this.register(EditCellPlugin);
+    !this._this.config.readOnly && this.register(EditCellPlugin);
 
     this.register(RightClickPlugin);
     this.register(RightClickPanelPlugin);
 
-    this.register(FontEditPlugin);
+    !this._this.config.readOnly && this.register(FontEditPlugin);
 
     this.register(CornerAutoMove);
   }

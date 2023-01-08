@@ -4,5 +4,3 @@ coverage
 
 # Ignore all HTML files:
 *.html
-
-*.md

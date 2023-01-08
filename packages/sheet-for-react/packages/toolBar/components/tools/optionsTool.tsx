@@ -26,14 +26,14 @@ const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>
       <div ref={ref}>
         <Popover
-          open={visible}
+          open={tool.disabled ? false : visible}
           onOpenChange={(v) => {
             setVisible(v);
           }}
           color={getColor(colorType.white)}
           triggerElm={
             <div
-              className='kgsheet_base_btn kgsheet_option'
+              className={'kgsheet_base_btn kgsheet_option' + (tool.disabled ? ' kgsheet_btn_disabled' : '')}
               style={{ color: getColor(colorType.black), width: '80px' }}>
               <span>{tool.valueLabel}</span>
               <Icon fontSize={16} icon='sheet-iconarrow-down' color={getColor(colorType.black)}></Icon>

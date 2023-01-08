@@ -71,6 +71,17 @@
   flex-direction: column;
 }
 
+.kgsheet_btn_disabled {
+  cursor: not-allowed;
+}
+.kgsheet_base_btn:hover{
+  background-color: transparent;
+}
+.kgsheet_base_btn:active
+{
+  background-color: transparent;
+}
+
 .kgsheet_active_color {
   background-color: rgba(76, 136, 255, 0.2);
 }

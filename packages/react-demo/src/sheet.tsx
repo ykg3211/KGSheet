@@ -7,6 +7,7 @@ function Sheet() {
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,
     darkMode: 'auto',
+    readOnly: false,
   });
 
   return (

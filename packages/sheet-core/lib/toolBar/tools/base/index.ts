@@ -17,6 +17,7 @@ export class BaseTool {
   public class: string;
   public style: Partial<CSSStyleDeclaration>;
   public active: boolean;
+  public disabled: boolean;
 
   constructor({ sheet, toolBar, key }: ToolsProps) {
     this.sheet = sheet;
@@ -28,6 +29,7 @@ export class BaseTool {
     this.label = '';
     this.toolTip = '';
     this.class = '';
+    this.disabled = Boolean(this.sheet.config.readOnly);
     this.style = {};
   }
 

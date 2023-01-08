@@ -40,7 +40,7 @@ export const lightColorSum: colorType = {
 };
 
 export default class DrawLayer extends BaseEvent {
-  public sheetConfig: BaseSheetSetting;
+  public config: BaseSheetSetting;
   public ctx: CanvasRenderingContext2D | null;
   public canvasDom: HTMLCanvasElement | null;
 
@@ -51,7 +51,7 @@ export default class DrawLayer extends BaseEvent {
   >;
   constructor(config: BaseSheetSetting) {
     super();
-    this.sheetConfig = config;
+    this.config = config;
     this.ctx = null;
     this.canvasDom = null;
     this.components = {};
@@ -67,7 +67,7 @@ export default class DrawLayer extends BaseEvent {
   }
 
   public toggleDarkMode(v?: boolean) {
-    if (this.sheetConfig.darkMode === 'auto') {
+    if (this.config.darkMode === 'auto') {
       this.darkMode = v === undefined ? !this.darkMode : v;
       this.emit(EventConstant.DARK_MODE_CHANGE, this.darkMode);
       this.emit(EventConstant.RENDER);

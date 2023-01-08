@@ -16,7 +16,12 @@ const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }
   const { color } = useContext(SheetContext);
 
   const className = useMemo(() => {
-    return [tool.class, 'kgsheet_btn kgsheet_base_btn', tool.active ? 'kgsheet_active_color' : ''].join(' ');
+    return [
+      tool.class,
+      'kgsheet_btn kgsheet_base_btn',
+      tool.active ? 'kgsheet_active_color' : '',
+      tool.disabled ? 'kgsheet_btn_disabled' : '',
+    ].join(' ');
   }, [tool.class, tool.active]);
 
   const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(colorType.black);
@@ -33,7 +38,7 @@ const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }
         )}
         className={className}
         onClick={() => {
-          tool.click();
+          !tool.disabled && tool.click();
         }}>
         <Icon icon={tool.icon} color={fontColor}></Icon>
         {needLabel && <span className='kgsheet_btn_label'>{tool.label}</span>}
