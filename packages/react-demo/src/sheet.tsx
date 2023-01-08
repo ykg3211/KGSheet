@@ -1,9 +1,9 @@
-import Main, { createDefaultData, SheetSetting } from 'kgsheet-for-react';
-import React, { useEffect, useRef, useState } from 'react';
+import Main, { createDefaultData, RefType, SheetSetting } from 'kgsheet-for-react';
+import React, { useRef, useState } from 'react';
 
 function Sheet() {
   const [defaultData] = useState(createDefaultData(30, 100));
-  const sheetRef = useRef(null);
+  const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,
     darkMode: 'auto',
@@ -16,7 +16,7 @@ function Sheet() {
         onClick={() => {
           console.log(sheetRef.current?.getData?.());
         }}>
-        huoqu
+        获取Data
       </div>
     </>
   );

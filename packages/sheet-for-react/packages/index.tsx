@@ -39,7 +39,11 @@ export interface SheetProps {
   config?: Omit<SheetSetting, 'dom'>;
 }
 
-const Main = React.forwardRef(({ defaultData, config }: SheetProps, ref) => {
+export interface RefType {
+  getData: () => ExcelConfig;
+}
+
+const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref) => {
   const [sheet, setSheet] = useState<Excel | null>(null);
   const [toolBar, setToolBar] = useState<ToolBar | null>(null);
   const [flag, setFlag] = useState(0);
