@@ -89,7 +89,7 @@ export default Sheet;
 > 是一个二维数组，最多支持两行按钮
 
 <!-- prettier-ignore -->
-```
+```typescript
 interface ToolsGroupConfig<T> {
   tools: T[][];
 }
@@ -115,7 +115,7 @@ enum ToolsEnum {
 
 参考默认值：
 
-```
+```typescript
 const defaultToolBarConfig: BarSettingType = [
   {
     tools: [[ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT, ToolsEnum.CLEAR_STYLE]],
