@@ -58,7 +58,7 @@ export interface RenderCellProps {
 
 export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' | 'w' | 'h'>;
 
-export interface BaseSheetSetting extends BarSettingType {
+export interface BaseSheetSetting {
   dom: HTMLElement | string;
   devMode?: boolean;
   darkMode?: boolean | 'auto';
@@ -66,4 +66,4 @@ export interface BaseSheetSetting extends BarSettingType {
   message?: (v: { type: 'info' | 'success' | 'error' | 'warning'; message: string }) => void;
 }
 
-export type SheetSetting = Omit<BaseSheetSetting, 'dom'>;
+export type SheetSetting = Omit<BaseSheetSetting, 'dom'> & BarSettingType;

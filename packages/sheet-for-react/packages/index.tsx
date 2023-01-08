@@ -36,7 +36,7 @@ export const SheetContext = React.createContext<Sheet>({
 
 export interface SheetProps {
   defaultData?: ExcelConfig;
-  config?: Omit<SheetSetting, 'dom'>;
+  config?: SheetSetting;
 }
 
 export interface RefType {

@@ -1,12 +1,21 @@
 import { EventConstant } from './plugins/base/event';
 import Base from './base/base';
-import { Align, ExcelConfig, BaseSheetSetting } from '../interfaces';
+import { Align, ExcelConfig, BaseSheetSetting, SheetSetting } from '../interfaces';
 import { PluginTypeEnum } from './plugins';
 import { isMacOS } from '../utils';
 
+const defaultConfig: SheetSetting = {
+  darkMode: 'auto',
+  devMode: false,
+  readOnly: false,
+};
+
 class Excel extends Base {
   constructor(config: BaseSheetSetting) {
-    super(config);
+    super({
+      ...defaultConfig,
+      ...config,
+    });
 
     this.devMode && console.log('System: ' + isMacOS ? 'macos' : 'windows');
   }

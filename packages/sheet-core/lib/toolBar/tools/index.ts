@@ -7,21 +7,21 @@ import { TextAlignLeft, TextAlignCenter, TextAlignRight } from './textAlign';
 import { FontColor, BackgroundColor } from './color';
 
 export enum ToolsEnum {
-  REVERT = 'revert',
-  ANTI_REVERT = 'anti_revert',
-  FONT_SIZE = 'font_size',
-  DARK_MODE = 'dark_mode',
-  CLEAR_STYLE = 'clear_style',
-  FONT_WEIGHT = 'font_weight',
-  FONT_DELETE_LINE = 'font_delete_line',
-  FONT_ITALIC = 'font_italic',
-  FONT_UNDER_LINE = 'font_under_line',
-  COMBINE_CELLS = 'combine_cells',
-  TEXT_ALIGN_LEFT = 'text_align_left',
-  TEXT_ALIGN_CENTER = 'text_align_center',
-  TEXT_ALIGN_RIGHT = 'text_align_right',
-  FONT_COLOR = 'font_color',
-  BACKGROUND_COLOR = 'background_color',
+  REVERT = 'revert', // 撤销
+  ANTI_REVERT = 'anti_revert', // 反撤销
+  FONT_SIZE = 'font_size', // 文本字体大小
+  DARK_MODE = 'dark_mode', // 黑夜模式切换
+  CLEAR_STYLE = 'clear_style', // 清除样式
+  FONT_WEIGHT = 'font_weight', // 字体粗细
+  FONT_DELETE_LINE = 'font_delete_line', // 删除线
+  FONT_ITALIC = 'font_italic', // 斜体
+  FONT_UNDER_LINE = 'font_under_line', // 下划线
+  COMBINE_CELLS = 'combine_cells', // 合并单元格
+  TEXT_ALIGN_LEFT = 'text_align_left', // 文字左对齐
+  TEXT_ALIGN_CENTER = 'text_align_center', // 文字居中
+  TEXT_ALIGN_RIGHT = 'text_align_right', // 文字右对齐
+  FONT_COLOR = 'font_color', // 子体颜色
+  BACKGROUND_COLOR = 'background_color', // 背景颜色
 }
 
 export interface ToolsMapType {
