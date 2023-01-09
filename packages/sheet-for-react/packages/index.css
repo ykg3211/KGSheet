@@ -74,10 +74,10 @@
 .kgsheet_btn_disabled {
   cursor: not-allowed;
 }
-.kgsheet_base_btn:hover{
+.kgsheet_btn_disabled:hover{
   background-color: transparent;
 }
-.kgsheet_base_btn:active
+.kgsheet_btn_disabled:active
 {
   background-color: transparent;
 }
