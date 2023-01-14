@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "antd": "^4.23.2",
-    "kgsheet": "workspace:^0.3.1",
+    "kgsheet": "workspace:^0.3.2",
     "react": ">=16",
     "react-dom": ">=16",
     "react-router-dom": ">4"
