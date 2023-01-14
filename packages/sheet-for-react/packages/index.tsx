@@ -16,6 +16,8 @@ import message from 'antd/lib/message';
 
 export * from 'kgsheet';
 
+import RightPanel from './rightPanel';
+
 interface Sheet {
   flag: number;
   color: (name: colorType) => string;
@@ -124,6 +126,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
         <div className='kgsheet_content'>
           <Container config={config} defaultData={defaultData} />
         </div>
+        <RightPanel />
       </div>
     </SheetContext.Provider>
   );

@@ -269,6 +269,14 @@
   height: 0;
   visibility: hidden;
 }
+/* 右键panelcss */
+.kgsheet_panel_point {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+}
+
+
 
 /* antd */
 /* antd */
