@@ -3,7 +3,7 @@ import Render from './render';
 import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
 import { dispatchEventType, setEventType, clearEventType } from '../plugins/base/EventDispatch';
 import { deepClone, judgeCross, judgeOver } from '../../utils';
-import { rectType } from './drawLayer';
+import { RectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
 import { ExcelConfig, BaseSheetSetting, SpanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
@@ -30,21 +30,21 @@ class Base extends Render {
 
   constructor(config: BaseSheetSetting) {
     super(config);
-    const dom = config.dom instanceof HTMLElement ? config.dom : document.getElementById(config.dom);
     this.ToolBar = null;
     this.pluginsMap = {};
-    if (!dom) {
+    if (!this.wrapperDom) {
       console.error('必须要指定一个DOM！');
       return;
     }
+    this.wrapperDom = this.wrapperDom;
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
-    this.handleDPR(dom);
-    this.initResize(dom);
+    this.handleDPR(this.wrapperDom);
+    this.initResize(this.wrapperDom);
 
     this.pluginsInstance = new Plugins(this);
 
-    dom.appendChild(this.canvasDom);
+    this.wrapperDom.appendChild(this.canvasDom);
 
     this.initDarkMode();
 
@@ -117,7 +117,7 @@ class Base extends Render {
     endCell.column = Math.max(0, endCell.column);
     endCell.row = Math.max(0, endCell.row);
 
-    const cellPosition: rectType = [
+    const cellPosition: RectType = [
       _data.w.slice(0, startCell.column).reduce((a, b) => a + b, 0) + paddingLeft - scrollLeft,
       _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
       _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
@@ -125,28 +125,6 @@ class Base extends Render {
     ];
 
     return cellPosition;
-  }
-
-  /**
-   * 处理高分屏的比例
-   */
-  private handleDPR(dom: HTMLElement) {
-    this.devMode && console.log('handleSize');
-    if (!this.canvasDom || !this.ctx) {
-      return;
-    }
-    let dpr = window.devicePixelRatio;
-    const cssWidth = dom.clientWidth;
-    const cssHeight = dom.clientHeight;
-    this.width = cssWidth;
-    this.height = cssHeight;
-    this.canvasDom.style.width = cssWidth + 'px';
-    this.canvasDom.style.height = cssHeight + 'px';
-
-    this.canvasDom.width = dpr * cssWidth;
-    this.canvasDom.height = dpr * cssHeight;
-
-    this.ctx?.scale(dpr * this.scale, dpr * this.scale);
   }
 
   /**
@@ -159,7 +137,7 @@ class Base extends Render {
     }
     const result = [e.pageX - this.canvasDom.offsetLeft, e.pageY - this.canvasDom.offsetTop];
     if (result[0] > 0 && result[1] > 0 && result[0] < this._width && result[1] < this._height) {
-      return result.map((item) => item / this._scale) as [number, number];
+      return result.map((item) => item / this.scale) as [number, number];
     }
 
     if (alwayInner) {
@@ -168,7 +146,7 @@ class Base extends Render {
 
       result[0] = Math.min(this._width, result[0]);
       result[1] = Math.min(this._height, result[1]);
-      return result as [number, number];
+      return result.map((item) => item / this.scale) as [number, number];
     }
 
     return false;
@@ -373,7 +351,7 @@ class Base extends Render {
    */
   public getRectByCell(cell: SelectedCellType) {
     const { _data, paddingLeft, scrollTop, scrollLeft, paddingTop } = this;
-    // 手动深拷贝
+
     const startCell = {
       row: cell.row,
       column: cell.column,
@@ -392,7 +370,7 @@ class Base extends Render {
       _data.h.slice(0, startCell.row).reduce((a, b) => a + b, 0) + paddingTop - scrollTop,
       _data.w.slice(startCell.column, endCell.column + 1).reduce((a, b) => a + b, 0),
       _data.h.slice(startCell.row, endCell.row + 1).reduce((a, b) => a + b, 0),
-    ] as rectType;
+    ] as RectType;
   }
 
   /**

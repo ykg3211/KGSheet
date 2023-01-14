@@ -648,8 +648,8 @@ export default class SelectPowerPlugin {
     }
     const that = this._this;
     const [x, y, w, h] = this._this.getRectByCell(this._endCell);
-    const width = that._width - that.paddingLeft - that.scrollBarWidth;
-    const height = that._height - that.paddingTop - that.scrollBarWidth;
+    const width = that.width - that.paddingLeft - that.scrollBarWidth;
+    const height = that.height - that.paddingTop - that.scrollBarWidth;
     const isInner = judgeInner([x, y, w, h], [that.paddingLeft, that.paddingTop, width, height]);
     if (!isInner) {
       if (x < that.paddingLeft) {

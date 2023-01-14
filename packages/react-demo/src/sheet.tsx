@@ -3,7 +3,7 @@ import 'kgsheet-for-react/dist/index.css';
 import React, { useRef, useState } from 'react';
 
 function Sheet() {
-  const [defaultData] = useState(createDefaultData(30, 100));
+  const [defaultData] = useState(createDefaultData(300, 1000));
   const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,

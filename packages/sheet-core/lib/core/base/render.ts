@@ -51,7 +51,7 @@ export default class Render extends DrawLayer {
     this.overGapHeight = 40;
     this._scale = 1;
     this.maxScale = 4;
-    this.minScale = 0.4;
+    this.minScale = 0.2;
     this.renderFuncArr = [];
     this.renderDataScope = [
       [0, 0],
@@ -101,10 +101,11 @@ export default class Render extends DrawLayer {
     return this._scale;
   }
   public set scale(v: number) {
-    // this._scale = v;
-    // setTimeout(() => {
-    //   this.render();
-    // }, 0);
+    this._scale = v < this.minScale ? this.minScale : v > this.maxScale ? this.maxScale : v;
+    setTimeout(() => {
+      this.handleDPR(this.wrapperDom);
+      this.scrollXY(0, 0);
+    }, 0);
   }
 
   public get scrollTop() {
@@ -129,11 +130,29 @@ export default class Render extends DrawLayer {
     }, 0);
   }
 
-  public _preRenderFunc() {
-    if (!this.canvasDom) {
+  /**
+   * 处理高分屏的比例
+   */
+  public handleDPR(dom?: HTMLElement | null) {
+    if (!this.canvasDom || !this.ctx || !dom) {
       return;
     }
-    this.ctx?.clearRect(0, 0, this.canvasDom.width, this.canvasDom.height);
+    let dpr = window.devicePixelRatio;
+    const cssWidth = dom.clientWidth;
+    const cssHeight = dom.clientHeight;
+    this.width = cssWidth;
+    this.height = cssHeight;
+    this.canvasDom.style.width = cssWidth + 'px';
+    this.canvasDom.style.height = cssHeight + 'px';
+
+    this.canvasDom.width = dpr * cssWidth;
+    this.canvasDom.height = dpr * cssHeight;
+
+    this.ctx?.scale(dpr * this.scale, dpr * this.scale);
+  }
+
+  public _preRenderFunc() {
+    this.ctx?.clearRect(0, 0, this.width, this.height);
   }
 
   public _renderFunc() {
@@ -445,8 +464,8 @@ export default class Render extends DrawLayer {
   }
   public getMaxScrollBound() {
     return {
-      height: this.contentHeight - this.height / this.scale + this.paddingTop + this.overGapWidth,
-      width: this.contentWidth - this.width / this.scale + this.paddingLeft + this.overGapHeight,
+      height: Math.max(0, this.contentHeight - this.height + this.paddingTop + this.overGapWidth / this.scale),
+      width: Math.max(0, this.contentWidth - this.width + this.paddingLeft + this.overGapHeight / this.scale),
     };
   }
   public scrollXY(deltaX: number, deltaY: number) {

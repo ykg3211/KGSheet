@@ -4,17 +4,17 @@
 import Base from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { BusinessEventConstant, EventConstant } from '../base/event';
-import { isNN } from '../../../utils';
+import { throttle, isNN } from '../../../utils';
 import { judgeOver } from '../../../utils';
 import { PluginTypeEnum } from '..';
-import { rectType } from '../../base/drawLayer';
+import { RectType } from '../../base/drawLayer';
 export default class ScrollPlugin {
   private _this: Base;
   public name: string;
   private scrollBarXW: number;
   private scrollBarYW: number;
-  private Xxywh: rectType; // X轴滚动块的坐标
-  private Yxywh: rectType; // Y轴滚动块的坐标
+  private Xxywh: RectType; // X轴滚动块的坐标
+  private Yxywh: RectType; // Y轴滚动块的坐标
 
   constructor(_this: Base) {
     this._this = _this;
@@ -263,7 +263,7 @@ export default class ScrollPlugin {
     let isShift = false;
     let isControl = false;
 
-    const handler = (e: WheelEvent) => {
+    const handler = throttle((e: WheelEvent) => {
       const { deltaX: _deltaX, deltaY: _deltaY } = e;
       let deltaX = _deltaX;
       let deltaY = _deltaY;
@@ -272,9 +272,7 @@ export default class ScrollPlugin {
         const initScale = this._this.scale;
         const originAbsoluteX = this._this.scrollTop + e.pageY;
         const originAbsoluteY = this._this.scrollLeft + e.pageX;
-        const temp = this._this.scale + deltaY / 1000;
-        this._this.scale =
-          temp < this._this.minScale ? this._this.minScale : temp > this._this.maxScale ? this._this.maxScale : temp;
+        this._this.scale = this._this.scale - deltaY / 1000;
 
         // todo @yukaige 缩放的时候中心是鼠标位置。
         const changeMultiple = this._this.scale / initScale;
@@ -297,7 +295,7 @@ export default class ScrollPlugin {
       }
 
       this._this.scrollXY(deltaX, deltaY);
-    };
+    }, 20);
 
     this._this.canvasDom?.addEventListener('wheel', handler);
 

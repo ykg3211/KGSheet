@@ -26,8 +26,8 @@ export default class CornerAutoMove {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.borderGapX = 0;
-    this.borderGapY = 0;
+    this.borderGapX = 10;
+    this.borderGapY = 10;
     this.isStart = false;
     this.needStop = false;
 
@@ -82,7 +82,8 @@ export default class CornerAutoMove {
       return;
     }
 
-    this._this.scrollXY(offset.offsetX, offset.offsetY);
+    this._this.scrollXY(offset.offsetX / this._this.scale, offset.offsetY / this._this.scale);
+
     await nextTick();
     this.render();
   }
@@ -96,7 +97,7 @@ export default class CornerAutoMove {
     const domOffsetRight = this._this.canvasDom.offsetLeft + this._this.canvasDom.offsetWidth - this.borderGapX;
 
     const domOffsetTop = this._this.canvasDom.offsetTop + this._this.paddingTop + this.borderGapY;
-    const domOffsetBottom = this._this.canvasDom.offsetTop + this._this.canvasDom.offsetHeight - this.borderGapX;
+    const domOffsetBottom = this._this.canvasDom.offsetTop + this._this.canvasDom.offsetHeight - this.borderGapY;
     let offsetX = 0;
     let offsetY = 0;
 

@@ -1,9 +1,9 @@
 import { CellTypeEnum, RenderCellPropsNoLocation, Cell, BaseSheetSetting } from '../../interfaces';
 import BaseEvent, { EventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
-export type rectType = [number, number, number, number];
+export type RectType = [number, number, number, number];
 
-function clipCell(ctx: CanvasRenderingContext2D, position: rectType, renderFunc: () => void) {
+function clipCell(ctx: CanvasRenderingContext2D, position: RectType, renderFunc: () => void) {
   ctx.save();
   ctx.beginPath();
   ctx.rect(...position);
@@ -43,6 +43,7 @@ export default class DrawLayer extends BaseEvent {
   public config: BaseSheetSetting;
   public ctx: CanvasRenderingContext2D | null;
   public canvasDom: HTMLCanvasElement | null;
+  public wrapperDom: HTMLElement | null;
 
   public devMode: boolean; // 是不是调试模式
   public darkMode: boolean;
@@ -54,6 +55,7 @@ export default class DrawLayer extends BaseEvent {
     this.config = config;
     this.ctx = null;
     this.canvasDom = null;
+    this.wrapperDom = config.dom instanceof HTMLElement ? config.dom : document.getElementById(config.dom);
     this.components = {};
 
     if (config.darkMode === 'auto') {

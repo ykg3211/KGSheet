@@ -2,7 +2,7 @@
 import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { rectType } from '../../base/drawLayer';
+import { RectType } from '../../base/drawLayer';
 import { Cell, SpanCell } from '../../../interfaces';
 import { combineCell, deepClone, isSameArray, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
@@ -285,7 +285,7 @@ export default class EditCellPlugin {
     ]);
   }
 
-  private drawDashBorder(ctx: CanvasRenderingContext2D, rect: rectType) {
+  private drawDashBorder(ctx: CanvasRenderingContext2D, rect: RectType) {
     ctx.save();
     ctx.strokeStyle = '#4a89fe';
     ctx.lineWidth = 1;
@@ -299,7 +299,7 @@ export default class EditCellPlugin {
     this._this.addRenderFunction(RenderZIndex.SCROLL_BAR, [
       () => {
         if (this.editCell && this.editDomInstance && this._this.canvasDom) {
-          const position = this._this.getRectByCell(this.editCell);
+          const position = this._this.getRectByCell(this.editCell).map((i) => i * this._this.scale) as RectType;
 
           position[0] += this._this.canvasDom.offsetLeft;
           position[1] += this._this.canvasDom.offsetTop;
@@ -395,7 +395,7 @@ export default class EditCellPlugin {
     if (cells.length > 0) {
       cell = cells[0];
     }
-    const position = this._this.getRectByCell(cell);
+    const _position = this._this.getRectByCell(cell);
 
     /**
      * 解决双击过程中移动鼠标之后，会将dom挂载在最后的单元格的bug。
@@ -405,17 +405,16 @@ export default class EditCellPlugin {
       if (!selectCells) {
         return;
       }
-      if (isDBClick) {
-        const _border = this._this.calBorder(selectCells.leftTopCell, selectCells.rightBottomCell);
-        if (!isSameArray(_border, position)) {
-          return;
-        }
+      const _border = this._this.calBorder(selectCells.leftTopCell, selectCells.rightBottomCell);
+      if (!isSameArray(_border, _position)) {
+        return;
       }
     }
     if (this._this.canvasDom) {
       this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
       this.editCell = cell;
 
+      const position = _position.map((i) => i * this._this.scale) as RectType;
       position[0] += this._this.canvasDom.offsetLeft;
       position[1] += this._this.canvasDom.offsetTop;
 
@@ -603,7 +602,7 @@ export default class EditCellPlugin {
     });
   }
 
-  private createEditBox(cell: SelectedCellType, [x, y, w, h]: rectType) {
+  private createEditBox(cell: SelectedCellType, [x, y, w, h]: RectType) {
     if (this.editDomInstance) {
       return;
     }

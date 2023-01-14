@@ -5,7 +5,7 @@ import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, CONTENT_KEYS, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { CONTENT_KEYS, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 
 export class InputDom {
   private DOM: HTMLTextAreaElement;
@@ -89,6 +89,7 @@ export class InputDom {
     this.DOM.style.border = '1px solid #4a89fe';
     this.DOM.style.resize = 'none';
     this.DOM.style.overflow = 'hidden';
+    this.DOM.style.minWidth = '120px';
 
     const textDecoration = [];
     cell.style.deleteLine && textDecoration.push('line-through');
@@ -113,34 +114,34 @@ export class InputDom {
   }
 
   public resetEditDomPosition(x: number, y: number, w: number, h: number) {
+    console.log(x, y, w, h);
     if (!this.DOM || !this._this.canvasDom) {
       return;
     }
-    const { paddingLeft, paddingTop, width, height } = this._this;
+
+    const { scale, paddingLeft: _paddingLeft, paddingTop: _paddingTop, _width, _height } = this._this;
+    const domW = w - 2 * this._this.scale;
+    const domH = h - 2 * this._this.scale;
+    const paddingLeft = _paddingLeft * scale;
+    const paddingTop = _paddingTop * scale;
     const _scrollBarWidth = this._this._scrollBarWidth || 10;
     const contentX = paddingLeft + (this._this.canvasDom?.offsetLeft || 0);
     const contentY = paddingTop + (this._this.canvasDom?.offsetTop || 0);
 
-    x += 1;
-    y += 1;
+    x += 1 * this._this.scale;
+    y += 1 * this._this.scale;
     x = Math.max(contentX, x);
     y = Math.max(contentY, y);
 
-    x = Math.min(this._this.canvasDom.offsetLeft + width - _scrollBarWidth - w + 3, x);
-    y = Math.min(this._this.canvasDom.offsetTop + height - _scrollBarWidth - h + 2, y);
+    x = Math.min(this._this.canvasDom.offsetLeft + _width - _scrollBarWidth - domW + 3, x);
+    y = Math.min(this._this.canvasDom.offsetTop + _height - _scrollBarWidth - domH + 2, y);
 
     this.setSize({
-      width: (w - 2) * this._this.scale,
-      height: (h - 2) * this._this.scale,
+      width: domW,
+      height: domH,
     });
-    this.minWidth = (w - 2) * this._this.scale;
-    this.minHeight = (h - 2) * this._this.scale;
-
-    const display = judgeCross(
-      [x, y, w, h],
-      [contentX, contentY, width - paddingLeft - _scrollBarWidth, height - paddingTop - _scrollBarWidth],
-    );
-    this.DOM.style.display = display ? 'block' : 'none';
+    this.minWidth = w - 2 * this._this.scale;
+    this.minHeight = h - 2 * this._this.scale;
 
     this.DOM.style.transform = `translate(${x}px, ${y}px)`;
 
