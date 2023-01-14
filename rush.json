@@ -8,6 +8,7 @@
 			"packageName": "kgsheet",
 			"projectFolder": "packages/sheet-core",
 			"reviewCategory": "tools",
+			"publishFolder": "./lib",
 			"shouldPublish": true,
 			"tags": ["frontend-team"]
 		},
@@ -15,6 +16,7 @@
 			"packageName": "kgsheet-for-react",
 			"projectFolder": "packages/sheet-for-react",
 			"reviewCategory": "tools",
+			"publishFolder": "./dist",
 			"shouldPublish": true,
 			"tags": ["frontend-team"]
 		},
@@ -25,5 +27,10 @@
 			"shouldPublish": false,
 			"tags": ["frontend-team"]
 		}
-	]
+	],
+	"repository": {
+		"url": "https://github.com/ykg3211/KGSheet.git",
+		"defaultRemote": "https://github.com/ykg3211/KGSheet.git",
+		"defaultBranch": "master"
+	}
 }

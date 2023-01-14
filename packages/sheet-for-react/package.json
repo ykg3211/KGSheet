@@ -1,6 +1,6 @@
 {
   "name": "kgsheet-for-react",
-  "version": "0.0.1",
+  "version": "0.3.1",
   "license": "MIT",
   "description": "Web版本excel的React组件",
   "author": "Yukaige",
@@ -23,11 +23,11 @@
     "dist"
   ],
   "dependencies": {
-    "kgsheet": "workspace:^",
+    "antd": "^4.23.2",
+    "kgsheet": "workspace:^0.3.1",
     "react": ">=16",
     "react-dom": ">=16",
-    "react-router-dom": ">4",
-    "antd": "4.24.3"
+    "react-router-dom": ">4"
   },
   "devDependencies": {
     "@types/node": "^18.7.18",

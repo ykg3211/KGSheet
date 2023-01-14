@@ -3,7 +3,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
+auth.sh
 # Runtime data
 *.pid
 *.seed
@@ -23,6 +23,8 @@ coverage
 
 # Bower dependency directory (https://bower.io/)
 bower_components
+
+CHANGELOG*
 
 # node-waf configuration
 .lock-wscript

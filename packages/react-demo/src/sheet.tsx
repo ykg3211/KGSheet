@@ -1,4 +1,5 @@
 import Main, { createDefaultData, RefType, SheetSetting } from 'kgsheet-for-react';
+import 'kgsheet-for-react/dist/index.css';
 import React, { useRef, useState } from 'react';
 
 function Sheet() {

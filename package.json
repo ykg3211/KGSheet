@@ -2,6 +2,9 @@
   "name": "rush",
   "scripts": {
     "start": "npm run build & sh ./dev.sh",
-    "build": "rush build:watch --to-except react-demo"
+    "build": "rush build:watch --to-except react-demo",
+    "auth": "sh ./auth.sh",
+    "change": "rush change",
+    "publish": "sh ./auth.sh && rush publish -a -p"
   }
 }
