@@ -1,6 +1,6 @@
 {
   "name": "kgsheet",
-  "version": "0.3.1",
+  "version": "0.3.4",
   "description": "Web版本excel",
   "author": "Yukaige",
   "homepage": "https://github.com/ykg3211/KGSheet.git",
@@ -11,7 +11,7 @@
     "lib": "lib"
   },
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
     "build:watch": "tsc",
