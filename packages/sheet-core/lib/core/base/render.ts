@@ -3,7 +3,7 @@ import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import { getABC, isSafari, _throttleByRequestAnimationFrame } from '../../utils';
+import { getABC, isSafari, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
 export default class Render extends DrawLayer {
@@ -60,7 +60,7 @@ export default class Render extends DrawLayer {
     this.renderSpanCellsArr = [];
     this.renderCellsArr = [];
 
-    this.render = _throttleByRequestAnimationFrame(this._renderFunc.bind(this));
+    this.render = throttleByRequestAnimationFrame(this._renderFunc.bind(this));
 
     this.on(EventConstant.RENDER, this.render);
 
