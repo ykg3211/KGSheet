@@ -1,6 +1,6 @@
 import Base from '../../base';
 import { ToolsPluginTypeEnum } from '..';
-import { EventConstant, ToolsEventConstant } from '../../../core/plugins/base/event';
+import { ToolsEventConstant } from '../../../core/plugins/base/event';
 
 export enum colorType {
   white = 'white',
@@ -27,13 +27,9 @@ export default class DarkMode {
     this._this = _this;
   }
 
-  public toogleDarkMode(dark?: boolean) {
-    this._this.sheet.toggleDarkMode(dark);
-    return this._this.sheet.darkMode;
-  }
-
   public color(name: colorType, needReverse: boolean = false) {
-    if (this._this.sheet.darkMode && !needReverse) {
+    const darkMode = this._this.sheet.darkMode;
+    if (darkMode && !needReverse) {
       return darkColorSum[name] || '';
     }
     return lightColorSum[name] || '';

@@ -264,12 +264,14 @@ export default class Render extends DrawLayer {
       }
       point[1] += this.data.h[rIndex];
     });
+
     this.resetRenderFunction(
       RenderZIndex.TABLE_LINE,
-      renderLineArr.map((item) => () => {
+      (this.drawCellBorder ? renderLineArr : []).map((item) => () => {
         this.drawLine(...item);
       }),
     );
+
     this.resetRenderFunction(
       RenderZIndex.TABLE_CELLS,
       this.renderCellsArr.flat().map((item) => () => {

@@ -1,9 +1,7 @@
 import Popover from '../components/popover';
-import { colorType } from 'kgsheet/dist/toolBar/plugins/DarkMode';
+import { colorType, RightClickPanelConstant, ShowPanelProps } from 'kgsheet';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SheetContext } from '..';
-import { RightClickPanelConstant } from 'kgsheet/dist/core/plugins/base/event';
-import { ShowPanelProps } from 'kgsheet/dist/RightClickPanel/interface';
 
 function RightPanel() {
   const isInit = useRef(false);

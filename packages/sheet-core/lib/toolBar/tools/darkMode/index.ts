@@ -6,7 +6,7 @@ export class DarkMode extends ButtonBase {
   constructor(props: ToolsProps) {
     super(props);
 
-    const dark = this.toolBar.getPlugin(ToolsPluginTypeEnum.DarkMode)?.darkMode;
+    const dark = this.sheet.darkMode;
 
     this.toolTip = '切换黑暗/白天模式';
     this.label = dark ? '黑暗模式' : '白天模式';
@@ -14,7 +14,8 @@ export class DarkMode extends ButtonBase {
   }
 
   public click() {
-    const darkMode = this.toolBar.getPlugin(ToolsPluginTypeEnum.DarkMode)?.toogleDarkMode();
+    this.sheet.toggleDarkMode();
+    const darkMode = this.sheet.darkMode;
     this.label = darkMode ? '黑暗模式' : '白天模式';
     this.icon = darkMode ? 'sheet-iconnightmode' : 'sheet-iconDaytimemode';
   }
