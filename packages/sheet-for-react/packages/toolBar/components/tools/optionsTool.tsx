@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import { OptionBase, colorType } from 'kgsheet';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../../..';
-import Popover from '../popover';
+import Popover from '../../../components/popover';
 import { TooltipPlacement } from 'antd/es/tooltip';
 import Icon from '../../../icons/icon';
 

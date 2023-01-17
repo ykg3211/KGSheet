@@ -1,5 +1,5 @@
 import { CellTypeEnum, RenderCellPropsNoLocation, Cell, BaseSheetSetting } from '../../interfaces';
-import BaseEvent, { EventConstant } from '../plugins/base/event';
+import BaseEvent, { EventConstant, ToolsEventConstant } from '../plugins/base/event';
 import { isNN } from '../../utils';
 export type RectType = [number, number, number, number];
 
@@ -47,6 +47,7 @@ export default class DrawLayer extends BaseEvent {
 
   public devMode: boolean; // 是不是调试模式
   public darkMode: boolean;
+  public _drawCellBorder: boolean;
   protected components: Partial<
     Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
   >;
@@ -64,13 +65,34 @@ export default class DrawLayer extends BaseEvent {
       this.darkMode = Boolean(config.darkMode);
     }
 
+    this._drawCellBorder = true;
     this.devMode = Boolean(config.devMode);
     this.handleDefaultComponents();
+    this.initMediaDarkMode();
+  }
+
+  private initMediaDarkMode() {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    media.addEventListener('change', (e) => {
+      this.toggleDarkMode(e.matches || false);
+    });
+    this.toggleDarkMode(media.matches || false);
+  }
+
+  public get drawCellBorder() {
+    return this._drawCellBorder;
+  }
+  public set drawCellBorder(v) {
+    this._drawCellBorder = v;
+    this.emit(ToolsEventConstant.TOGGLE_CELL_BORDER, v);
+    this.emit(EventConstant.RENDER);
   }
 
   public toggleDarkMode(v?: boolean) {
     if (this.config.darkMode === 'auto') {
       this.darkMode = v === undefined ? !this.darkMode : v;
+      this.emit(ToolsEventConstant.REFRESH);
       this.emit(EventConstant.DARK_MODE_CHANGE, this.darkMode);
       this.emit(EventConstant.RENDER);
     }

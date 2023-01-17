@@ -2,9 +2,9 @@ import React, { useContext, useRef, useState } from 'react';
 import { colorType, ColorBase } from 'kgsheet';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../../..';
-import Popover from '../popover';
 import { TooltipPlacement } from 'antd/es/tooltip';
 import Icon from '../../../icons/icon';
+import Popover from '../../../components/popover';
 
 interface Props {
   tool: ColorBase;

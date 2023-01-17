@@ -22,7 +22,13 @@
 
 .kgsheet_content {
   width: 100%;
-  height: calc(100% - 58px);
+  height: calc(100% - 58px - 28px);
+}
+
+.kgsheet_bottom {
+  width: 100%;
+  height: 28px;
+  background-color: rgb(244, 246, 247);
 }
 
 .kgsheet_target {
@@ -38,6 +44,14 @@
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+.kgsheet_bottom_Container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 
@@ -269,6 +283,14 @@
   height: 0;
   visibility: hidden;
 }
+/* 右键panelcss */
+.kgsheet_panel_point {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+}
+
+
 
 /* antd */
 /* antd */

@@ -3,8 +3,8 @@
 
 import Base from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
-import { BusinessEventConstant, EventConstant } from '../base/event';
-import { throttle, isNN } from '../../../utils';
+import { EventConstant } from '../base/event';
+import { throttleByRequestAnimationFrame, isNN } from '../../../utils';
 import { judgeOver } from '../../../utils';
 import { PluginTypeEnum } from '..';
 import { RectType } from '../../base/drawLayer';
@@ -209,7 +209,7 @@ export default class ScrollPlugin {
     const contentHeight = this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight;
     // 画X轴滚动条
     if (this._this.width < contentWidth) {
-      this.scrollBarXW = Math.max((this._this.width * this._this.width) / contentWidth, 20);
+      this.scrollBarXW = (this._this.width * this._this.width) / contentWidth;
       const percentX = this._this.scrollLeft / maxWidth;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
@@ -236,7 +236,7 @@ export default class ScrollPlugin {
 
     // 画Y轴滚动条
     if (this._this.height < contentHeight) {
-      this.scrollBarYW = Math.max((this._this.height * this._this.height) / contentHeight, 20);
+      this.scrollBarYW = (this._this.height * this._this.height) / contentHeight;
       const percentY = this._this.scrollTop / maxHeight;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
@@ -263,7 +263,7 @@ export default class ScrollPlugin {
     let isShift = false;
     let isControl = false;
 
-    const handler = throttle((e: WheelEvent) => {
+    const handler = throttleByRequestAnimationFrame((e: WheelEvent) => {
       const { deltaX: _deltaX, deltaY: _deltaY } = e;
       let deltaX = _deltaX;
       let deltaY = _deltaY;
@@ -295,7 +295,7 @@ export default class ScrollPlugin {
       }
 
       this._this.scrollXY(deltaX, deltaY);
-    }, 20);
+    });
 
     this._this.canvasDom?.addEventListener('wheel', handler);
 

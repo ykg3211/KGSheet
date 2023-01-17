@@ -15,6 +15,8 @@ function Container({ defaultData, config }: SheetProps) {
       setSheet(instance);
       const data = defaultData || createDefaultData(30, 500);
       instance.setData(data);
+      // @ts-ignore
+      window.ykg = instance;
       once.current = false;
     }
   }, []);

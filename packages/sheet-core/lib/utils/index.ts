@@ -119,7 +119,7 @@ export function combineCell(cells: SelectedCellType[]) {
   };
 }
 
-export function _throttleByRequestAnimationFrame(fn: Function) {
+export function throttleByRequestAnimationFrame(fn: Function) {
   let flag = true;
   return (...arg: any) => {
     if (flag) {

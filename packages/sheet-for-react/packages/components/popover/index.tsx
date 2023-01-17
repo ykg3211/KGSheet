@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Popover as _Propover, PopoverProps } from 'antd';
 
 interface Props extends PopoverProps {
@@ -6,12 +6,12 @@ interface Props extends PopoverProps {
   triggerElm: JSX.Element;
 }
 const Popover = (props: Props) => {
-  const { children, triggerElm, ...rest } = props;
+  const { children, triggerElm, placement = 'bottomLeft', ...rest } = props;
 
   return (
     <_Propover
       overlayClassName='kgsheet_option_popover'
-      placement='bottomLeft'
+      placement={placement}
       content={children}
       trigger='click'
       {...rest}>

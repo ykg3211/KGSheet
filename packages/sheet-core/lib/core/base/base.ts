@@ -7,6 +7,7 @@ import { RectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
 import { ExcelConfig, BaseSheetSetting, SpanCell } from '../../interfaces';
 import ToolBar from '../../toolBar';
+import BottomBar from '../../bottomBar';
 
 export interface BaseDataType {
   scope: CellCornerScopeType;
@@ -19,6 +20,7 @@ export interface SelectedCellType {
 }
 class Base extends Render {
   public ToolBar: ToolBar | null;
+  public BottomBar: BottomBar | null;
   public pluginsInstance!: Plugins;
   public setEvent!: setEventType;
   public clearEvent!: clearEventType;
@@ -31,6 +33,7 @@ class Base extends Render {
   constructor(config: BaseSheetSetting) {
     super(config);
     this.ToolBar = null;
+    this.BottomBar = null;
     this.pluginsMap = {};
     if (!this.wrapperDom) {
       console.error('必须要指定一个DOM！');

@@ -4,15 +4,21 @@ export enum RightClickPanelType {
   LEFT_BAR = 'left_bar',
 }
 
-interface CellPanelType {
+export interface BasePanelType {
+  x: number;
+  y: number;
+  darkMode: boolean;
+}
+
+interface CellPanelType extends BasePanelType {
   type: RightClickPanelType.CELL;
 }
 
-interface TopBarPanelType {
+interface TopBarPanelType extends BasePanelType {
   type: RightClickPanelType.TOP_BAR;
 }
 
-interface RightBarPanelType {
+interface RightBarPanelType extends BasePanelType {
   type: RightClickPanelType.LEFT_BAR;
 }
 

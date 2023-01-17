@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 import { useState } from 'react';
 import Container from './sheetContainer';
 import Tools from './toolBar';
+import BottomTools from './bottomBar';
 import './icons/iconfont.js';
 import Excel, {
   ToolBar,
@@ -10,11 +11,14 @@ import Excel, {
   colorType,
   ExcelConfig,
   SheetSetting,
+  BottomBar,
 } from 'kgsheet';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
 
 export * from 'kgsheet';
+
+import RightPanel from './rightPanel';
 
 interface Sheet {
   flag: number;
@@ -22,6 +26,7 @@ interface Sheet {
   sheet: Excel;
   setSheet: (v: Excel) => void;
   toolBar: ToolBar;
+  bottomBar: BottomBar;
   setToolBar: (v: ToolBar) => void;
 }
 
@@ -31,6 +36,7 @@ export const SheetContext = React.createContext<Sheet>({
   color: (name: colorType) => name,
   setSheet: () => {},
   toolBar: null,
+  bottomBar: null,
   setToolBar: () => {},
 });
 
@@ -46,6 +52,7 @@ export interface RefType {
 const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref) => {
   const [sheet, setSheet] = useState<Excel | null>(null);
   const [toolBar, setToolBar] = useState<ToolBar | null>(null);
+  const [bottomBar, setBottomBar] = useState<BottomBar | null>(null);
   const [flag, setFlag] = useState(0);
 
   useImperativeHandle(ref, () => ({
@@ -54,9 +61,9 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
     },
   }));
 
-  const refresh = () => {
+  const refresh = useCallback(() => {
     setFlag((v) => v + 1);
-  };
+  }, [setFlag]);
 
   const getColor = useCallback(
     (v: colorType) => {
@@ -97,6 +104,16 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
 
       instance.on?.(ToolsEventConstant.REFRESH, refresh);
     }
+
+    if (sheet && !bottomBar) {
+      const instance = new BottomBar({
+        sheet,
+        // config: {},
+      });
+      setBottomBar(instance);
+
+      instance.on?.(ToolsEventConstant.REFRESH, refresh);
+    }
   }, [sheet]);
 
   const handleSheet = (v: Excel) => {
@@ -115,6 +132,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
         sheet: sheet,
         setSheet: handleSheet,
         toolBar: toolBar,
+        bottomBar: bottomBar,
         setToolBar: handleToolBar,
       }}>
       <div className='kgsheet'>
@@ -124,6 +142,10 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
         <div className='kgsheet_content'>
           <Container config={config} defaultData={defaultData} />
         </div>
+        <div className='kgsheet_bottom'>
+          <BottomTools />
+        </div>
+        <RightPanel />
       </div>
     </SheetContext.Provider>
   );
