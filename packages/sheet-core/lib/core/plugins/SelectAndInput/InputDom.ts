@@ -89,7 +89,7 @@ export class InputDom {
     this.DOM.style.border = '1px solid #4a89fe';
     this.DOM.style.resize = 'none';
     this.DOM.style.overflow = 'hidden';
-    this.DOM.style.minWidth = '120px';
+    this.DOM.style.minWidth = '50px';
 
     const textDecoration = [];
     cell.style.deleteLine && textDecoration.push('line-through');
