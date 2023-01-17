@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from 'react';
 import { BaseTool, colorType } from 'kgsheet';
-import Icon from '../../../icons/icon';
+import Icon from '../../icons/icon';
 import { Tooltip } from 'antd';
-import { SheetContext } from '../../..';
+import { SheetContext } from '../..';
 import { TooltipPlacement } from 'antd/es/tooltip';
 
 interface Props {

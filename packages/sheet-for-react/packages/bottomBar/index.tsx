@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '..';
 import { colorType } from 'kgsheet';
-import Tool from './components/tools';
+import Tool from './components';
 
 function BottomTools() {
   const { bottomBar, flag } = useContext(SheetContext);
@@ -12,7 +12,6 @@ function BottomTools() {
 
   const style = useMemo<React.CSSProperties>(() => {
     if (bottomBar) {
-      console.log(bottomBar.getColor(colorType.white));
       return {
         backgroundColor: bottomBar.getColor(colorType.white),
       };
@@ -21,9 +20,9 @@ function BottomTools() {
   }, [flag, bottomBar]);
 
   return (
-    <div style={style} className='kgsheet_bottom_Container'>
+    <div style={style} className='kgsheet_bottom_container'>
       {columns.map((tools, index) => (
-        <div key={'columns_' + index}>
+        <div className='kgsheet_bottom_container_panel' key={'columns_' + index}>
           {tools.map((tool) => (
             <Tool key={tool.key} tool={tool} />
           ))}
