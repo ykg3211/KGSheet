@@ -46,7 +46,7 @@
   flex-wrap: wrap;
 }
 
-.kgsheet_bottom_Container {
+.kgsheet_bottom_container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -54,6 +54,11 @@
   align-items: center;
 }
 
+.kgsheet_bottom_container_panel {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 
 .kgsheet_btn_label {
   margin-top: 3px;
@@ -291,6 +296,11 @@
 }
 
 
+.kgsheet_flex_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 /* antd */
 /* antd */

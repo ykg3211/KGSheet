@@ -51,7 +51,7 @@ export default class Render extends DrawLayer {
     this.overGapHeight = 40;
     this._scale = 1;
     this.maxScale = 4;
-    this.minScale = 0.2;
+    this.minScale = 0.1;
     this.renderFuncArr = [];
     this.renderDataScope = [
       [0, 0],
@@ -102,6 +102,7 @@ export default class Render extends DrawLayer {
   }
   public set scale(v: number) {
     this._scale = v < this.minScale ? this.minScale : v > this.maxScale ? this.maxScale : v;
+    this.emit(EventConstant.SCALE_CHANGE, this._scale);
     setTimeout(() => {
       this.handleDPR(this.wrapperDom);
       this.scrollXY(0, 0);

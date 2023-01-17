@@ -16,6 +16,8 @@ export { BaseTool, ToolTypeEnum } from './toolBar/tools/base';
 
 export { default as BottomBar } from './bottomBar';
 
+export { ZoomBar } from './bottomBar/tools/ZoomBar';
+
 export { BaseTool as BottomBaseTool, ToolTypeEnum as BottomToolTypeEnum } from './bottomBar/tools/base';
 
 export { default as OptionBase } from './toolBar/tools/base/optionBase';
