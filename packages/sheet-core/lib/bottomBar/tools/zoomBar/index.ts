@@ -18,7 +18,7 @@ export class ZoomBar extends BaseTool {
     super(props);
     this.value = +(this.sheet.scale * 100).toFixed();
     this.type = ToolTypeEnum.ZOOM;
-    this.zoomOptions = [400, 300, 250, 200, 150, 125, 100, 75, 50, 20, 10];
+    this.zoomOptions = [200, 150, 125, 100, 75, 50, 20];
     this.up = {
       toolTip: '放大',
       icon: 'sheet-iconadd-bold',

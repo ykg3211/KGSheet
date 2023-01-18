@@ -50,8 +50,8 @@ export default class Render extends DrawLayer {
     this.overGapWidth = 40;
     this.overGapHeight = 40;
     this._scale = 1;
-    this.maxScale = 4;
-    this.minScale = 0.1;
+    this.maxScale = 2;
+    this.minScale = 0.2;
     this.renderFuncArr = [];
     this.renderDataScope = [
       [0, 0],

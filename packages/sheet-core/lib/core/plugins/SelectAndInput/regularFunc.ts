@@ -1,3 +1,4 @@
+import { deepClone } from '../../../utils';
 import { Cell, ExcelConfig, SpanCell } from '../../../interfaces';
 import { BaseDataType } from '../../base/base';
 import { CellCornerScopeType } from './EditCellPlugin';
@@ -67,25 +68,25 @@ const calculateData = ({
   if (arrow === regularArrowEnum.LEFT2RIGHT) {
     for (let row = 0; row < height; row++) {
       for (let column = 0; column < width; column++) {
-        result[row][column] = sourceData[row][column % sourceData[0].length];
+        result[row][column] = deepClone(sourceData[row][column % sourceData[0].length]);
       }
     }
   } else if (arrow === regularArrowEnum.RIGHT2LEFT) {
     for (let row = 0; row < height; row++) {
       for (let column = 0; column < width; column++) {
-        result[row][width - column - 1] = sourceData[row][sourceData[0].length - 1 - (column % sourceData[0].length)];
+        result[row][width - column - 1] = deepClone(sourceData[row][sourceData[0].length - 1 - (column % sourceData[0].length)]);
       }
     }
   } else if (arrow === regularArrowEnum.TOP2BOTTOM) {
     for (let column = 0; column < width; column++) {
       for (let row = 0; row < height; row++) {
-        result[row][column] = sourceData[row % sourceData.length][column];
+        result[row][column] = deepClone(sourceData[row % sourceData.length][column]);
       }
     }
   } else if (arrow === regularArrowEnum.BOTTOM2TOP) {
     for (let column = 0; column < width; column++) {
       for (let row = 0; row < height; row++) {
-        result[height - row - 1][column] = sourceData[sourceData.length - 1 - (row % sourceData.length)][column];
+        result[height - row - 1][column] = deepClone(sourceData[sourceData.length - 1 - (row % sourceData.length)][column]);
       }
     }
   }
