@@ -343,7 +343,7 @@ export default class Render extends DrawLayer {
     this.resetRenderFunction(
       RenderZIndex.TABLE_SPAN_CELLS,
       this.renderSpanCellsArr.map((item) => () => {
-        this.drawCell(item, true);
+        this.drawCell(item, this.drawCellBorder);
       }),
     );
   }
