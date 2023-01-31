@@ -63,8 +63,6 @@ export default class DuplicateStyle {
   }
 
   private duplicateStyle(scope: CellCornerScopeType | undefined) {
-    console.log(this.targetData);
-    console.log(scope);
     if (!scope || !this.targetData) {
       return;
     }
@@ -77,9 +75,14 @@ export default class DuplicateStyle {
 
     const targetData = handleCell(sourceData, (cell, point) => {
       if (point) {
-        const { row, column } = point;
-        // @ts-ignore
-        cell.style = this.targetData.data.cells[row][column].style;
+        const { row, column, isSpanCell } = point;
+        if (isSpanCell) {
+          // @ts-ignore
+          cell.style = this.targetData.data.cells[row - scope.leftTopCell.row][column - scope.leftTopCell.column].style;
+        } else {
+          // @ts-ignore
+          cell.style = this.targetData.data.cells[row][column].style;
+        }
       }
       return cell;
     });

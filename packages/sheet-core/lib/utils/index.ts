@@ -200,6 +200,7 @@ export function handleCell(
   trigger: (
     v: Cell,
     location: {
+      isSpanCell?: boolean;
       row: number;
       column: number;
     },
@@ -216,8 +217,13 @@ export function handleCell(
     });
   });
   Object.keys(target.spanCells).forEach((key) => {
+    const [row, column] = key.split('_').map(Number);
     // @ts-ignore
-    target.spanCells[key] = trigger(target.spanCells[key]);
+    target.spanCells[key] = trigger(target.spanCells[key], {
+      isSpanCell: true,
+      row,
+      column,
+    });
   });
   return target;
 }
