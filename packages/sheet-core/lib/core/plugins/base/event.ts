@@ -8,6 +8,7 @@ export enum ToolsEventConstant {
 }
 export enum RightClickPanelConstant {
   SHOW_PANEL = 'show_panel',
+  HIDE_PANEL = 'hide_panel',
 }
 export enum EventConstant {
   RENDER = 'render',

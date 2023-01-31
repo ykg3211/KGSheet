@@ -1,5 +1,6 @@
 .kgsheet-icon {
-  width: 1em; height: 1em;
+  width: 1em;
+  height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
@@ -78,11 +79,11 @@
 }
 
 
-.kgsheet_base_btn:hover{
+.kgsheet_base_btn:hover {
   background-color: rgba(127, 127, 127, 0.2);
 }
-.kgsheet_base_btn:active
-{
+
+.kgsheet_base_btn:active {
   background-color: rgba(127, 127, 127, 0.4);
 }
 
@@ -93,11 +94,12 @@
 .kgsheet_btn_disabled {
   cursor: not-allowed;
 }
-.kgsheet_btn_disabled:hover{
+
+.kgsheet_btn_disabled:hover {
   background-color: transparent;
 }
-.kgsheet_btn_disabled:active
-{
+
+.kgsheet_btn_disabled:active {
   background-color: transparent;
 }
 
@@ -105,11 +107,11 @@
   background-color: rgba(76, 136, 255, 0.2);
 }
 
-.kgsheet_active_color:hover{
+.kgsheet_active_color:hover {
   background-color: rgba(76, 136, 255, 0.3);
 }
-.kgsheet_active_color:active
-{
+
+.kgsheet_active_color:active {
   background-color: rgba(76, 136, 255, 0.4);
 }
 
@@ -119,10 +121,11 @@
   padding: 0 5px;
 }
 
-.kgsheet_option:hover{
+.kgsheet_option:hover {
   background-color: rgba(127, 127, 127, 0.2);
 }
-.kgsheet_option:active{
+
+.kgsheet_option:active {
   background-color: rgba(127, 127, 127, 0.4);
 }
 
@@ -145,17 +148,19 @@
   margin: 3px;
 }
 
-.kgsheet_option_btn_normal:hover{
+.kgsheet_option_btn_normal:hover {
   background-color: rgba(127, 127, 127, 0.2);
 }
-.kgsheet_option_btn_normal:active{
+
+.kgsheet_option_btn_normal:active {
   background-color: rgba(127, 127, 127, 0.4);
 }
 
 .kgsheet_option_btn_active {
   background-color: rgba(76, 136, 255, 0.2);
 }
-.kgsheet_option_btn_active:hover{
+
+.kgsheet_option_btn_active:hover {
   background-color: rgba(76, 136, 255, 0.3);
 }
 
@@ -192,6 +197,7 @@
   height: 70%;
   margin: 0 8px;
 }
+
 .kgsheet_empty_tool {
   width: 24px;
   padding: 0 5px;
@@ -201,16 +207,19 @@
   height: 24px;
   position: relative;
 }
+
 .kgsheet_color_btn {
   padding: 0 3px;
   position: relative;
 }
+
 .kgsheet_color_sm_arrow {
   padding: 0 2px;
   height: 100%;
   margin: 0;
 }
-.kgsheet_color_bar  {
+
+.kgsheet_color_bar {
   width: 14px;
   height: 3px;
   position: absolute;
@@ -223,10 +232,12 @@
   padding: 5px;
   display: flex;
 }
+
 .kgsheet_color_store_row {
   display: flex;
   flex-direction: column;
 }
+
 .kgsheet_color_panel {
   width: 20px;
   margin: 4px;
@@ -288,11 +299,23 @@
   height: 0;
   visibility: hidden;
 }
+
 /* 右键panelcss */
 .kgsheet_panel_point {
   position: absolute;
   width: 0px;
   height: 0px;
+}
+
+.kgsheet_panel {
+  position: absolute;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.kgsheet_panel_item {
+  width: 150px;
+  height: 30px;
 }
 
 
@@ -312,9 +335,11 @@
   border-radius: 5px !important;
   transition: .1s all ease-in-out !important;
 }
-.ant-select-selector:hover{
+
+.ant-select-selector:hover {
   background-color: rgba(127, 127, 127, 0.2) !important;
 }
-.ant-select-selector:active{
+
+.ant-select-selector:active {
   background-color: rgba(127, 127, 127, 0.4) !important;
 }

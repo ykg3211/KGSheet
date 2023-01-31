@@ -215,3 +215,25 @@ export function mapObject<T>(obj: Record<any, T>, cb: (v: T) => T) {
     obj[key] = cb(obj[key]);
   });
 }
+
+export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
+  let dom: HTMLElement | null;
+  if (typeof _dom === 'string') {
+    dom = document.getElementById(_dom) || (document.getElementsByClassName(_dom)[0] as HTMLElement) || null;
+  } else {
+    dom = _dom;
+  }
+  if (!dom) {
+    return true;
+  }
+
+  let current = (e.target as HTMLElement) || null;
+  while (current) {
+    if (dom === current) {
+      return false;
+    }
+
+    current = current.parentElement as HTMLElement;
+  }
+  return true;
+}

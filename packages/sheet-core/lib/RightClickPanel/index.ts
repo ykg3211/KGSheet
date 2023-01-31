@@ -2,6 +2,7 @@ import { EventConstant, RightClickPanelConstant } from '../core/plugins/base/eve
 import { PluginTypeEnum } from '../core/plugins';
 import Base from '../core/base/base';
 import { BasePanelType, RightClickPanelType } from './interface';
+import { clickOutSide } from '../utils';
 
 interface Position {
   x: number;
@@ -23,6 +24,15 @@ export default class RightClickPanelPlugin {
   private initEvent() {
     this._this.on(EventConstant.RIGHT_CLICK, (e) => {
       this.createPanel(e);
+    });
+
+    document.body.addEventListener('mousedown', (e) => {
+      if (e.button === 2) {
+        return;
+      }
+      if (clickOutSide('kgsheet_panel', e)) {
+        this._this.emit(RightClickPanelConstant.HIDE_PANEL);
+      }
     });
   }
 
