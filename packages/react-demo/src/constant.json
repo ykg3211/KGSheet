@@ -634,7 +634,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 12,
                     "fontWeight": "800"
                 },
@@ -643,7 +643,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 12,
                     "fontWeight": "800"
                 },
@@ -652,7 +652,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 12,
                     "fontWeight": "800"
                 },
@@ -661,7 +661,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 12,
                     "fontWeight": "800"
                 },
@@ -670,7 +670,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 12,
                     "fontWeight": "800"
                 },
@@ -881,7 +881,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 18,
                     "backgroundColor": "#7edafb",
                     "deleteLine": true,
@@ -892,7 +892,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 18,
                     "backgroundColor": "#7edafb",
                     "deleteLine": true,
@@ -903,7 +903,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 18,
                     "backgroundColor": "#7edafb",
                     "deleteLine": true,
@@ -914,7 +914,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 18,
                     "backgroundColor": "#7edafb",
                     "deleteLine": true,
@@ -925,7 +925,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "center",
                     "fontSize": 18,
                     "backgroundColor": "#7edafb",
                     "deleteLine": true,
@@ -1385,7 +1385,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "backgroundColor": "#f76964",
                     "underLine": true,
@@ -1396,7 +1396,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "backgroundColor": "#f76964",
                     "underLine": true,
@@ -1407,7 +1407,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "backgroundColor": "#f76964",
                     "underLine": true,
@@ -1418,7 +1418,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "backgroundColor": "#f76964",
                     "underLine": true,
@@ -1429,7 +1429,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "backgroundColor": "#f76964",
                     "underLine": true,
@@ -1642,7 +1642,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "fontWeight": "800",
                     "deleteLine": true,
@@ -1654,7 +1654,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "fontWeight": "800",
                     "deleteLine": true,
@@ -1666,7 +1666,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "fontWeight": "800",
                     "deleteLine": true,
@@ -1678,7 +1678,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "fontWeight": "800",
                     "deleteLine": true,
@@ -1690,7 +1690,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 18,
                     "fontWeight": "800",
                     "deleteLine": true,
@@ -1904,7 +1904,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 24,
                     "backgroundColor": "#fad355"
                 },
@@ -1913,7 +1913,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 24,
                     "backgroundColor": "#fad355"
                 },
@@ -1922,7 +1922,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 24,
                     "backgroundColor": "#fad355"
                 },
@@ -1931,7 +1931,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 24,
                     "backgroundColor": "#fad355"
                 },
@@ -1940,7 +1940,7 @@
             },
             {
                 "style": {
-                    "textAlign": "left",
+                    "textAlign": "right",
                     "fontSize": 24,
                     "backgroundColor": "#fad355"
                 },

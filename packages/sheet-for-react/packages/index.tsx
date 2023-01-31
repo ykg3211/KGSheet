@@ -47,6 +47,7 @@ export interface SheetProps {
 
 export interface RefType {
   getData: () => ExcelConfig;
+  setData: (v: ExcelConfig) => void;
 }
 
 const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref) => {
@@ -58,6 +59,9 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
   useImperativeHandle(ref, () => ({
     getData: () => {
       return sheet?.getData?.();
+    },
+    setData: (v: ExcelConfig) => {
+      sheet.data = JSON.parse(JSON.stringify(v));
     },
   }));
 
