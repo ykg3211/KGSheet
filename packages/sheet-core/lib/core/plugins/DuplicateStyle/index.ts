@@ -1,3 +1,4 @@
+import { createDefaultCell } from '../../../utils/defaultData';
 import { PluginTypeEnum } from '..';
 import { deepClone, handleCell } from '../../../utils';
 import { html2excel } from '../../../utils/htmlParse';
@@ -9,6 +10,7 @@ import KeyboardPlugin from '../KeyboardPlugin';
 import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
+import { SpanCell } from '../../../interfaces';
 
 /**
  * Chrome 浏览器规定，只有 HTTPS 协议的页面才能使用这个 API。
@@ -73,11 +75,30 @@ export default class DuplicateStyle {
 
     const { data: sourceData } = this._this.getDataByScope(scope);
 
-    const targetData = handleCell(sourceData, (cell, { row, column }) => {
-      // @ts-ignore
-      cell.style = this.targetData.data.cells[row][column].style;
+    const targetData = handleCell(sourceData, (cell, point) => {
+      if (point) {
+        const { row, column } = point;
+        // @ts-ignore
+        cell.style = this.targetData.data.cells[row][column].style;
+      }
       return cell;
     });
+
+    // Object.keys(this.targetData.data.spanCells).forEach((key) => {
+    //   // @ts-ignore
+    //   const spanCell = this.targetData.data.spanCells[key];
+    //   const [row, column] = key.split('_').map(Number);
+    //   // @ts-ignore
+    //   const newRow = row + scope.leftTopCell.row - this.targetData.scope.leftTopCell.row;
+    //   // @ts-ignore
+    //   const newColumn = column + scope.leftTopCell.column - this.targetData.scope.leftTopCell.column;
+    //   const newSpanCell: SpanCell = {
+    //     ...createDefaultCell(),
+    //     style: spanCell.style,
+    //     span: spanCell.span,
+    //   };
+    //   targetData.spanCells[`${newRow}_${newColumn}`] = newSpanCell;
+    // });
 
     this.ExcelBaseFunction?.cellsChange({
       scope,

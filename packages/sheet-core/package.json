@@ -7,9 +7,6 @@
   "license": "MIT",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
-  "directories": {
-    "lib": "lib"
-  },
   "files": [
     "dist"
   ],
