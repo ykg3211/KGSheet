@@ -638,11 +638,12 @@ export default class SelectPowerPlugin {
 
   public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
     this.selectCell = leftTopCell;
-    this._startCell = leftTopCell;
-    this._endCell = rightBottomCell;
+    this._startCell = rightBottomCell;
+    this._endCell = leftTopCell;
   }
 
   public moveToView() {
+    this._this.devMode && console.log('moveToView');
     if (!this._endCell) {
       return;
     }

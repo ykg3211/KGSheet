@@ -391,6 +391,10 @@ export default class EditCellPlugin {
 
   private initEditBoxDom(cell: SelectedCellType, isDBClick = false) {
     this._this.devMode && console.log('InitEditBoxDom', cell);
+
+    this.SelectPlugin._startCell = this.SelectPlugin.selectCell;
+    this.SelectPlugin._endCell = this.SelectPlugin.selectCell;
+
     const { cells } = this._this.getSpanCellByCell({ cell });
     if (cells.length > 0) {
       cell = cells[0];
