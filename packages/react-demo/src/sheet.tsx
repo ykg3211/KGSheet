@@ -1,9 +1,10 @@
 import Main, { createDefaultData, RefType, SheetSetting } from 'kgsheet-for-react';
 import 'kgsheet-for-react/dist/index.css';
 import React, { useRef, useState } from 'react';
+import defaultData from './constant.json';
 
 function Sheet() {
-  const [defaultData] = useState(createDefaultData(300, 1000));
+  // const [defaultData] = useState(createDefaultData(30, 100));
   const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,

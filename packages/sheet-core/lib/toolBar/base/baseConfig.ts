@@ -3,7 +3,7 @@ import { ToolsEnum } from '../tools';
 
 const baseToolBarConfig: BarSettingType = [
   {
-    tools: [[ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT, ToolsEnum.CLEAR_STYLE]],
+    tools: [[ToolsEnum.REVERT, ToolsEnum.ANTI_REVERT, ToolsEnum.CLEAR_STYLE, ToolsEnum.DUPLICATE_STYLE]],
   },
   {
     tools: [

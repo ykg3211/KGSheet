@@ -15,6 +15,7 @@ import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
 import RightClickPanelPlugin from '../../rightClickPanel';
+import DuplicateStyle from './DuplicateStyle';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -30,6 +31,7 @@ export enum PluginTypeEnum {
   CopyAndPaste = 'CopyAndPaste',
   RightClickPlugin = 'RightClickPlugin',
   RightClickPanelPlugin = 'RightClickPanelPlugin',
+  DuplicateStyle = 'DuplicateStyle',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
   CornerAutoMove = 'CornerAutoMove',
@@ -49,6 +51,7 @@ export interface PluginType {
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
   [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
   [PluginTypeEnum.RightClickPanelPlugin]?: RightClickPanelPlugin;
+  [PluginTypeEnum.DuplicateStyle]?: DuplicateStyle;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
@@ -64,6 +67,7 @@ export default class Plugins {
 
   constructor(_this: Base) {
     this._this = _this;
+    const readOnly = this._this.config.readOnly;
     // 全局的交互事件收集派发插件， 必须在第一个
     this.register(EventDispatch);
     // 全局的键盘事件派发插件
@@ -86,15 +90,16 @@ export default class Plugins {
 
     // 选中单元格插件
     this.register(SelectPowerPlugin);
-    !this._this.config.readOnly && this.register(CopyAndPaste);
+    !readOnly && this.register(CopyAndPaste);
+    !readOnly && this.register(DuplicateStyle);
 
     // 选中之后输入单元格的插件
-    !this._this.config.readOnly && this.register(EditCellPlugin);
+    !readOnly && this.register(EditCellPlugin);
 
     this.register(RightClickPlugin);
     this.register(RightClickPanelPlugin);
 
-    !this._this.config.readOnly && this.register(FontEditPlugin);
+    !readOnly && this.register(FontEditPlugin);
 
     this.register(CornerAutoMove);
   }

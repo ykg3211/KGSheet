@@ -113,16 +113,16 @@ export default class CopyAndPaste {
       const text_html = await blob_html.text();
       console.log(html2excel(text_html));
       const newExcelData = html2excel(text_html);
-      if(newExcelData?.cells) {
-        newExcelData.cells = newExcelData?.cells.map(cells => {
-          return cells.map(cell => {
+      if (newExcelData?.cells) {
+        newExcelData.cells = newExcelData?.cells.map((cells) => {
+          return cells.map((cell) => {
             cell.style = {
               ...createDefaultStyle(),
-              ...cell.style
-            }
+              ...cell.style,
+            };
             return cell;
-          })
-        })
+          });
+        });
       }
       const selectCell = this.SelectPlugin.selectCell;
       if (!newExcelData || !selectCell) {
@@ -167,7 +167,6 @@ export default class CopyAndPaste {
       });
       return;
     } catch (e) {}
-
 
     try {
       // @ts-ignore
@@ -225,8 +224,8 @@ export default class CopyAndPaste {
   }
 
   private registerOnceDashBorder(data: BaseDataType) {
-    this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
-    this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [
+    this._this.resetRenderFunction(RenderZIndex.DASH_SELLS_BORDER);
+    this._this.addRenderFunction(RenderZIndex.DASH_SELLS_BORDER, [
       ((ctx: CanvasRenderingContext2D) => {
         ctx.save();
         const [x, y, w, h] = this._this.calBorder(data.scope.leftTopCell, data.scope.rightBottomCell);
@@ -241,7 +240,7 @@ export default class CopyAndPaste {
     ]);
     this._this.render();
     this._this.once(EventConstant.EXCEL_CHANGE, () => {
-      this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
+      this._this.resetRenderFunction(RenderZIndex.DASH_SELLS_BORDER);
     });
   }
 }

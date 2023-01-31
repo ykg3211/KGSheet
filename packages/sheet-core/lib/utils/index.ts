@@ -195,11 +195,23 @@ export function getABC(num: number): string {
   return result.map((i) => String.fromCharCode(i + 65)).join('');
 }
 
-export function handleCell(source: ExcelConfig, trigger: (v: Cell) => Cell) {
+export function handleCell(
+  source: ExcelConfig,
+  trigger: (
+    v: Cell,
+    location: {
+      row: number;
+      column: number;
+    },
+  ) => Cell,
+) {
   const target = deepClone(source);
-  target.cells = target.cells.map((row) => {
-    return row.map((cell) => {
-      cell = trigger(cell);
+  target.cells = target.cells.map((row, rowIndex) => {
+    return row.map((cell, columnIndex) => {
+      cell = trigger(cell, {
+        row: rowIndex,
+        column: columnIndex,
+      });
       return cell;
     });
   });

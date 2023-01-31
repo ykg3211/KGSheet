@@ -4,6 +4,7 @@ import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 export enum ToolsEventConstant {
   REFRESH = 'refresh',
   REFRESH_ATTRIBUTES_STATE = 'refresh_attributes_state',
+  DUPLICATE_STYLE_STATE_CHANGE = 'duplicate_style_state_change',
   TOGGLE_CELL_BORDER = 'toggle_draw_cell_border',
 }
 export enum RightClickPanelConstant {
@@ -42,6 +43,7 @@ type EventParamsTypes = {
   [EventConstant.SCALE_CHANGE]: number;
   [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [ToolsEventConstant.TOGGLE_CELL_BORDER]: boolean;
+  [ToolsEventConstant.DUPLICATE_STYLE_STATE_CHANGE]: boolean;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 
