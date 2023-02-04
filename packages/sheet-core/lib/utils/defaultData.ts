@@ -1,4 +1,5 @@
-import { ExcelConfig, CellTypeEnum, Cell, CellStyle } from '../interfaces';
+import { judgeCellType } from '.';
+import { ExcelConfig, Cell, CellStyle } from '../interfaces';
 const BASE_WIDTH = 120;
 const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
@@ -9,17 +10,12 @@ export const createDefaultStyle = () => {
   };
   return result;
 };
-const judgeType = (v: string): CellTypeEnum => {
-  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
-    return CellTypeEnum.url;
-  }
-  return CellTypeEnum.text;
-};
+
 export const createDefaultCell = (content = '') => {
   const result: Cell = {
     style: createDefaultStyle(),
     content: content || '',
-    type: judgeType(content),
+    type: judgeCellType(content),
   };
   return result;
 };

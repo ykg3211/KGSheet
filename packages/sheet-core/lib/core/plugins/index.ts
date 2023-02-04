@@ -15,6 +15,7 @@ import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
 import RightClickPanelPlugin from './RightClickPanel';
 import DuplicateStyle from './DuplicateStyle';
+import UrlClickPlugin from './UrlClickPlugin';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -32,6 +33,7 @@ export enum PluginTypeEnum {
   DuplicateStyle = 'DuplicateStyle',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
+  UrlClickPlugin = 'UrlClickPlugin',
   CornerAutoMove = 'CornerAutoMove',
 }
 
@@ -51,6 +53,7 @@ export interface PluginType {
   [PluginTypeEnum.DuplicateStyle]?: DuplicateStyle;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
+  [PluginTypeEnum.UrlClickPlugin]?: UrlClickPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
 }
 
@@ -89,6 +92,7 @@ export default class Plugins {
     this.register(SelectPowerPlugin);
     !readOnly && this.register(CopyAndPaste);
     !readOnly && this.register(DuplicateStyle);
+    this.register(UrlClickPlugin);
 
     // 选中之后输入单元格的插件
     !readOnly && this.register(EditCellPlugin);

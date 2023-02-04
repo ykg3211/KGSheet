@@ -9,7 +9,7 @@ import { createDefaultCell } from '../../../utils/defaultData';
 import { BusinessEventConstant, EventConstant, ToolsEventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
-import { BASE_KEYS_ENUM, CONTENT_KEYS, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
+import { BASE_KEYS_ENUM, CONTENT_KEYS, FN_KEY, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import SelectPowerPlugin, { selectTypeEnum } from './SelectPowerPlugin';
 import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
@@ -174,7 +174,7 @@ export default class EditCellPlugin {
 
       // 所有输入内容的key的处理，主要是为了能呼出输入框
       this.KeyboardPlugin.register({
-        mainKeys: Object.keys(CONTENT_KEYS),
+        mainKeys: Object.keys(CONTENT_KEYS).concat(FN_KEY.F2),
         callbacks: [
           (e, v) => {
             if (!this.SelectPlugin.selectCell) {
@@ -184,7 +184,7 @@ export default class EditCellPlugin {
               return;
             }
             this.initEditBoxDom(this.SelectPlugin.selectCell);
-            if (this.editDomInstance) {
+            if (this.editDomInstance && v.mainKeys !== FN_KEY.F2) {
               // 比较hack， 在这个dom上绑定了oninput的方法，借助这个方法可以执行到定义的时候的上下文，
               this.editDomInstance.inputInDom(v.mainKeys);
             }
@@ -201,6 +201,7 @@ export default class EditCellPlugin {
             if (!border) {
               return;
             }
+            console.log('delete');
             this.clearContentByScope({
               leftTopCell: border.cellScope.leftTopCell,
               rightBottomCell: border.cellScope.rightBottomCell,
@@ -517,9 +518,9 @@ export default class EditCellPlugin {
       },
       innerFunc: handleMouseDownCursor.bind(this),
       outerFunc: () => {
-        if (this._this.canvasDom) {
-          this._this.canvasDom.style.cursor = 'default';
-        }
+        // if (this._this.canvasDom) {
+        //   this._this.canvasDom.style.cursor = 'default';
+        // }
       },
     });
   }
@@ -611,6 +612,9 @@ export default class EditCellPlugin {
       return;
     }
     const originData = this._this.getRealCell(cell);
+    if (!originData) {
+      return;
+    }
     this.editDomInstance = new InputDom(this._this, originData, cell);
     // 需要微调是为了不遮挡
     this.editDomInstance.resetEditDomPosition(x, y, w, h);

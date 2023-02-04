@@ -384,7 +384,7 @@ class Base extends Render {
     if (this._data.spanCells && spanCell) {
       return spanCell;
     }
-    return this._data.cells[cell.row][cell.column];
+    return this._data.cells?.[cell.row]?.[cell.column] || null;
   }
 
   /**

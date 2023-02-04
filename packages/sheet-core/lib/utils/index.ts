@@ -1,4 +1,4 @@
-import { Cell, ExcelConfig } from '../interfaces';
+import { Cell, CellTypeEnum, ExcelConfig } from '../interfaces';
 import { SelectedCellType } from '../core/base/base';
 
 type numbers2 = [number, number];
@@ -255,3 +255,10 @@ export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
   }
   return true;
 }
+
+export const judgeCellType = (v: string): CellTypeEnum => {
+  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+    return CellTypeEnum.url;
+  }
+  return CellTypeEnum.text;
+};

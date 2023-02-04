@@ -1,6 +1,6 @@
 import { PluginTypeEnum } from '..';
 import { Cell } from '../../../interfaces';
-import { debounce, deepClone, judgeCross } from '../../../utils';
+import { debounce, deepClone, judgeCellType, judgeCross } from '../../../utils';
 import Base, { BaseDataType, SelectedCellType } from '../../base/base';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
@@ -114,7 +114,6 @@ export class InputDom {
   }
 
   public resetEditDomPosition(x: number, y: number, w: number, h: number) {
-    console.log(x, y, w, h);
     if (!this.DOM || !this._this.canvasDom) {
       return;
     }
@@ -188,9 +187,11 @@ export class InputDom {
       if (typeof newV === 'string') {
         this.DOM.value = newV;
         originData.content = newV;
+        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       } else {
         originData.content = this.DOM.value;
+        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       }
 
@@ -216,6 +217,8 @@ export class InputDom {
         OPERATE_KEYS_ENUM.ArrowLeft,
         OPERATE_KEYS_ENUM.ArrowRight,
         OPERATE_KEYS_ENUM.ArrowUp,
+        OPERATE_KEYS_ENUM.Delete,
+        OPERATE_KEYS_ENUM.Backspace,
       ],
       ...Object.keys(CONTENT_KEYS),
     ];
