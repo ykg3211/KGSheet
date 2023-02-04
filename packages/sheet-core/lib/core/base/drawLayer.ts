@@ -67,7 +67,7 @@ export default class DrawLayer extends BaseEvent {
 
     this._drawCellBorder = true;
     this.devMode = Boolean(config.devMode);
-    this.components = components;
+    this.components = components as any;
     this.initMediaDarkMode();
   }
 

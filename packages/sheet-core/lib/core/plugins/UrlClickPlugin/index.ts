@@ -143,7 +143,7 @@ export default class UrlClickPlugin {
         window.open(realCell.content);
       }
     };
-    this._this.setEvent(EventConstant.CLICK, {
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e: MouseEvent) => {
         if (e) {

@@ -16,6 +16,7 @@ import CornerAutoMove from './CornerAutoMove';
 import RightClickPanelPlugin from './RightClickPanel';
 import DuplicateStyle from './DuplicateStyle';
 import UrlClickPlugin from './UrlClickPlugin';
+import ImageStackPlugin from './ImageStackPlugin';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -33,6 +34,7 @@ export enum PluginTypeEnum {
   DuplicateStyle = 'DuplicateStyle',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
+  ImageStackPlugin = 'ImageStackPlugin',
   UrlClickPlugin = 'UrlClickPlugin',
   CornerAutoMove = 'CornerAutoMove',
 }
@@ -53,6 +55,7 @@ export interface PluginType {
   [PluginTypeEnum.DuplicateStyle]?: DuplicateStyle;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
+  [PluginTypeEnum.ImageStackPlugin]?: ImageStackPlugin;
   [PluginTypeEnum.UrlClickPlugin]?: UrlClickPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
 }
@@ -102,6 +105,8 @@ export default class Plugins {
     !readOnly && this.register(FontEditPlugin);
 
     this.register(CornerAutoMove);
+
+    this.register(ImageStackPlugin);
   }
 
   public deregister(name?: PluginTypeEnum) {
