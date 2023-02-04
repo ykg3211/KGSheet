@@ -9,11 +9,17 @@ export const createDefaultStyle = () => {
   };
   return result;
 };
+const judgeType = (v: string): CellTypeEnum => {
+  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+    return CellTypeEnum.url;
+  }
+  return CellTypeEnum.text;
+};
 export const createDefaultCell = (content = '') => {
   const result: Cell = {
     style: createDefaultStyle(),
     content: content || '',
-    type: CellTypeEnum.text,
+    type: judgeType(content),
   };
   return result;
 };

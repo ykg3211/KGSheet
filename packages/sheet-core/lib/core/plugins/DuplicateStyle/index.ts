@@ -1,16 +1,11 @@
-import { createDefaultCell } from '../../../utils/defaultData';
 import { PluginTypeEnum } from '..';
 import { deepClone, handleCell } from '../../../utils';
-import { html2excel } from '../../../utils/htmlParse';
 import Base, { BaseDataType } from '../../base/base';
 import { RenderZIndex } from '../../base/constant';
-import { BusinessEventConstant, EventConstant, ToolsEventConstant } from '../base/event';
+import { EventConstant, ToolsEventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
-import KeyboardPlugin from '../KeyboardPlugin';
-import { META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 import SelectPowerPlugin from '../SelectAndInput/SelectPowerPlugin';
-import { SpanCell } from '../../../interfaces';
 
 /**
  * Chrome 浏览器规定，只有 HTTPS 协议的页面才能使用这个 API。

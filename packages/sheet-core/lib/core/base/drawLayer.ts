@@ -1,9 +1,10 @@
-import { CellTypeEnum, RenderCellPropsNoLocation, Cell, BaseSheetSetting } from '../../interfaces';
+import { CellTypeEnum, RenderCellPropsNoLocation, BaseSheetSetting } from '../../interfaces';
 import BaseEvent, { EventConstant, ToolsEventConstant } from '../plugins/base/event';
-import { isNN } from '../../utils';
+import components from './cellComponents';
+
 export type RectType = [number, number, number, number];
 
-function clipCell(ctx: CanvasRenderingContext2D, position: RectType, renderFunc: () => void) {
+export function clipCell(ctx: CanvasRenderingContext2D, position: RectType, renderFunc: () => void) {
   ctx.save();
   ctx.beginPath();
   ctx.rect(...position);
@@ -49,7 +50,7 @@ export default class DrawLayer extends BaseEvent {
   public darkMode: boolean;
   public _drawCellBorder: boolean;
   protected components: Partial<
-    Record<CellTypeEnum, (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
+    Record<CellTypeEnum, (_: this, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
   >;
   constructor(config: BaseSheetSetting) {
     super();
@@ -57,7 +58,6 @@ export default class DrawLayer extends BaseEvent {
     this.ctx = null;
     this.canvasDom = null;
     this.wrapperDom = config.dom instanceof HTMLElement ? config.dom : document.getElementById(config.dom);
-    this.components = {};
 
     if (config.darkMode === 'auto') {
       this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches || false;
@@ -67,7 +67,7 @@ export default class DrawLayer extends BaseEvent {
 
     this._drawCellBorder = true;
     this.devMode = Boolean(config.devMode);
-    this.handleDefaultComponents();
+    this.components = components;
     this.initMediaDarkMode();
   }
 
@@ -105,75 +105,7 @@ export default class DrawLayer extends BaseEvent {
     return lightColorSum[name] || '';
   }
 
-  protected handleDefaultComponents() {
-    this.components[CellTypeEnum.text] = (ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => {
-      const { point, cell, w, h } = data;
-      this.initStrokeStyle(ctx);
-      ctx.fillStyle = cell.style.backgroundColor || this.color('white');
-      ctx.fillRect(point[0], point[1], w, h);
-
-      if (cell.content === '') {
-        return;
-      }
-
-      clipCell(ctx, [point[0], point[1], w, h], () => {
-        const size = cell.style.fontSize || 12;
-        ctx.font = `${cell.style.fontWeight || 'normal'} ${cell.style.italic ? 'italic' : ''} ${size}px ${
-          cell.style.font || 'Arial'
-        }`;
-        ctx.fillStyle = cell.style.fontColor || this.color('black');
-        ctx.textAlign = 'left';
-        let left = point[0];
-        if (cell.style.textAlign) {
-          ctx.textAlign = cell.style.textAlign;
-          if (cell.style.textAlign === 'center') {
-            left += w / 2;
-          } else if (cell.style.textAlign === 'right') {
-            left += w;
-          }
-        }
-
-        if (cell.style.underLine || cell.style.deleteLine) {
-          let top = point[1] + h / 2;
-          const contentWidth = ctx.measureText(cell.content).width;
-          let _left = left;
-          let _right = left;
-          if (cell.style.textAlign === 'left') {
-            _right += contentWidth;
-          } else if (cell.style.textAlign === 'center') {
-            _left -= contentWidth / 2;
-            _right += contentWidth / 2;
-          } else if (cell.style.textAlign === 'right') {
-            _left -= contentWidth;
-          }
-          _left -= 3;
-          _right += 3;
-
-          if (cell.style.deleteLine) {
-            ctx.beginPath();
-            ctx.strokeStyle = cell.style.fontColor || this.color('black');
-            ctx.lineWidth = 1;
-            ctx.moveTo(_left, top);
-            ctx.lineTo(_right, top);
-            ctx.stroke();
-          }
-          if (cell.style.underLine) {
-            top += size / 2 - 2;
-            ctx.beginPath();
-            ctx.strokeStyle = cell.style.fontColor || this.color('black');
-            ctx.lineWidth = 1;
-            ctx.moveTo(_left, top);
-            ctx.lineTo(_right, top);
-            ctx.stroke();
-          }
-        }
-
-        ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
-      });
-    };
-  }
-
-  private initStrokeStyle(ctx: CanvasRenderingContext2D) {
+  public initStrokeStyle(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = this.color('line');
     ctx.lineWidth = 1;
   }
@@ -203,7 +135,7 @@ export default class DrawLayer extends BaseEvent {
     }
     const renderFunc = this.components[props.cell.type];
     if (renderFunc) {
-      renderFunc(this.ctx, props);
+      renderFunc(this, this.ctx, props);
     }
     if (needBorder) {
       this.drawBorder(props);
@@ -217,7 +149,7 @@ export default class DrawLayer extends BaseEvent {
     //@ts-ignore
     const renderFunc = this.components[props.cell.type];
     if (renderFunc) {
-      renderFunc(this.ctx, props);
+      renderFunc(this, this.ctx, props);
     }
 
     // 绘制左上角的小三角

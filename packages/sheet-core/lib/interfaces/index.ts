@@ -4,6 +4,8 @@ export type Align = 'left' | 'center' | 'right';
 export type TextDecoration = 'underline' | 'line-through' | 'none';
 export enum CellTypeEnum {
   text = 'text',
+  url = 'url',
+  picture = 'picture',
   richText = 'richText',
   number = 'number',
   date = 'date',

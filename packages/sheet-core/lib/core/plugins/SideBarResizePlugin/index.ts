@@ -180,7 +180,7 @@ export default class SideBarResizePlugin {
       start = source.slice(0, renderDataScope[0][1]).reduce((a, b) => a + b, 0) + paddingLeft - _scrollLeft;
     }
     const anchorArr: number[] = [];
-    source.slice(renderDataScope[0][isLeft ? 0 : 1], renderDataScope[1][isLeft ? 0 : 1]).forEach((item) => {
+    source.slice(renderDataScope[0][isLeft ? 0 : 1], renderDataScope[1][isLeft ? 0 : 1] + 1).forEach((item) => {
       start += item;
       anchorArr.push(start);
     });

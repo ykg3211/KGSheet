@@ -3,7 +3,7 @@ import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import { getABC, isSafari, throttleByRequestAnimationFrame } from '../../utils';
+import { getABC, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
 export default class Render extends DrawLayer {
