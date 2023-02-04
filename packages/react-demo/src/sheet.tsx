@@ -7,7 +7,7 @@ function Sheet() {
   // const [defaultData] = useState(createDefaultData(30, 100));
   const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
-    devMode: true,
+    devMode: false,
     darkMode: 'auto',
     readOnly: false,
   });

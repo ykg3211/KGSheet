@@ -393,20 +393,26 @@ export default class SelectPowerPlugin {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
+
         if (!point) {
+          return false;
+        }
+
+        // 右键如果点击在选中框内部，则不能执行后续操作
+        if (
+          e.button === 2 &&
+          this._borderPosition &&
+          judgeInner(
+            [...point, 1, 1],
+            [...this._borderPosition?.anchor, this._borderPosition?.w, this._borderPosition?.h],
+          )
+        ) {
           return false;
         }
 
         return point;
       },
       innerFunc: mouseDownCB.bind(this),
-      outerFunc: () => {
-        // this.selectCell = null;
-        // this._startCell = null;
-        // this._endCell = null;
-        // this._borderPosition = null;
-        // this._this._render();
-      },
     });
 
     const mouseMoveCB = (e: any, point: [number, number]) => {

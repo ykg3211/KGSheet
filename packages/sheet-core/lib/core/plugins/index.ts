@@ -7,14 +7,13 @@ import ScrollPlugin from './MousePlugin/ScrollPlugin';
 import SideBarResizePlugin from './SideBarResizePlugin';
 import SelectPowerPlugin from './SelectAndInput/SelectPowerPlugin';
 import EditCellPlugin from './SelectAndInput/EditCellPlugin';
-import RightClickPlugin from './RightClickPlugin';
 import KeyboardPlugin from './KeyboardPlugin';
 import BaseEventStack from './EventStack/base';
 import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
-import RightClickPanelPlugin from '../../rightClickPanel';
+import RightClickPanelPlugin from './RightClickPanel';
 import DuplicateStyle from './DuplicateStyle';
 
 export enum PluginTypeEnum {
@@ -29,7 +28,6 @@ export enum PluginTypeEnum {
   SelectPowerPlugin = 'SelectPowerPlugin',
   EditCellPlugin = 'EditCellPlugin',
   CopyAndPaste = 'CopyAndPaste',
-  RightClickPlugin = 'RightClickPlugin',
   RightClickPanelPlugin = 'RightClickPanelPlugin',
   DuplicateStyle = 'DuplicateStyle',
   BlurFocusReset = 'BlurFocusReset',
@@ -49,7 +47,6 @@ export interface PluginType {
   [PluginTypeEnum.SelectPowerPlugin]?: SelectPowerPlugin;
   [PluginTypeEnum.EditCellPlugin]?: EditCellPlugin;
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
-  [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
   [PluginTypeEnum.RightClickPanelPlugin]?: RightClickPanelPlugin;
   [PluginTypeEnum.DuplicateStyle]?: DuplicateStyle;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
@@ -96,7 +93,6 @@ export default class Plugins {
     // 选中之后输入单元格的插件
     !readOnly && this.register(EditCellPlugin);
 
-    this.register(RightClickPlugin);
     this.register(RightClickPanelPlugin);
 
     !readOnly && this.register(FontEditPlugin);

@@ -1,4 +1,3 @@
-import Popover from '../components/popover';
 import { colorType, RightClickPanelConstant, ShowPanelProps } from 'kgsheet';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { SheetContext } from '..';
@@ -40,6 +39,9 @@ function RightPanel() {
     <div
       ref={panelDom}
       className='kgsheet_panel'
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
       style={{ top: panelConfig?.y || 0, left: panelConfig?.x || 0, ...style }}>
       {[1, 2].map((item) => (
         <div key={item} className='kgsheet_panel_item'>
@@ -48,20 +50,6 @@ function RightPanel() {
       ))}
     </div>
   );
-  // return (
-  //   <Popover
-  //     open={visible}
-  //     color={getColor(colorType.white)}
-  //     triggerElm={
-  //       <>
-  //         <div className='kgsheet_panel_point' style={{ top: panelConfig?.y || 0, left: panelConfig?.x || 0 }}>1</div>
-  //       </>
-  //     }>
-  //     <div style={{ color: getColor(colorType.black) }}>
-  //       <div>123</div>
-  //     </div>
-  //   </Popover>
-  // );
 }
 
 export default RightPanel;

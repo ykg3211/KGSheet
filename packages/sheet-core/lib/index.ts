@@ -26,4 +26,4 @@ export { default as ColorBase } from './toolBar/tools/base/colorBase';
 
 export type { SheetSetting, BaseSheetSetting, ExcelConfig } from './interfaces/index';
 
-export type { ShowPanelProps } from './rightClickPanel/interface';
+export type { ShowPanelProps } from './core/plugins/RightClickPanel/interface';
