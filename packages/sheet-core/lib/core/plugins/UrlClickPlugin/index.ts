@@ -6,7 +6,7 @@ import { Align, Cell, CellStyle, CellTypeEnum, ExcelConfig, SpanCell } from '../
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 import { EventConstant } from '../base/event';
 import { EventZIndex } from '../../base/constant';
-import { isNN } from '../../../utils';
+import { isNN, judgeOver } from '../../../utils';
 
 // 主要用于计算style
 const INIT_V = 'init_v'; // 初始态
@@ -38,61 +38,32 @@ export default class UrlClickPlugin {
     }
   }
 
-  public getSameAttributes(data: ExcelConfig, scope: CellCornerScopeType) {
-    const needAttrs: Array<keyof CellStyle> = [
-      'textAlign',
-      'backgroundColor',
-      'fontWeight',
-      'fontColor',
-      'fontSize',
-      'font',
-      'deleteLine',
-      'underLine',
-      'italic',
-    ];
+  private judgeInUrl(point: [number, number]) {
+    const { cell, cellLoaction } = this._this.getCellByPoint(point);
+    if (cell && cellLoaction) {
+      const realCell = this._this.getRealCell(cell);
+      if (realCell && this._this.ctx && realCell.type === CellTypeEnum.url) {
+        this._this.ctx.save();
+        this._this.ctx.font = `${realCell.style.fontWeight || 'normal'} ${realCell.style.italic ? 'italic' : ''} ${
+          realCell.style.fontSize
+        }px ${realCell.style.font || 'Arial'}`;
+        const width = (this._this.ctx?.measureText(realCell.content).width || 0) * this._this.scale;
+        const height = realCell.style.fontSize || 12;
+        this._this.ctx.restore();
 
-    // @ts-ignore
-    const attributes: Record<keyof CellStyle, any> = {};
-    needAttrs.forEach((key) => {
-      attributes[key] = INIT_V;
-    });
-
-    const skipMap: Record<string, boolean> = {};
-
-    const commonHandleCell = (cell: Cell | SpanCell) => {
-      needAttrs.forEach((attr) => {
-        if (attributes[attr] === INIT_V) {
-          attributes[attr] = cell.style[attr];
-        } else if (attributes[attr] !== cell.style[attr]) {
-          attributes[attr] = NOT_SAME;
+        let left = cellLoaction.point[0];
+        const right = cellLoaction.point[1] + this._this.data.h[cell.row] / 2 - height / 2;
+        if (realCell.style.textAlign === 'center') {
+          left += Math.max((this._this.data.w[cell.column] - width) / 2, 0);
+        } else if (realCell.style.textAlign === 'right') {
+          left += Math.max(this._this.data.w[cell.column] - width, 0);
         }
-      });
-    };
 
-    Object.keys(data.spanCells).forEach((key) => {
-      const spanCell = data.spanCells[key];
-      const [w, h] = spanCell.span;
-      const [row, column] = key.split('_').map(Number);
-
-      for (let i = 0; i < h; i++) {
-        for (let ii = 0; ii < w; ii++) {
-          const key = `${row - scope.leftTopCell.row + i}_${column - scope.leftTopCell.column + ii}`;
-          skipMap[key] = true;
-        }
+        const isOverUrl = judgeOver(point, [left, right, width, height]);
+        return isOverUrl ? realCell : null;
       }
-
-      commonHandleCell(spanCell);
-    });
-
-    data.cells.forEach((row, r) => {
-      row.forEach((cell, c) => {
-        if (!skipMap[r + '_' + c]) {
-          commonHandleCell(cell);
-        }
-      });
-    });
-
-    return attributes;
+    }
+    return null;
   }
 
   private initEvent() {
@@ -113,12 +84,9 @@ export default class UrlClickPlugin {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e: any) => {
         if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
-          const cell = this._this.getCellByPoint([e._mouseX, e._mouseY]);
+          const cell = this.judgeInUrl([e._mouseX, e._mouseY]);
           if (cell) {
-            const realCell = this._this.getRealCell(cell);
-            if (realCell && realCell.type === CellTypeEnum.url) {
-              return realCell;
-            }
+            return cell;
           }
         }
         return false;
@@ -151,12 +119,9 @@ export default class UrlClickPlugin {
           if (!point) {
             return;
           }
-          const cell = this._this.getCellByPoint(point);
+          const cell = this.judgeInUrl(point);
           if (cell) {
-            const realCell = this._this.getRealCell(cell);
-            if (realCell && realCell.type === CellTypeEnum.url) {
-              return realCell;
-            }
+            return cell;
           }
         }
         return false;

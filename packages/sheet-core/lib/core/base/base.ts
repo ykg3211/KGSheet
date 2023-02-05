@@ -5,7 +5,7 @@ import { dispatchEventType, setEventType, clearEventType } from '../plugins/base
 import { deepClone, judgeCross, judgeOver } from '../../utils';
 import { RectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
-import { ExcelConfig, BaseSheetSetting, SpanCell } from '../../interfaces';
+import { ExcelConfig, BaseSheetSetting, SpanCell, RenderCellProps } from '../../interfaces';
 import ToolBar from '../../toolBar';
 import BottomBar from '../../bottomBar';
 
@@ -296,7 +296,7 @@ class Base extends Render {
     const { renderCellsArr, renderSpanCellsArr } = this;
 
     let selectedCell: SelectedCellType | null = null;
-
+    let selectedCellLocation: RenderCellProps | null = null;
     // 点击最左上角的
     if (point[0] <= this.paddingLeft && point[1] <= this.paddingTop) {
       selectedCell = {
@@ -339,6 +339,7 @@ class Base extends Render {
                   row: cell.location.row,
                   column: cell.location.column,
                 };
+                selectedCellLocation = cell;
                 return true;
               }
               return false;
@@ -349,8 +350,13 @@ class Base extends Render {
         return false;
       });
     }
-
-    return selectedCell as SelectedCellType | null;
+    return {
+      cell: selectedCell,
+      cellLoaction: selectedCellLocation,
+    } as {
+      cell: SelectedCellType | null;
+      cellLoaction: RenderCellProps | null;
+    };
   }
 
   /**

@@ -7,6 +7,7 @@ import { getABC, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
 export default class Render extends DrawLayer {
+  public dpr: number;
   public _width: number; /** dom 实际width */
   public _height: number; /** dom 实际height */
   public paddingTop: number; // 上方的宽度 // 实际为上方的常驻条高度
@@ -52,6 +53,7 @@ export default class Render extends DrawLayer {
     this._scale = 1;
     this.maxScale = 2;
     this.minScale = 0.2;
+    this.dpr = window.devicePixelRatio;
     this.renderFuncArr = [];
     this.renderDataScope = [
       [0, 0],
@@ -138,7 +140,7 @@ export default class Render extends DrawLayer {
     if (!this.canvasDom || !this.ctx || !dom) {
       return;
     }
-    let dpr = window.devicePixelRatio;
+    let dpr = this.dpr;
     const cssWidth = dom.clientWidth;
     const cssHeight = dom.clientHeight;
     this.width = cssWidth;

@@ -55,7 +55,7 @@ export default class RightClickPanelPlugin {
   }
 
   private handleCell(point: [number, number], originPosition: Position) {
-    const cell = this._this.getCellByPoint(point);
+    const { cell } = this._this.getCellByPoint(point);
 
     console.log(cell);
     if (!cell || (cell.column === -1 && cell.row === -1)) {

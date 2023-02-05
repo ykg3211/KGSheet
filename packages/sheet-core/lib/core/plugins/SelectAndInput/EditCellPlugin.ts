@@ -463,7 +463,7 @@ export default class EditCellPlugin {
           return false;
         }
 
-        const cell = this._this.getCellByPoint([point[0], point[1]]);
+        const { cell } = this._this.getCellByPoint([point[0], point[1]]);
         if (cell && cell.column !== -1 && cell.row !== -1) {
           return cell;
         }
@@ -477,7 +477,7 @@ export default class EditCellPlugin {
     // 处理鼠标点击事件
     const handleMouseDownCursor = (e: MouseEvent, [type, point]: [string, [number, number]]) => {
       const cells = this.SelectPlugin.selectedCells;
-      const cell = this._this.getCellByPoint(point);
+      const { cell } = this._this.getCellByPoint(point);
       if (!cells || !cell) {
         return;
       }
@@ -562,7 +562,7 @@ export default class EditCellPlugin {
         return;
       }
 
-      const cell = this._this.getCellByPoint(point);
+      const { cell } = this._this.getCellByPoint(point);
 
       if (!cell) {
         return;

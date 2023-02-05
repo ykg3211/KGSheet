@@ -331,7 +331,7 @@ export default class SelectPowerPlugin {
     let isMouseDown_top_Cell = false;
     let isMouseDown_left_Cell = false;
     const mouseDownCB = (e: any, point: [number, number]) => {
-      const cell = this._this.getCellByPoint(point);
+      const { cell } = this._this.getCellByPoint(point);
       if (!cell) {
         return;
       }
@@ -417,7 +417,7 @@ export default class SelectPowerPlugin {
 
     const mouseMoveCB = (e: any, point: [number, number]) => {
       // 超过左边框还能识别的兼容
-      const cell = this._this.getCellByPoint([
+      const { cell } = this._this.getCellByPoint([
         Math.max(this._this.paddingLeft + 1, point[0]),
         Math.max(this._this.paddingTop + 1, point[1]),
       ]);
