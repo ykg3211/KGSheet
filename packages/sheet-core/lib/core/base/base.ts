@@ -42,8 +42,12 @@ class Base extends Render {
     this.wrapperDom = this.wrapperDom;
     this.canvasDom = document.createElement('canvas');
     this.ctx = this.canvasDom.getContext('2d') as CanvasRenderingContext2D;
-    this.handleDPR(this.wrapperDom);
     this.initResize(this.wrapperDom);
+
+    setTimeout(() => {
+      this.handleDPR(this.wrapperDom);
+      this.render();
+    }, 0);
 
     this.pluginsInstance = new Plugins(this);
 

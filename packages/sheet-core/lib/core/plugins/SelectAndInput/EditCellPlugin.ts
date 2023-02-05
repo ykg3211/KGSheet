@@ -3,7 +3,7 @@ import { PluginTypeEnum } from '..';
 import Base, { SelectedCellType } from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { RectType } from '../../base/drawLayer';
-import { Cell, SpanCell } from '../../../interfaces';
+import { Cell, CellTypeEnum, SpanCell } from '../../../interfaces';
 import { combineCell, deepClone, isSameArray, judgeOver } from '../../../utils';
 import { createDefaultCell } from '../../../utils/defaultData';
 import { BusinessEventConstant, EventConstant, ToolsEventConstant } from '../base/event';
@@ -392,6 +392,11 @@ export default class EditCellPlugin {
 
   private initEditBoxDom(cell: SelectedCellType, isDBClick = false) {
     this._this.devMode && console.log('InitEditBoxDom', cell);
+
+    const originData = this._this.getRealCell(cell);
+    if (originData.type === CellTypeEnum.image) {
+      return;
+    }
 
     this.SelectPlugin._startCell = this.SelectPlugin.selectCell;
     this.SelectPlugin._endCell = this.SelectPlugin.selectCell;
