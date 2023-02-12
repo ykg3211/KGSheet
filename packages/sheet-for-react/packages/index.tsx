@@ -61,7 +61,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
       return sheet?.getData?.();
     },
     setData: (v: ExcelConfig) => {
-      sheet.data = JSON.parse(JSON.stringify(v));
+      sheet.data = v;
     },
   }));
 

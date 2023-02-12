@@ -30,7 +30,6 @@ export default function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCel
       _w = w;
       _h = (w * height) / width;
       _y += (h - _h) / 2;
-      ctx.drawImage(img as CanvasImageSource, point[0], point[1] + (h - height) / 2, _w, _h);
     }
     ctx.drawImage(img as CanvasImageSource, _x, _y, _w, _h);
   });

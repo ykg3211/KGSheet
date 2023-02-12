@@ -41,6 +41,7 @@ type EventParamsTypes = {
   [EventConstant.RIGHT_CLICK]: MouseEvent;
   [EventConstant.DARK_MODE_CHANGE]: boolean;
   [EventConstant.SCALE_CHANGE]: number;
+  [EventConstant.BLUR_FOCUS_RESET_PARAMS]: boolean;
   [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [ToolsEventConstant.TOGGLE_CELL_BORDER]: boolean;
   [ToolsEventConstant.DUPLICATE_STYLE_STATE_CHANGE]: boolean;

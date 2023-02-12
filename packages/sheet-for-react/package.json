@@ -1,12 +1,12 @@
 {
   "name": "kgsheet-for-react",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "license": "MIT",
   "description": "Web版本excel的React组件",
   "author": "Yukaige",
   "homepage": "https://github.com/ykg3211/KGSheet.git",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "packages/index.tsx",
+  "main": "packages/index.tsx",
   "browser": {
     "./dist/index.js": "./dist/index.js"
   },
@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "antd": "^4.23.2",
-    "kgsheet": "workspace:^0.3.5",
+    "kgsheet": "workspace:^0.3.6",
     "react": ">=16",
     "react-dom": ">=16",
     "react-router-dom": ">4"

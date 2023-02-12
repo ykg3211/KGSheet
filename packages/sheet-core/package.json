@@ -1,12 +1,12 @@
 {
   "name": "kgsheet",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Web版本excel",
   "author": "Yukaige",
   "homepage": "https://github.com/ykg3211/KGSheet.git",
   "license": "MIT",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "lib/index.ts",
+  "main": "lib/index.ts",
   "files": [
     "dist"
   ],

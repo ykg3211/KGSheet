@@ -28,7 +28,7 @@ export default class Render extends DrawLayer {
   public _scrollTop: number; // 滚动的参数
   public _scrollLeft: number; // 滚动的参数
 
-  public renderDataScope: [[number, number], [number, number]];
+  public renderDataScope: [[number, number], [number, number]]; // [row, column]
   public renderCellsArr: RenderCellProps[][];
   public renderSpanCellsArr: RenderCellProps[];
 
