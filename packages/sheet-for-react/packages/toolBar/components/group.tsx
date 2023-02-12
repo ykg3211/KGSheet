@@ -1,4 +1,4 @@
-import { ToolsGroupType, colorType } from 'kgsheet';
+import { ToolsGroupType, toolBarColorType } from 'kgsheet';
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../..';
 import Tools from './tools';
@@ -12,7 +12,7 @@ export default function Group({ group }: Props) {
 
   const fontColor = useMemo<string>(() => {
     if (toolBar) {
-      return toolBar.getColor(colorType.black);
+      return toolBar.getColor(toolBarColorType.black);
     }
     return 'rgba(0,0,0,0)';
   }, [flag, toolBar]);

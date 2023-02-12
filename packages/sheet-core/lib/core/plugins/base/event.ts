@@ -6,6 +6,9 @@ export enum ToolsEventConstant {
   REFRESH_ATTRIBUTES_STATE = 'refresh_attributes_state',
   DUPLICATE_STYLE_STATE_CHANGE = 'duplicate_style_state_change',
   TOGGLE_CELL_BORDER = 'toggle_draw_cell_border',
+  SET_SHADOW_INPUT = 'set_shadow_input',
+  SHADOW_INPUT_CHANGE = 'shadow_input_change',
+  SHADOW_INPUT_FOCUS = 'shadow_input_focus',
 }
 export enum RightClickPanelConstant {
   SHOW_PANEL = 'show_panel',
@@ -45,6 +48,8 @@ type EventParamsTypes = {
   [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [ToolsEventConstant.TOGGLE_CELL_BORDER]: boolean;
   [ToolsEventConstant.DUPLICATE_STYLE_STATE_CHANGE]: boolean;
+  [ToolsEventConstant.SHADOW_INPUT_CHANGE]: string;
+  [ToolsEventConstant.SET_SHADOW_INPUT]: string;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 

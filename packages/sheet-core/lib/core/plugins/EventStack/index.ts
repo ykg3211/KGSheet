@@ -54,7 +54,6 @@ export default class ExcelBaseFunction {
     Object.keys(pre.spanCells).forEach((spanCell) => {
       delete this._this._data.spanCells[spanCell];
     });
-    console.log(after);
     this._this.setDataByScope({
       scope,
       data: after,
@@ -96,7 +95,6 @@ export default class ExcelBaseFunction {
       });
     });
 
-    console.log(after_data.cells);
     this.EventStackPlugin.push(
       [
         {

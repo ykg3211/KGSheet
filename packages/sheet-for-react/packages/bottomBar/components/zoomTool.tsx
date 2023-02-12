@@ -1,6 +1,6 @@
 import { TooltipPlacement } from 'antd/es/tooltip';
 import React, { useContext, useMemo, useState } from 'react';
-import { ZoomBar, colorType } from 'kgsheet';
+import { ZoomBar, toolBarColorType } from 'kgsheet';
 import Icon from '../../icons/icon';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../..';
@@ -26,7 +26,7 @@ const ZoomTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }: 
     ].join(' ');
   }, [tool.class, tool.active]);
 
-  const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(colorType.black);
+  const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(toolBarColorType.black);
 
   return (
     <>
@@ -53,18 +53,18 @@ const ZoomTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }: 
         onOpenChange={(v) => {
           setVisible(v);
         }}
-        color={color(colorType.white)}
+        color={color(toolBarColorType.white)}
         triggerElm={
           <div
             className={
               'kgsheet_base_btn kgsheet_option' +
               (tool.disabled ? ' kgsheet_btn_disabled' : '' + ' kgsheet_flex_center')
             }
-            style={{ color: color(colorType.black), width: '44px', margin: 0 }}>
+            style={{ color: color(toolBarColorType.black), width: '44px', margin: 0 }}>
             <span>{tool.value + '%'}</span>
           </div>
         }>
-        <div style={{ color: color(colorType.black) }}>
+        <div style={{ color: color(toolBarColorType.black) }}>
           {tool.zoomOptions.map((v) => (
             <div
               className={

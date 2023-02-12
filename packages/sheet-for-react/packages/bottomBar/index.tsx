@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '..';
-import { colorType } from 'kgsheet';
+import { bottomBarColorType } from 'kgsheet';
 import Tool from './components';
 
 function BottomTools() {
@@ -13,7 +13,7 @@ function BottomTools() {
   const style = useMemo<React.CSSProperties>(() => {
     if (bottomBar) {
       return {
-        backgroundColor: bottomBar.getColor(colorType.white),
+        backgroundColor: bottomBar.getColor(bottomBarColorType.white),
       };
     }
     return {};

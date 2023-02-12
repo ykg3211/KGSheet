@@ -11,6 +11,7 @@ export default class Base extends BaseEvent {
   protected Tools: ToolsGroupType[];
   protected ToolsMap: Partial<Record<ToolsEnum, any>>;
   private _tag: number;
+  public config: config;
   public pluginsInstance: Plugins;
   public pluginsMap: PluginType;
 
@@ -20,6 +21,7 @@ export default class Base extends BaseEvent {
     this._tag = 0;
     this.Tools = [];
     this.ToolsMap = {};
+    this.config = config || {};
 
     this.pluginsMap = {};
     this.pluginsInstance = new Plugins(this);

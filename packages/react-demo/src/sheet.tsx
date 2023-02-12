@@ -46,6 +46,7 @@ function Sheet() {
     darkMode: 'auto',
     fps: true,
     readOnly: false,
+    shadowInput: true,
   });
 
   return (

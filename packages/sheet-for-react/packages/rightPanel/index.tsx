@@ -1,4 +1,4 @@
-import { colorType, RightClickPanelConstant, ShowPanelProps } from 'kgsheet';
+import { toolBarColorType, RightClickPanelConstant, ShowPanelProps } from 'kgsheet';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { SheetContext } from '..';
 
@@ -30,7 +30,7 @@ function RightPanel() {
 
   const style = useMemo<React.CSSProperties>(() => {
     return {
-      backgroundColor: getColor(colorType.white),
+      backgroundColor: getColor(toolBarColorType.white),
       display: visible ? 'block' : 'none',
     };
   }, [flag, getColor, visible]);

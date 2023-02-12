@@ -1,10 +1,10 @@
 import { RenderCellPropsNoLocation } from '../../../interfaces';
-import DrawLayer, { clipCell } from '../drawLayer';
+import DrawLayer, { clipCell, ColorType } from '../drawLayer';
 
 export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
   const { point, cell, w, h } = data;
   _.initStrokeStyle(ctx);
-  ctx.fillStyle = cell.style.backgroundColor || _.color('white');
+  ctx.fillStyle = cell.style.backgroundColor || _.getColor(ColorType.white);
   ctx.fillRect(point[0], point[1], w, h);
 
   if (cell.content === '') {
@@ -16,7 +16,7 @@ export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: Rend
     ctx.font = `${cell.style.fontWeight || 'normal'} ${cell.style.italic ? 'italic' : ''} ${size}px ${
       cell.style.font || 'Arial'
     }`;
-    ctx.fillStyle = cell.style.fontColor || _.color('black');
+    ctx.fillStyle = cell.style.fontColor || _.getColor(ColorType.black);
     ctx.textAlign = 'left';
     let left = point[0];
     if (cell.style.textAlign) {
@@ -46,7 +46,7 @@ export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: Rend
 
       if (cell.style.deleteLine) {
         ctx.beginPath();
-        ctx.strokeStyle = cell.style.fontColor || _.color('black');
+        ctx.strokeStyle = cell.style.fontColor || _.getColor(ColorType.black);
         ctx.lineWidth = 1;
         ctx.moveTo(_left, top);
         ctx.lineTo(_right, top);
@@ -55,7 +55,7 @@ export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: Rend
       if (cell.style.underLine) {
         top += size / 2 - 2;
         ctx.beginPath();
-        ctx.strokeStyle = cell.style.fontColor || _.color('black');
+        ctx.strokeStyle = cell.style.fontColor || _.getColor(ColorType.black);
         ctx.lineWidth = 1;
         ctx.moveTo(_left, top);
         ctx.lineTo(_right, top);

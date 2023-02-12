@@ -47,6 +47,7 @@ export default class EditCellPlugin {
     this.addRenderFunc();
     this.transformEditDom();
     this.initResetParams();
+    this.initToolBarShadowInput();
   }
 
   private initPlugin() {
@@ -201,7 +202,7 @@ export default class EditCellPlugin {
             if (!border) {
               return;
             }
-            console.log('delete');
+
             this.clearContentByScope({
               leftTopCell: border.cellScope.leftTopCell,
               rightBottomCell: border.cellScope.rightBottomCell,
@@ -210,6 +211,29 @@ export default class EditCellPlugin {
         ],
       });
     }
+  }
+
+  private initToolBarShadowInput() {
+    this._this.on(ToolsEventConstant.SHADOW_INPUT_FOCUS, (Z) => {
+      if (this.SelectPlugin.selectCell) {
+        this.initEditBoxDom(this.SelectPlugin.selectCell, {
+          needFocus: false,
+        });
+      }
+    });
+
+    this._this.on(ToolsEventConstant.SHADOW_INPUT_CHANGE, (v) => {
+      if (this.SelectPlugin.selectCell) {
+        if (this.editDomInstance) {
+          this.editDomInstance.inputInDom(v);
+        } else {
+          this.initEditBoxDom(this.SelectPlugin.selectCell);
+          if (this.editDomInstance) {
+            (this.editDomInstance as any).inputInDom(v);
+          }
+        }
+      }
+    });
   }
 
   // 增加delete方法，清空content；
@@ -390,7 +414,14 @@ export default class EditCellPlugin {
     this.handleMouseUp();
   }
 
-  private initEditBoxDom(cell: SelectedCellType, isDBClick = false) {
+  private initEditBoxDom(
+    cell: SelectedCellType,
+    config?: {
+      isDBClick?: boolean;
+      needFocus?: boolean;
+    },
+  ) {
+    const { isDBClick = false, needFocus = true } = config || {};
     this._this.devMode && console.log('InitEditBoxDom', cell);
 
     const originData = this._this.getRealCell(cell);
@@ -428,7 +459,7 @@ export default class EditCellPlugin {
       position[0] += this._this.canvasDom.offsetLeft;
       position[1] += this._this.canvasDom.offsetTop;
 
-      this.createEditBox(this.editCell, position);
+      this.createEditBox(this.editCell, position, needFocus);
 
       this.SelectPlugin.selectCell = cell;
       this.SelectPlugin._endCell = cell;
@@ -440,7 +471,9 @@ export default class EditCellPlugin {
 
   private handleDBClick() {
     const dbClickCB = (e: any, cell: SelectedCellType) => {
-      this.initEditBoxDom(cell, true);
+      this.initEditBoxDom(cell, {
+        isDBClick: true,
+      });
     };
     this._this.setEvent(EventConstant.DB_CLICK, {
       type: EventZIndex.TABLE_CELLS,
@@ -612,7 +645,7 @@ export default class EditCellPlugin {
     });
   }
 
-  private createEditBox(cell: SelectedCellType, [x, y, w, h]: RectType) {
+  private createEditBox(cell: SelectedCellType, [x, y, w, h]: RectType, needFocus = true) {
     if (this.editDomInstance) {
       return;
     }
@@ -620,7 +653,9 @@ export default class EditCellPlugin {
     if (!originData) {
       return;
     }
-    this.editDomInstance = new InputDom(this._this, originData, cell);
+    this.editDomInstance = new InputDom(this._this, originData, cell, {
+      needFocus,
+    });
     // 需要微调是为了不遮挡
     this.editDomInstance.resetEditDomPosition(x, y, w, h);
     return this.editDomInstance;

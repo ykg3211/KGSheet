@@ -2,19 +2,19 @@ import Base from '../../base';
 import { ToolsPluginTypeEnum } from '..';
 import { EventConstant, ToolsEventConstant } from '../../../core/plugins/base/event';
 
-export enum colorType {
+export enum toolBarColorType {
   white = 'white',
   black = 'black',
 }
 
-export const darkColorSum: Record<colorType, string> = {
-  [colorType.white]: '#2A2B2B',
-  [colorType.black]: '#E9EBEA',
+export const lightColorSum: Record<toolBarColorType, string> = {
+  [toolBarColorType.white]: '#E9EBEA',
+  [toolBarColorType.black]: '#2A2B2B',
 };
 
-export const lightColorSum: Record<colorType, string> = {
-  [colorType.white]: '#E9EBEA',
-  [colorType.black]: '#2A2B2B',
+export const darkColorSum: Record<toolBarColorType, string> = {
+  [toolBarColorType.white]: '#2A2B2B',
+  [toolBarColorType.black]: '#E9EBEA',
 };
 
 export default class DarkMode {
@@ -32,7 +32,7 @@ export default class DarkMode {
     return this._this.sheet.darkMode;
   }
 
-  public color(name: colorType, needReverse: boolean = false) {
+  public color(name: toolBarColorType, needReverse: boolean = false) {
     if (this._this.sheet.darkMode && !needReverse) {
       return darkColorSum[name] || '';
     }

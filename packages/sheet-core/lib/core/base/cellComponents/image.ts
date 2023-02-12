@@ -1,12 +1,12 @@
 import { RenderCellPropsNoLocation } from '../../../interfaces';
 import { PluginTypeEnum } from '../../plugins';
 import Base from '../base';
-import { clipCell } from '../drawLayer';
+import { clipCell, ColorType } from '../drawLayer';
 
 export default function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
   const { point, cell, w, h } = data;
   _.initStrokeStyle(ctx);
-  ctx.fillStyle = cell.style.backgroundColor || _.color('white');
+  ctx.fillStyle = cell.style.backgroundColor || _.getColor(ColorType.white);
   ctx.fillRect(point[0], point[1], w, h);
 
   if (cell.content === '') {

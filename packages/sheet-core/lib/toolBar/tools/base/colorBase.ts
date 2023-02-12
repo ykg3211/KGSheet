@@ -2,6 +2,7 @@ import { ToolsProps } from '../../interface';
 import { throttle } from '../../../utils';
 import { BaseTool, ToolTypeEnum } from '.';
 import { EventConstant, ToolsEventConstant } from '../../../core/plugins/base/event';
+import { ColorType } from '../../../core/base/drawLayer';
 
 // const translateColor = (colors: string[]) => {
 //   return colors.map((item) => {
@@ -65,7 +66,7 @@ export default class ColorBase extends BaseTool {
     this.type = ToolTypeEnum.COLOR;
     this.isActive = false;
     this.recentColorStore = [];
-    this.value = this.sheet.color('black');
+    this.value = this.sheet.getColor(ColorType.black);
     this.initDarkModeChange();
     this.maxRecent = 11;
     this.colorStore = DefaultColors;
@@ -89,8 +90,8 @@ export default class ColorBase extends BaseTool {
 
   private initDarkModeChange() {
     this.sheet.on(EventConstant.DARK_MODE_CHANGE, () => {
-      if (this.value === this.sheet.color('white')) {
-        this.value = this.sheet.color('black');
+      if (this.value === this.sheet.getColor(ColorType.white)) {
+        this.value = this.sheet.getColor(ColorType.black);
       }
     });
   }

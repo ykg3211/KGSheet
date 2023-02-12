@@ -8,7 +8,7 @@ import Excel, {
   ToolBar,
   BusinessEventConstant,
   ToolsEventConstant,
-  colorType,
+  toolBarColorType,
   ExcelConfig,
   SheetSetting,
   BottomBar,
@@ -16,13 +16,11 @@ import Excel, {
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
 
-export * from 'kgsheet';
-
 import RightPanel from './rightPanel';
 
 interface Sheet {
   flag: number;
-  color: (name: colorType) => string;
+  color: (name: toolBarColorType) => string;
   sheet: Excel;
   setSheet: (v: Excel) => void;
   toolBar: ToolBar;
@@ -33,7 +31,7 @@ interface Sheet {
 export const SheetContext = React.createContext<Sheet>({
   flag: 0,
   sheet: null,
-  color: (name: colorType) => name,
+  color: (name: toolBarColorType) => name,
   setSheet: () => {},
   toolBar: null,
   bottomBar: null,
@@ -70,7 +68,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
   }, [setFlag]);
 
   const getColor = useCallback(
-    (v: colorType) => {
+    (v: toolBarColorType) => {
       if (!toolBar) {
         return v;
       }
@@ -102,7 +100,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
     if (sheet && !toolBar) {
       const instance = new ToolBar({
         sheet,
-        // config: {},
+        config,
       });
       setToolBar(instance);
 
@@ -156,3 +154,4 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
 });
 
 export default Main;
+export * from 'kgsheet';

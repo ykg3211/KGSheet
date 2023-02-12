@@ -17,8 +17,24 @@
 
 .kgsheet_toolbar {
   width: 100%;
-  height: 58px;
   background-color: rgb(244, 246, 247);
+}
+
+.kgsheet_topBar_shadow {
+  height: 24px;
+  width: 100%;
+  background-color: white;
+  border-top: 1px solid #d3d3d3;
+  border-bottom: 1px solid #d3d3d3;
+  box-sizing: border-box;
+  padding: 0 5px;
+}
+
+.kgsheet_topBar_shadowInput {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
 }
 
 .kgsheet_content {
@@ -166,6 +182,7 @@
 
 .kgsheet_toolBar_container {
   width: 100%;
+  height: 58px;
   display: flex;
   align-items: center;
   justify-content: flex-start;

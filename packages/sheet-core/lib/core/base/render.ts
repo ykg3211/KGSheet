@@ -2,7 +2,7 @@
 import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
-import DrawLayer from './drawLayer';
+import DrawLayer, { ColorType } from './drawLayer';
 import { getABC, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
@@ -396,8 +396,8 @@ export default class Render extends DrawLayer {
     let x = point[0];
     let y = point[1];
     const baseStyle: CellStyle = {
-      backgroundColor: this.color('sideBar'),
-      fontColor: this.color('black'),
+      backgroundColor: this.getColor(ColorType.sideBar),
+      fontColor: this.getColor(ColorType.black),
       textAlign: 'center',
     };
     if (r === startRIndex && c === startCIndex) {

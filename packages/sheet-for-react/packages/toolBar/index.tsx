@@ -1,7 +1,8 @@
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../';
 import BaseLayout from './components/baseLayout';
-import { colorType } from 'kgsheet';
+import { toolBarColorType } from 'kgsheet';
+import ShadowInput from './components/shadowInput';
 
 function Tools() {
   const { toolBar, flag } = useContext(SheetContext);
@@ -13,7 +14,7 @@ function Tools() {
   const style = useMemo<React.CSSProperties>(() => {
     if (toolBar) {
       return {
-        backgroundColor: toolBar.getColor(colorType.white),
+        backgroundColor: toolBar.getColor(toolBarColorType.white),
       };
     }
     return {};
@@ -22,6 +23,7 @@ function Tools() {
   return (
     <div style={style} className='kgsheet_toolBarContainer'>
       {tools}
+      <ShadowInput />
     </div>
   );
 }

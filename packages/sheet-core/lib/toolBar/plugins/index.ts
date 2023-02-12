@@ -1,15 +1,18 @@
 import Base from '../base';
 import DarkMode from './DarkMode';
 import UpdateState from './UpdateState';
+import ShadowInput from './ShadowInput';
 
 export enum ToolsPluginTypeEnum {
   DarkMode = 'DarkMode',
   UpdateState = 'UpdateState',
+  ShadowInput = 'ShadowInput',
 }
 
 export interface PluginType {
   [ToolsPluginTypeEnum.DarkMode]?: DarkMode;
   [ToolsPluginTypeEnum.UpdateState]?: UpdateState;
+  [ToolsPluginTypeEnum.ShadowInput]?: ShadowInput;
 }
 
 export interface BasePluginType {
@@ -25,6 +28,7 @@ export default class Plugins {
 
     this.register(DarkMode);
     this.register(UpdateState);
+    this._this.config.shadowInput && this.register(ShadowInput);
   }
 
   public deregister(name?: ToolsPluginTypeEnum) {

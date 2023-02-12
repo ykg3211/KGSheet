@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import { BaseTool, colorType } from 'kgsheet';
+import { BaseTool, toolBarColorType } from 'kgsheet';
 import Icon from '../../icons/icon';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../..';
@@ -24,7 +24,7 @@ const ButtonTool = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }
     ].join(' ');
   }, [tool.class, tool.active]);
 
-  const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(colorType.black);
+  const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(toolBarColorType.black);
 
   return (
     <Tooltip placement={toolTipPlacement} title={tool.toolTip}>

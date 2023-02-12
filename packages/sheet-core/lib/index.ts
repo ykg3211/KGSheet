@@ -4,11 +4,15 @@ import createDefaultData, { createDefaultCell } from './utils/defaultData';
 
 export default Excel;
 
+export { ColorType as colorType } from './core/base/drawLayer';
+
 export { ToolBar, createDefaultData, createDefaultCell };
 
 export * from './core/plugins/base/event';
 
-export { colorType } from './toolBar/plugins/DarkMode';
+export { toolBarColorType } from './toolBar/plugins/DarkMode';
+
+export { colorType as bottomBarColorType } from './bottomBar/plugins/DarkMode';
 
 export type { ToolsGroupType } from './toolBar/interface';
 
