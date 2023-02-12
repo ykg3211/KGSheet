@@ -6,7 +6,7 @@ import Main, {
   createDefaultCell,
   Cell,
 } from 'kgsheet-for-react';
-import 'kgsheet-for-react/dist/index.css';
+// import 'kgsheet-for-react/dist/index.css';
 import React, { useRef } from 'react';
 import defaultData from './constant.json';
 // import originData from './sheet.json';

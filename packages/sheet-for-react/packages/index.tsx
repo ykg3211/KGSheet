@@ -15,8 +15,9 @@ import Excel, {
 } from 'kgsheet';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
-
 import RightPanel from './rightPanel';
+
+import './index.css';
 
 interface Sheet {
   flag: number;

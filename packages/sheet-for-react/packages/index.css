@@ -27,7 +27,12 @@
   border-top: 1px solid #d3d3d3;
   border-bottom: 1px solid #d3d3d3;
   box-sizing: border-box;
-  padding: 0 5px;
+  display: flex;
+}
+.kgsheet_topBar_cell_pointer {
+  min-width: 80px;
+  height: 100%;
+  border-right: 1px solid;
 }
 
 .kgsheet_topBar_shadowInput {
@@ -35,6 +40,7 @@
   width: 100%;
   border: none;
   outline: none;
+  padding: 0 5px;
 }
 
 .kgsheet_content {
