@@ -475,6 +475,8 @@ export default class Render extends DrawLayer {
     };
   }
   public scrollXY(deltaX: number, deltaY: number) {
+    deltaX = deltaX / this.scale;
+    deltaY = deltaY / this.scale;
     const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
     if (this.scrollLeft + deltaX < 0 || this.contentWidth + this.paddingLeft + this.overGapWidth - this.width < 0) {
       this.scrollLeft = 0;

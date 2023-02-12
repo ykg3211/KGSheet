@@ -1,11 +1,12 @@
 {
   "name": "rush",
   "scripts": {
-    "start": "node ./packages.js start && npm run build & sh ./dev.sh",
-    "build": "rush build:watch --to-except react-demo",
-    "build:publish": "node ./packages.js build && rush build:watch --to-except react-demo",
+    "start": "node ./packages.js start && npm run build:dev & sh ./dev.sh",
+    "build": "node ./packages.js build && rush build:watch --to-except react-demo",
+    "build:dev": "rush build:watch --to-except react-demo",
+    "build:demo": "node ./packages.js build && rush build --to-except react-demo && sh ./demo.sh",
     "auth": "sh ./auth.sh",
-    "change": "npm run build:publish && rush change --bulk --message 'update' --bump-type patch",
+    "change": "npm run build && rush change --bulk --message 'update' --bump-type patch",
     "publish": "sh ./auth.sh && rush publish -a -p"
   }
 }

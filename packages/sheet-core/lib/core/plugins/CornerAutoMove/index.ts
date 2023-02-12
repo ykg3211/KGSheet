@@ -82,7 +82,7 @@ export default class CornerAutoMove {
       return;
     }
 
-    this._this.scrollXY(offset.offsetX / this._this.scale, offset.offsetY / this._this.scale);
+    this._this.scrollXY(offset.offsetX, offset.offsetY);
 
     await nextTick();
     this.render();

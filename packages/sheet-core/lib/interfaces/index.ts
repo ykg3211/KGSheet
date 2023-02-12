@@ -63,6 +63,7 @@ export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' |
 export interface BaseSheetSetting {
   dom: HTMLElement | string;
   devMode?: boolean;
+  fps?: boolean;
   darkMode?: boolean | 'auto';
   readOnly?: boolean;
   message?: (v: { type: 'info' | 'success' | 'error' | 'warning'; message: string }) => void;

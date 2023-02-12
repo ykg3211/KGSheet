@@ -16,6 +16,7 @@ import CornerAutoMove from './CornerAutoMove';
 import RightClickPanelPlugin from './RightClickPanel';
 import DuplicateStyle from './DuplicateStyle';
 import UrlClickPlugin from './UrlClickPlugin';
+import FPSPlugin from './FPSPlugin';
 import ImageStackPlugin from './ImageStackPlugin';
 
 export enum PluginTypeEnum {
@@ -36,6 +37,7 @@ export enum PluginTypeEnum {
   FontEditPlugin = 'FontEditPlugin',
   ImageStackPlugin = 'ImageStackPlugin',
   UrlClickPlugin = 'UrlClickPlugin',
+  FPSPlugin = 'FPSPlugin',
   CornerAutoMove = 'CornerAutoMove',
 }
 
@@ -57,6 +59,7 @@ export interface PluginType {
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
   [PluginTypeEnum.ImageStackPlugin]?: ImageStackPlugin;
   [PluginTypeEnum.UrlClickPlugin]?: UrlClickPlugin;
+  [PluginTypeEnum.FPSPlugin]?: FPSPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
 }
 
@@ -78,7 +81,8 @@ export default class Plugins {
     // 全局的编辑撤销翻撤销事件栈。
     this.register(BaseEventStack);
     this.register(ExcelBaseFunction);
-
+    // 图片请求缓存的
+    this.register(ImageStackPlugin);
     // sheet失焦之后重制某些状态的
     this.register(BlurFocusReset);
 
@@ -106,7 +110,7 @@ export default class Plugins {
 
     this.register(CornerAutoMove);
 
-    this.register(ImageStackPlugin);
+    this._this.config.fps && this.register(FPSPlugin);
   }
 
   public deregister(name?: PluginTypeEnum) {

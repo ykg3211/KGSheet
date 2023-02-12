@@ -44,6 +44,7 @@ function Sheet() {
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,
     darkMode: 'auto',
+    fps: true,
     readOnly: false,
   });
 
