@@ -9,34 +9,34 @@ import Main, {
 import 'kgsheet-for-react/dist/index.css';
 import React, { useRef } from 'react';
 import defaultData from './constant.json';
-import originData from './sheet.json';
+// import originData from './sheet.json';
 
-const formatSheetArrData = () => {
-  const w: number[] = [100, 822, 69, 61, 446, 300, 401, 200];
-  const h: number[] = [];
-  const cells: ExcelConfig['cells'] = originData.map((item) => {
-    h.push(300);
-    return [
-      createDefaultCell(''),
-      createDefaultCell(item.title),
-      createDefaultCell(item.price + ''),
-      createDefaultCell(item.currency),
-      createDefaultCell(item.detailURL),
-      // @ts-ignore
-      createDefaultCell(item.imgUrl, 'image'),
-      createDefaultCell(item.company),
-      createDefaultCell(item.unit),
-    ];
-  });
-  return {
-    w,
-    h,
-    cells,
-    spanCells: {
-      '0_0': { ...createDefaultCell('情趣内衣'), span: [1, 900] },
-    } as any,
-  };
-};
+// const formatSheetArrData = () => {
+//   const w: number[] = [100, 822, 69, 61, 446, 300, 401, 200];
+//   const h: number[] = [];
+//   const cells: ExcelConfig['cells'] = originData.map((item) => {
+//     h.push(300);
+//     return [
+//       createDefaultCell(''),
+//       createDefaultCell(item.title),
+//       createDefaultCell(item.price + ''),
+//       createDefaultCell(item.currency),
+//       createDefaultCell(item.detailURL),
+//       // @ts-ignore
+//       createDefaultCell(item.imgUrl, 'image'),
+//       createDefaultCell(item.company),
+//       createDefaultCell(item.unit),
+//     ];
+//   });
+//   return {
+//     w,
+//     h,
+//     cells,
+//     spanCells: {
+//       '0_0': { ...createDefaultCell('情趣内衣'), span: [1, 900] },
+//     } as any,
+//   };
+// };
 
 function Sheet() {
   // const [defaultData] = useState(createDefaultData(30, 100));

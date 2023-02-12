@@ -150,7 +150,7 @@ export const isSameArray: (array_1: Array<any>, array_2: Array<any>) => boolean 
 
 export function throttle(func: any, t: number) {
   let ready: boolean = true;
-  let time: null | number = null;
+  let time: any = null;
   return (...arg: any) => {
     if (time) {
       clearTimeout(time);
@@ -170,7 +170,7 @@ export function throttle(func: any, t: number) {
 }
 
 export function debounce(func: any, t: number) {
-  let time: null | number = null;
+  let time: any = null;
   return (...arg: any) => {
     if (time) {
       clearTimeout(time);

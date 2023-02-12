@@ -82,7 +82,7 @@ export default class EventDispatch {
     // 用于处理触摸事件的
     try {
       if (e instanceof TouchEvent) {
-        const touchAttrs = e.changedTouches[0] || {};
+        const touchAttrs: Record<string, any> = e.changedTouches[0] || {};
         (e as any).clientX = touchAttrs.clientX;
         (e as any).clientY = touchAttrs.clientY;
         (e as any).pageX = touchAttrs.pageX;
