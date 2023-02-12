@@ -1,4 +1,4 @@
-import { Cell, ExcelConfig } from '../interfaces';
+import { Cell, CellTypeEnum, ExcelConfig } from '../interfaces';
 import { SelectedCellType } from '../core/base/base';
 
 type numbers2 = [number, number];
@@ -195,17 +195,35 @@ export function getABC(num: number): string {
   return result.map((i) => String.fromCharCode(i + 65)).join('');
 }
 
-export function handleCell(source: ExcelConfig, trigger: (v: Cell) => Cell) {
+export function handleCell(
+  source: ExcelConfig,
+  trigger: (
+    v: Cell,
+    location: {
+      isSpanCell?: boolean;
+      row: number;
+      column: number;
+    },
+  ) => Cell,
+) {
   const target = deepClone(source);
-  target.cells = target.cells.map((row) => {
-    return row.map((cell) => {
-      cell = trigger(cell);
+  target.cells = target.cells.map((row, rowIndex) => {
+    return row.map((cell, columnIndex) => {
+      cell = trigger(cell, {
+        row: rowIndex,
+        column: columnIndex,
+      });
       return cell;
     });
   });
   Object.keys(target.spanCells).forEach((key) => {
+    const [row, column] = key.split('_').map(Number);
     // @ts-ignore
-    target.spanCells[key] = trigger(target.spanCells[key]);
+    target.spanCells[key] = trigger(target.spanCells[key], {
+      isSpanCell: true,
+      row,
+      column,
+    });
   });
   return target;
 }
@@ -215,3 +233,32 @@ export function mapObject<T>(obj: Record<any, T>, cb: (v: T) => T) {
     obj[key] = cb(obj[key]);
   });
 }
+
+export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
+  let dom: HTMLElement | null;
+  if (typeof _dom === 'string') {
+    dom = document.getElementById(_dom) || (document.getElementsByClassName(_dom)[0] as HTMLElement) || null;
+  } else {
+    dom = _dom;
+  }
+  if (!dom) {
+    return true;
+  }
+
+  let current = (e.target as HTMLElement) || null;
+  while (current) {
+    if (dom === current) {
+      return false;
+    }
+
+    current = current.parentElement as HTMLElement;
+  }
+  return true;
+}
+
+export const judgeCellType = (v: string): CellTypeEnum => {
+  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+    return CellTypeEnum.url;
+  }
+  return CellTypeEnum.text;
+};

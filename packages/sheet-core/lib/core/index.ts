@@ -26,6 +26,8 @@ class Excel extends Base {
 
   public setData(data: ExcelConfig) {
     if (data) {
+      data.w = data.w.slice(0, data.cells[0].length);
+      data.h = data.h.slice(0, data.cells.length);
       this.data = data;
     }
   }

@@ -331,7 +331,7 @@ export default class SelectPowerPlugin {
     let isMouseDown_top_Cell = false;
     let isMouseDown_left_Cell = false;
     const mouseDownCB = (e: any, point: [number, number]) => {
-      const cell = this._this.getCellByPoint(point);
+      const { cell } = this._this.getCellByPoint(point);
       if (!cell) {
         return;
       }
@@ -393,25 +393,31 @@ export default class SelectPowerPlugin {
       type: EventZIndex.TABLE_CELLS,
       judgeFunc: (e) => {
         const point = this._this.transformXYInContainer(e);
+
         if (!point) {
+          return false;
+        }
+
+        // 右键如果点击在选中框内部，则不能执行后续操作
+        if (
+          e.button === 2 &&
+          this._borderPosition &&
+          judgeInner(
+            [...point, 1, 1],
+            [...this._borderPosition?.anchor, this._borderPosition?.w, this._borderPosition?.h],
+          )
+        ) {
           return false;
         }
 
         return point;
       },
       innerFunc: mouseDownCB.bind(this),
-      outerFunc: () => {
-        // this.selectCell = null;
-        // this._startCell = null;
-        // this._endCell = null;
-        // this._borderPosition = null;
-        // this._this._render();
-      },
     });
 
     const mouseMoveCB = (e: any, point: [number, number]) => {
       // 超过左边框还能识别的兼容
-      const cell = this._this.getCellByPoint([
+      const { cell } = this._this.getCellByPoint([
         Math.max(this._this.paddingLeft + 1, point[0]),
         Math.max(this._this.paddingTop + 1, point[1]),
       ]);
@@ -638,11 +644,12 @@ export default class SelectPowerPlugin {
 
   public selectCells({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
     this.selectCell = leftTopCell;
-    this._startCell = leftTopCell;
-    this._endCell = rightBottomCell;
+    this._startCell = rightBottomCell;
+    this._endCell = leftTopCell;
   }
 
   public moveToView() {
+    this._this.devMode && console.log('moveToView');
     if (!this._endCell) {
       return;
     }

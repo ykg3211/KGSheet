@@ -15,10 +15,10 @@ export default class BlurFocusReset {
 
   private windowBlur() {
     window.onblur = () => {
-      this._this.emit(EventConstant.BLUR_FOCUS_RESET_PARAMS);
+      this._this.emit(EventConstant.BLUR_FOCUS_RESET_PARAMS, false);
     };
     window.onfocus = () => {
-      this._this.emit(EventConstant.BLUR_FOCUS_RESET_PARAMS);
+      this._this.emit(EventConstant.BLUR_FOCUS_RESET_PARAMS, true);
     };
   }
 }

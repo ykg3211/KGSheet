@@ -3,10 +3,11 @@ import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
 import DrawLayer from './drawLayer';
-import { getABC, isSafari, throttleByRequestAnimationFrame } from '../../utils';
+import { getABC, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
 export default class Render extends DrawLayer {
+  public dpr: number;
   public _width: number; /** dom 实际width */
   public _height: number; /** dom 实际height */
   public paddingTop: number; // 上方的宽度 // 实际为上方的常驻条高度
@@ -27,7 +28,7 @@ export default class Render extends DrawLayer {
   public _scrollTop: number; // 滚动的参数
   public _scrollLeft: number; // 滚动的参数
 
-  public renderDataScope: [[number, number], [number, number]];
+  public renderDataScope: [[number, number], [number, number]]; // [row, column]
   public renderCellsArr: RenderCellProps[][];
   public renderSpanCellsArr: RenderCellProps[];
 
@@ -50,8 +51,9 @@ export default class Render extends DrawLayer {
     this.overGapWidth = 40;
     this.overGapHeight = 40;
     this._scale = 1;
-    this.maxScale = 4;
-    this.minScale = 0.1;
+    this.maxScale = 2;
+    this.minScale = 0.2;
+    this.dpr = window.devicePixelRatio;
     this.renderFuncArr = [];
     this.renderDataScope = [
       [0, 0],
@@ -138,11 +140,12 @@ export default class Render extends DrawLayer {
     if (!this.canvasDom || !this.ctx || !dom) {
       return;
     }
-    let dpr = window.devicePixelRatio;
+    let dpr = this.dpr;
     const cssWidth = dom.clientWidth;
     const cssHeight = dom.clientHeight;
     this.width = cssWidth;
     this.height = cssHeight;
+    console.log(cssWidth);
     this.canvasDom.style.width = cssWidth + 'px';
     this.canvasDom.style.height = cssHeight + 'px';
 
@@ -343,7 +346,7 @@ export default class Render extends DrawLayer {
     this.resetRenderFunction(
       RenderZIndex.TABLE_SPAN_CELLS,
       this.renderSpanCellsArr.map((item) => () => {
-        this.drawCell(item, true);
+        this.drawCell(item, this.drawCellBorder);
       }),
     );
   }

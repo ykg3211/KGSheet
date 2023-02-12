@@ -5,6 +5,7 @@ import { AntiRevert, Revert } from './revert';
 import { CombineCells } from './combineCells';
 import { TextAlignLeft, TextAlignCenter, TextAlignRight } from './textAlign';
 import { FontColor, BackgroundColor } from './color';
+import { DuplicateStyle } from './duplicateStyle';
 
 export enum ToolsEnum {
   REVERT = 'revert', // 撤销
@@ -17,6 +18,7 @@ export enum ToolsEnum {
   FONT_ITALIC = 'font_italic', // 斜体
   FONT_UNDER_LINE = 'font_under_line', // 下划线
   COMBINE_CELLS = 'combine_cells', // 合并单元格
+  DUPLICATE_STYLE = 'duplicate_style', // 格式刷
   TEXT_ALIGN_LEFT = 'text_align_left', // 文字左对齐
   TEXT_ALIGN_CENTER = 'text_align_center', // 文字居中
   TEXT_ALIGN_RIGHT = 'text_align_right', // 文字右对齐
@@ -35,6 +37,7 @@ export interface ToolsMapType {
   [ToolsEnum.FONT_ITALIC]: FontItalic;
   [ToolsEnum.FONT_UNDER_LINE]: FontUnderLine;
   [ToolsEnum.COMBINE_CELLS]: CombineCells;
+  [ToolsEnum.DUPLICATE_STYLE]: DuplicateStyle;
   [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft;
   [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter;
   [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight;
@@ -53,6 +56,7 @@ const ToolsMap = {
   [ToolsEnum.FONT_ITALIC]: FontItalic,
   [ToolsEnum.FONT_UNDER_LINE]: FontUnderLine,
   [ToolsEnum.COMBINE_CELLS]: CombineCells,
+  [ToolsEnum.DUPLICATE_STYLE]: DuplicateStyle,
   [ToolsEnum.TEXT_ALIGN_LEFT]: TextAlignLeft,
   [ToolsEnum.TEXT_ALIGN_CENTER]: TextAlignCenter,
   [ToolsEnum.TEXT_ALIGN_RIGHT]: TextAlignRight,

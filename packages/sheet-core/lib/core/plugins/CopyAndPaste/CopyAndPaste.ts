@@ -1,3 +1,4 @@
+import { createDefaultStyle } from '../../../utils/defaultData';
 import { PluginTypeEnum } from '..';
 import { deepClone } from '../../../utils';
 import { html2excel } from '../../../utils/htmlParse';
@@ -108,24 +109,21 @@ export default class CopyAndPaste {
 
     try {
       // @ts-ignore
-      const blob_plain = await ClipboardItems[0].getType('text/plain');
-      const text_plain = await blob_plain.text();
-      const content = text_plain.split('\n').map((item) => item.split('\t'));
-      this._this.devMode && console.log('paste');
-      this._this.devMode && console.log(content);
-      const anchor = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.selectCell;
-      if (anchor) {
-        this._this.getPlugin(PluginTypeEnum.EditCellPlugin)?.setContent(content, anchor);
-      }
-    } catch (e) {}
-
-    try {
-      // @ts-ignore
       const blob_html = await ClipboardItems[0].getType('text/html');
       const text_html = await blob_html.text();
-      // console.log('html', text_html)
       console.log(html2excel(text_html));
       const newExcelData = html2excel(text_html);
+      if (newExcelData?.cells) {
+        newExcelData.cells = newExcelData?.cells.map((cells) => {
+          return cells.map((cell) => {
+            cell.style = {
+              ...createDefaultStyle(),
+              ...cell.style,
+            };
+            return cell;
+          });
+        });
+      }
       const selectCell = this.SelectPlugin.selectCell;
       if (!newExcelData || !selectCell) {
         return;
@@ -167,6 +165,21 @@ export default class CopyAndPaste {
           cells: deepClone(newExcelData.cells),
         },
       });
+      return;
+    } catch (e) {}
+
+    try {
+      // @ts-ignore
+      const blob_plain = await ClipboardItems[0].getType('text/plain');
+      const text_plain = await blob_plain.text();
+      const content = text_plain.split('\n').map((item) => item.split('\t'));
+      this._this.devMode && console.log('paste');
+      this._this.devMode && console.log(content);
+      const anchor = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.selectCell;
+      if (anchor) {
+        this._this.getPlugin(PluginTypeEnum.EditCellPlugin)?.setContent(content, anchor);
+      }
+      return;
     } catch (e) {}
 
     try {
@@ -211,8 +224,8 @@ export default class CopyAndPaste {
   }
 
   private registerOnceDashBorder(data: BaseDataType) {
-    this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
-    this._this.addRenderFunction(RenderZIndex.COPY_SELLS_BORDER, [
+    this._this.resetRenderFunction(RenderZIndex.DASH_SELLS_BORDER);
+    this._this.addRenderFunction(RenderZIndex.DASH_SELLS_BORDER, [
       ((ctx: CanvasRenderingContext2D) => {
         ctx.save();
         const [x, y, w, h] = this._this.calBorder(data.scope.leftTopCell, data.scope.rightBottomCell);
@@ -227,7 +240,7 @@ export default class CopyAndPaste {
     ]);
     this._this.render();
     this._this.once(EventConstant.EXCEL_CHANGE, () => {
-      this._this.resetRenderFunction(RenderZIndex.COPY_SELLS_BORDER);
+      this._this.resetRenderFunction(RenderZIndex.DASH_SELLS_BORDER);
     });
   }
 }

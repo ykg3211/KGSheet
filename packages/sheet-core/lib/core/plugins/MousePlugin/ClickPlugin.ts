@@ -21,6 +21,8 @@ export default class ClickPlugin {
     this.commonRegisterEvent('touchstart', EventConstant.TOUCH_START);
     this.commonRegisterEvent('touchmove', EventConstant.TOUCH_MOVE);
     this.commonRegisterEvent('touchend', EventConstant.TOUCH_END, true);
+
+    this.initEvent();
   }
 
   private commonRegisterEvent(event: any, key: EventConstant, isOnDom: boolean = false) {
@@ -39,6 +41,22 @@ export default class ClickPlugin {
         document.body?.removeEventListener(event, handler);
       } else {
         this._this.canvasDom?.removeEventListener(event, handler);
+      }
+    });
+  }
+
+  private initEvent() {
+    if (!this._this.canvasDom) {
+      return;
+    }
+    this._this.canvasDom.oncontextmenu = function (e) {
+      e.preventDefault();
+    };
+
+    this._this.canvasDom.addEventListener('mousedown', (e) => {
+      if (e.button === 2) {
+        e.preventDefault();
+        this._this.emit(EventConstant.RIGHT_CLICK, e);
       }
     });
   }

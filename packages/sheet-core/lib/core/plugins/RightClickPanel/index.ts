@@ -1,7 +1,8 @@
-import { EventConstant, RightClickPanelConstant } from '../core/plugins/base/event';
-import { PluginTypeEnum } from '../core/plugins';
-import Base from '../core/base/base';
+import { EventConstant, RightClickPanelConstant } from '../base/event';
+import { PluginTypeEnum } from '..';
+import Base from '../../base/base';
 import { BasePanelType, RightClickPanelType } from './interface';
+import { clickOutSide } from '../../../utils';
 
 interface Position {
   x: number;
@@ -24,6 +25,15 @@ export default class RightClickPanelPlugin {
     this._this.on(EventConstant.RIGHT_CLICK, (e) => {
       this.createPanel(e);
     });
+
+    document.body.addEventListener('mousedown', (e) => {
+      if (e.button === 2) {
+        return;
+      }
+      if (clickOutSide('kgsheet_panel', e)) {
+        this._this.emit(RightClickPanelConstant.HIDE_PANEL);
+      }
+    });
   }
 
   public createPanel(e: MouseEvent | undefined) {
@@ -44,7 +54,38 @@ export default class RightClickPanelPlugin {
     this.handleCell(point, originPosition);
   }
 
-  private createBaseConfig({ x, y }: Position): BasePanelType {
+  private handleCell(point: [number, number], originPosition: Position) {
+    const { cell } = this._this.getCellByPoint(point);
+
+    console.log(cell);
+    if (!cell || (cell.column === -1 && cell.row === -1)) {
+      return;
+    }
+    if (cell?.column === -1) {
+      this.handleSideBar(originPosition, false);
+      return;
+    }
+    if (cell?.column === -1) {
+      this.handleSideBar(originPosition, true);
+      return;
+    }
+    this._this.emit(RightClickPanelConstant.SHOW_PANEL, {
+      type: RightClickPanelType.CELL,
+      ...this.createPanelPostion(originPosition),
+      ...this.createBaseConfig(RightClickPanelType.CELL),
+    });
+  }
+
+  private handleSideBar(position: Position, isTop = true) {
+    const type = isTop ? RightClickPanelType.TOP_BAR : RightClickPanelType.LEFT_BAR;
+    this._this.emit(RightClickPanelConstant.SHOW_PANEL, {
+      type,
+      ...this.createPanelPostion(position),
+      ...this.createBaseConfig(type),
+    });
+  }
+
+  private createPanelPostion({ x, y }: Position): BasePanelType {
     return {
       x,
       y,
@@ -52,39 +93,7 @@ export default class RightClickPanelPlugin {
     };
   }
 
-  private handleCell(point: [number, number], originPosition: Position) {
-    console.log(point);
-    const cell = this._this.getCellByPoint(point);
-
-    console.log(cell);
-    if (!cell || (cell.column === -1 && cell.row === -1)) {
-      return;
-    }
-    if (cell?.column === -1) {
-      this.handleLeftBar(originPosition);
-      return;
-    }
-    if (cell?.column === -1) {
-      this.handleTopBar(originPosition);
-      return;
-    }
-    this._this.emit(RightClickPanelConstant.SHOW_PANEL, {
-      type: RightClickPanelType.CELL,
-      ...this.createBaseConfig(originPosition),
-    });
-  }
-
-  private handleLeftBar(position: Position) {
-    this._this.emit(RightClickPanelConstant.SHOW_PANEL, {
-      type: RightClickPanelType.LEFT_BAR,
-      ...this.createBaseConfig(position),
-    });
-  }
-
-  private handleTopBar(position: Position) {
-    this._this.emit(RightClickPanelConstant.SHOW_PANEL, {
-      type: RightClickPanelType.TOP_BAR,
-      ...this.createBaseConfig(position),
-    });
+  private createBaseConfig(type: RightClickPanelType) {
+    return {};
   }
 }

@@ -4,6 +4,7 @@ import { ExcelConfig } from '../../../interfaces';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 import BaseEventStack, { BaseEventType } from './base';
 import { EventConstant } from '../base/event';
+import { judgeCellType } from '../../../utils';
 
 export interface BaseCellChangeType {
   scope: CellCornerScopeType;
@@ -53,7 +54,7 @@ export default class ExcelBaseFunction {
     Object.keys(pre.spanCells).forEach((spanCell) => {
       delete this._this._data.spanCells[spanCell];
     });
-
+    console.log(after);
     this._this.setDataByScope({
       scope,
       data: after,
@@ -88,6 +89,14 @@ export default class ExcelBaseFunction {
   }
 
   public cellsChange({ scope, pre_data, after_data }: BaseCellsChangeEventStackType, immediate = true) {
+    after_data.cells = after_data.cells.map((cells) => {
+      return cells.map((cell) => {
+        cell.type = judgeCellType(cell.content);
+        return cell;
+      });
+    });
+
+    console.log(after_data.cells);
     this.EventStackPlugin.push(
       [
         {

@@ -7,14 +7,16 @@ import ScrollPlugin from './MousePlugin/ScrollPlugin';
 import SideBarResizePlugin from './SideBarResizePlugin';
 import SelectPowerPlugin from './SelectAndInput/SelectPowerPlugin';
 import EditCellPlugin from './SelectAndInput/EditCellPlugin';
-import RightClickPlugin from './RightClickPlugin';
 import KeyboardPlugin from './KeyboardPlugin';
 import BaseEventStack from './EventStack/base';
 import CopyAndPaste from './CopyAndPaste/CopyAndPaste';
 import BlurFocusReset from './BlurFocusReset';
 import FontEditPlugin from './FontEditPlugin';
 import CornerAutoMove from './CornerAutoMove';
-import RightClickPanelPlugin from '../../rightClickPanel';
+import RightClickPanelPlugin from './RightClickPanel';
+import DuplicateStyle from './DuplicateStyle';
+import UrlClickPlugin from './UrlClickPlugin';
+import ImageStackPlugin from './ImageStackPlugin';
 
 export enum PluginTypeEnum {
   KeyboardPlugin = 'KeyboardPlugin',
@@ -28,10 +30,12 @@ export enum PluginTypeEnum {
   SelectPowerPlugin = 'SelectPowerPlugin',
   EditCellPlugin = 'EditCellPlugin',
   CopyAndPaste = 'CopyAndPaste',
-  RightClickPlugin = 'RightClickPlugin',
   RightClickPanelPlugin = 'RightClickPanelPlugin',
+  DuplicateStyle = 'DuplicateStyle',
   BlurFocusReset = 'BlurFocusReset',
   FontEditPlugin = 'FontEditPlugin',
+  ImageStackPlugin = 'ImageStackPlugin',
+  UrlClickPlugin = 'UrlClickPlugin',
   CornerAutoMove = 'CornerAutoMove',
 }
 
@@ -47,10 +51,12 @@ export interface PluginType {
   [PluginTypeEnum.SelectPowerPlugin]?: SelectPowerPlugin;
   [PluginTypeEnum.EditCellPlugin]?: EditCellPlugin;
   [PluginTypeEnum.CopyAndPaste]?: CopyAndPaste;
-  [PluginTypeEnum.RightClickPlugin]?: RightClickPlugin;
   [PluginTypeEnum.RightClickPanelPlugin]?: RightClickPanelPlugin;
+  [PluginTypeEnum.DuplicateStyle]?: DuplicateStyle;
   [PluginTypeEnum.BlurFocusReset]?: BlurFocusReset;
   [PluginTypeEnum.FontEditPlugin]?: FontEditPlugin;
+  [PluginTypeEnum.ImageStackPlugin]?: ImageStackPlugin;
+  [PluginTypeEnum.UrlClickPlugin]?: UrlClickPlugin;
   [PluginTypeEnum.CornerAutoMove]?: CornerAutoMove;
 }
 
@@ -64,6 +70,7 @@ export default class Plugins {
 
   constructor(_this: Base) {
     this._this = _this;
+    const readOnly = this._this.config.readOnly;
     // 全局的交互事件收集派发插件， 必须在第一个
     this.register(EventDispatch);
     // 全局的键盘事件派发插件
@@ -86,17 +93,20 @@ export default class Plugins {
 
     // 选中单元格插件
     this.register(SelectPowerPlugin);
-    !this._this.config.readOnly && this.register(CopyAndPaste);
+    !readOnly && this.register(CopyAndPaste);
+    !readOnly && this.register(DuplicateStyle);
+    this.register(UrlClickPlugin);
 
     // 选中之后输入单元格的插件
-    !this._this.config.readOnly && this.register(EditCellPlugin);
+    !readOnly && this.register(EditCellPlugin);
 
-    this.register(RightClickPlugin);
     this.register(RightClickPanelPlugin);
 
-    !this._this.config.readOnly && this.register(FontEditPlugin);
+    !readOnly && this.register(FontEditPlugin);
 
     this.register(CornerAutoMove);
+
+    this.register(ImageStackPlugin);
   }
 
   public deregister(name?: PluginTypeEnum) {

@@ -1,13 +1,15 @@
-import { ShowPanelProps } from '../../../rightClickPanel/interface';
+import { ShowPanelProps } from '../RightClickPanel/interface';
 import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
 
 export enum ToolsEventConstant {
   REFRESH = 'refresh',
   REFRESH_ATTRIBUTES_STATE = 'refresh_attributes_state',
+  DUPLICATE_STYLE_STATE_CHANGE = 'duplicate_style_state_change',
   TOGGLE_CELL_BORDER = 'toggle_draw_cell_border',
 }
 export enum RightClickPanelConstant {
   SHOW_PANEL = 'show_panel',
+  HIDE_PANEL = 'hide_panel',
 }
 export enum EventConstant {
   RENDER = 'render',
@@ -39,8 +41,10 @@ type EventParamsTypes = {
   [EventConstant.RIGHT_CLICK]: MouseEvent;
   [EventConstant.DARK_MODE_CHANGE]: boolean;
   [EventConstant.SCALE_CHANGE]: number;
+  [EventConstant.BLUR_FOCUS_RESET_PARAMS]: boolean;
   [RightClickPanelConstant.SHOW_PANEL]: ShowPanelProps;
   [ToolsEventConstant.TOGGLE_CELL_BORDER]: boolean;
+  [ToolsEventConstant.DUPLICATE_STYLE_STATE_CHANGE]: boolean;
   [BusinessEventConstant.MSG_BOX]: { type: 'info' | 'success' | 'error' | 'warning'; message: string };
 };
 

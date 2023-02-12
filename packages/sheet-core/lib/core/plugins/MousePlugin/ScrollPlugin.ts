@@ -209,7 +209,7 @@ export default class ScrollPlugin {
     const contentHeight = this._this.contentHeight + this._this.paddingTop + this._this.overGapHeight;
     // 画X轴滚动条
     if (this._this.width < contentWidth) {
-      this.scrollBarXW = (this._this.width * this._this.width) / contentWidth;
+      this.scrollBarXW = Math.max(10, (this._this.width * this._this.width) / contentWidth);
       const percentX = this._this.scrollLeft / maxWidth;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
@@ -236,7 +236,7 @@ export default class ScrollPlugin {
 
     // 画Y轴滚动条
     if (this._this.height < contentHeight) {
-      this.scrollBarYW = (this._this.height * this._this.height) / contentHeight;
+      this.scrollBarYW = Math.max(10, (this._this.height * this._this.height) / contentHeight);
       const percentY = this._this.scrollTop / maxHeight;
       ctx.fillStyle = this._this.color('white');
       ctx.lineWidth = 1;
