@@ -6,7 +6,7 @@
     "build:dev": "rush build:watch --to-except react-demo",
     "build:demo": "node ./packages.js build && rush build --to-except react-demo && sh ./demo.sh",
     "auth": "sh ./auth.sh",
-    "change": "npm run build && rush change --bulk --message 'update' --bump-type patch",
+    "change": "rush change --bulk --message 'update' --bump-type patch",
     "publish": "sh ./auth.sh && rush publish -a -p"
   }
 }
