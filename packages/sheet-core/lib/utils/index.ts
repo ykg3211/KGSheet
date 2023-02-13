@@ -258,10 +258,13 @@ export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
 
 export const judgeCellType = (cell: Cell): CellTypeEnum => {
   const { content } = cell;
-  console.log(Number(content));
-  if (!isNaN(Number(content))) {
+
+  if (content !== '' && !isNaN(Number(content))) {
     return CellTypeEnum.number;
   } else if (judgeIsUrl(content)) {
+    if (['svg', 'png', 'jpg', 'jpeg'].includes((content.split('.').pop() || '').toLocaleLowerCase())) {
+      return CellTypeEnum.image;
+    }
     return CellTypeEnum.url;
   }
 

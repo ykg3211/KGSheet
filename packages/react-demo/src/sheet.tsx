@@ -42,7 +42,7 @@ import defaultData_1 from './default.json';
 function Sheet() {
   const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
-    devMode: false,
+    devMode: true,
     darkMode: 'auto',
     fps: true,
     readOnly: false,
