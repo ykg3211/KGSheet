@@ -104,7 +104,7 @@ export default class Plugins {
     // 选中之后输入单元格的插件
     !readOnly && this.register(EditCellPlugin);
 
-    this.register(RightClickPanelPlugin);
+    // this.register(RightClickPanelPlugin);
 
     !readOnly && this.register(FontEditPlugin);
 

@@ -424,7 +424,14 @@ export default class EditCellPlugin {
     const { isDBClick = false, needFocus = true } = config || {};
     this._this.devMode && console.log('InitEditBoxDom', cell);
 
+    const { cells } = this._this.getSpanCellByCell({ cell });
+
+    if (cells.length > 0) {
+      cell = cells[0];
+    }
+
     const originData = this._this.getRealCell(cell);
+
     if (originData.type === CellTypeEnum.image) {
       return;
     }
@@ -432,10 +439,6 @@ export default class EditCellPlugin {
     this.SelectPlugin._startCell = this.SelectPlugin.selectCell;
     this.SelectPlugin._endCell = this.SelectPlugin.selectCell;
 
-    const { cells } = this._this.getSpanCellByCell({ cell });
-    if (cells.length > 0) {
-      cell = cells[0];
-    }
     const _position = this._this.getRectByCell(cell);
 
     /**

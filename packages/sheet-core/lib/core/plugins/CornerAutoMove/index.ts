@@ -26,8 +26,8 @@ export default class CornerAutoMove {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.borderGapX = 10;
-    this.borderGapY = 10;
+    this.borderGapX = 5;
+    this.borderGapY = 5;
     this.isStart = false;
     this.needStop = false;
 

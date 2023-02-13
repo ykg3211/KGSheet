@@ -256,9 +256,21 @@ export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
   return true;
 }
 
-export const judgeCellType = (v: string): CellTypeEnum => {
-  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+export const judgeCellType = (cell: Cell): CellTypeEnum => {
+  const { content } = cell;
+  console.log(Number(content));
+  if (!isNaN(Number(content))) {
+    return CellTypeEnum.number;
+  } else if (judgeIsUrl(content)) {
     return CellTypeEnum.url;
   }
-  return CellTypeEnum.text;
+
+  return cell.type;
+};
+
+export const judgeIsUrl = (v: string): boolean => {
+  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+    return true;
+  }
+  return false;
 };

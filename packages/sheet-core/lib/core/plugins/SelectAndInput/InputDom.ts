@@ -197,11 +197,9 @@ export class InputDom {
       if (typeof newV === 'string') {
         this.DOM.value = newV;
         originData.content = newV;
-        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       } else {
         originData.content = this.DOM.value;
-        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       }
 

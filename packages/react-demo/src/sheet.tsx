@@ -7,8 +7,9 @@ import Main, {
   Cell,
 } from 'kgsheet-for-react';
 // import 'kgsheet-for-react/dist/index.css';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import defaultData from './constant.json';
+import defaultData_1 from './default.json';
 // import originData from './sheet.json';
 
 // const formatSheetArrData = () => {
@@ -39,7 +40,6 @@ import defaultData from './constant.json';
 // };
 
 function Sheet() {
-  // const [defaultData] = useState(createDefaultData(30, 100));
   const sheetRef = useRef<RefType>(null);
   const sheetConfig = useRef<SheetSetting>({
     devMode: false,
@@ -53,7 +53,7 @@ function Sheet() {
     <>
       <div style={{ height: 'calc(100% - 30px)' }}>
         {/* @ts-ignore */}
-        <Main ref={sheetRef} defaultData={createDefaultData(30, 100)} config={sheetConfig.current} />
+        <Main ref={sheetRef} defaultData={defaultData_1} config={sheetConfig.current} />
       </div>
       <div style={{ display: 'flex' }}>
         <div

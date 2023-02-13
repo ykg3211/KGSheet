@@ -88,9 +88,10 @@ export default class ExcelBaseFunction {
   }
 
   public cellsChange({ scope, pre_data, after_data }: BaseCellsChangeEventStackType, immediate = true) {
+    // 判断是不是url的类型
     after_data.cells = after_data.cells.map((cells) => {
       return cells.map((cell) => {
-        cell.type = judgeCellType(cell.content);
+        cell.type = judgeCellType(cell);
         return cell;
       });
     });

@@ -34,7 +34,6 @@ const map = {
 };
 
 Object.values(map).forEach((package) => {
-  console.log(package.path);
   const file = fs.readFileSync(package.path, {
     encoding: 'utf-8',
   });

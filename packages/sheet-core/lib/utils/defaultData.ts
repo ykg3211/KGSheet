@@ -15,7 +15,7 @@ export const createDefaultCell = (content = '', cellType?: CellTypeEnum) => {
   const result: Cell = {
     style: createDefaultStyle(),
     content: content || '',
-    type: cellType || judgeCellType(content),
+    type: cellType || judgeCellType({ content, type: cellType || 'text' } as any),
   };
   return result;
 };
