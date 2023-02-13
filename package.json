@@ -7,6 +7,7 @@
     "build:demo": "node ./packages.js build && rush build --to-except react-demo && sh ./demo.sh",
     "auth": "sh ./auth.sh",
     "change": "rush change --bulk --message 'update' --bump-type patch",
-    "publish": "sh ./auth.sh && rush publish -a -p"
+    "publish": "sh ./auth.sh && rush publish -a -p",
+    "publish:auto": "npm run build && npm run change && sh ./auth.sh && rush publish -a -p"
   }
 }
