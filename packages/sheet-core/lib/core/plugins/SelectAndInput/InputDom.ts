@@ -13,10 +13,10 @@ export class InputDom {
   private _this: Base;
   private cell: SelectedCellType;
   private ExcelBaseFunction!: ExcelBaseFunction;
-  private KeyboardPlugin!: KeyboardPlugin;
   private minHeight!: number;
   private minWidth!: number;
   private enterEvent!: () => void;
+  private isEnableCommand: boolean;
 
   constructor(
     _this: Base,
@@ -29,14 +29,14 @@ export class InputDom {
     this._this = _this;
     this.DOM = document.createElement('textarea');
     this.cell = cell;
+    this.isEnableCommand = false;
     this.setCommonStyle(data);
     this.stopPropagation();
     this.initPlugin();
+    this.initPower();
     this.handleDomValue(data);
 
     (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.DOM);
-
-    this.registerKeyboardEvent();
 
     setTimeout(() => {
       config?.needFocus && this.DOM?.focus();
@@ -50,26 +50,6 @@ export class InputDom {
     } else {
       console.error('InputDom 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
-
-    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
-    if (KeyboardPlugin) {
-      this.KeyboardPlugin = KeyboardPlugin;
-      this.enterEvent = this._enterEvent.bind(this);
-    } else {
-      console.error('InputDom 依赖于 KeyboardPlugin, 请正确注册插件!');
-    }
-  }
-
-  private registerKeyboardEvent() {
-    this.KeyboardPlugin.register({
-      baseKeys: [META],
-      mainKeys: [OPERATE_KEYS_ENUM.Enter],
-      callbacks: [this.enterEvent],
-    });
-  }
-
-  private _enterEvent() {
-    console.log(1);
   }
 
   public inputInDom(mainKeys: any) {
@@ -251,11 +231,29 @@ export class InputDom {
     this.DOM.removeEventListener('keydown', this._stopPropagation_arrow);
     this.DOM.removeEventListener('keyup', this._stopPropagation_arrow);
 
-    this.KeyboardPlugin.uninstall({
-      baseKeys: [],
-      mainKeys: [OPERATE_KEYS_ENUM.Enter],
-      callbacks: [this.enterEvent],
-    });
     this.DOM.remove();
+  }
+
+  private KeydownCB(e: KeyboardEvent) {
+    if (e.key === META) {
+      this.isEnableCommand = e.type === 'keydown';
+    }
+
+    if (this.isEnableCommand && e.key === OPERATE_KEYS_ENUM.Enter && e.type === 'keydown') {
+      this.DOM.value += '1';
+    }
+  }
+
+  private initPower() {
+    const cb = (e: KeyboardEvent) => {
+      if (e.key === META) {
+        this.isEnableCommand = e.type === 'keydown';
+      }
+      if (this.isEnableCommand && e.key === OPERATE_KEYS_ENUM.Enter && e.type === 'keydown') {
+        this.DOM.value += '\n';
+      }
+    };
+    this.DOM.addEventListener('keydown', cb.bind(this));
+    this.DOM.addEventListener('keyup', cb.bind(this));
   }
 }
