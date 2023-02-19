@@ -14,13 +14,8 @@ export default class ShadowInput {
 
   private initEvent() {
     this._this.sheet.on(EventConstant.SELECT_CELLS_CHANGE, (selectedCells) => {
-      if (
-        selectedCells &&
-        selectedCells.leftTopCell.column === selectedCells.rightBottomCell.column &&
-        selectedCells.leftTopCell.row === selectedCells.rightBottomCell.row
-      ) {
+      if (selectedCells) {
         const cell = this._this.sheet.getRealCell(selectedCells.leftTopCell);
-
         this._this.emit(ToolsEventConstant.SET_SHADOW_INPUT, cell.content);
       }
     });

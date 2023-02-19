@@ -234,16 +234,6 @@ export class InputDom {
     this.DOM.remove();
   }
 
-  private KeydownCB(e: KeyboardEvent) {
-    if (e.key === META) {
-      this.isEnableCommand = e.type === 'keydown';
-    }
-
-    if (this.isEnableCommand && e.key === OPERATE_KEYS_ENUM.Enter && e.type === 'keydown') {
-      this.DOM.value += '1';
-    }
-  }
-
   private initPower() {
     const cb = (e: KeyboardEvent) => {
       if (e.key === META) {

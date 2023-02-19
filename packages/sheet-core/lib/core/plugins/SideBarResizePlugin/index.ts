@@ -2,7 +2,7 @@
 
 import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
-import { EventZIndex } from '../../base/constant';
+import { EventZIndex, RenderZIndex } from '../../base/constant';
 import { isNN } from '../../../utils';
 import { EventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
@@ -38,6 +38,49 @@ export default class SideBarResizePlugin {
     this._this.clearEvent(EventConstant.MOUSE_UP, EventZIndex.SIDE_BAR);
   }
 
+  private registerHighLight({ isLeft, index }: { isLeft: boolean; index: number }) {
+    console.log(isLeft, index);
+    this._this.addRenderFunction(RenderZIndex.BORDER_HIGH_LIGHT, [
+      (ctx) => {
+        ctx.save();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#3370FF';
+        if (isLeft) {
+          const startRow = this._this.renderCellsArr[0][0].location.row;
+          if (!this._this.renderCellsArr[index - startRow + 1]) {
+            return;
+          }
+          const point = this._this.renderCellsArr[index - startRow + 1][0].point;
+          const width = this._this.renderCellsArr[index - startRow + 1]
+            .map((cell) => cell.w)
+            .reduce((a, b) => a + b, 0);
+
+          ctx.beginPath();
+          ctx.moveTo(...point);
+          ctx.lineTo(point[0] + width, point[1]);
+          ctx.stroke();
+        } else {
+          const startColumn = this._this.renderCellsArr[0][0].location.column;
+          if (!this._this.renderCellsArr[0][index - startColumn + 1]) {
+            return;
+          }
+          const point = this._this.renderCellsArr[0][index - startColumn + 1].point;
+          const height = this._this.renderCellsArr.map((cells) => cells[0].h).reduce((a, b) => a + b, 0);
+
+          ctx.beginPath();
+          ctx.moveTo(...point);
+          ctx.lineTo(point[0], point[1] + height);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      },
+    ]);
+  }
+  private resetHighLight() {
+    this._this.resetRenderFunction(RenderZIndex.BORDER_HIGH_LIGHT);
+  }
+
   private handleMouseDrag() {
     let isStart = false;
     let initWidth: null | number = null;
@@ -52,9 +95,14 @@ export default class SideBarResizePlugin {
       YMouseDownLastFrameY = e.pageY;
       isLeft = Boolean(_isLeft);
       origin = index;
+      this.registerHighLight({
+        isLeft,
+        index,
+      });
       if (typeof origin === 'number') {
         initWidth = isLeft ? this._this._data.h[origin] : this._this._data.w[origin];
       }
+      this._this.render();
     };
 
     this._this.setEvent(EventConstant.MOUSE_DOWN, {
@@ -116,6 +164,7 @@ export default class SideBarResizePlugin {
       initWidth = null;
       XMouseDownLastFrameX = null;
       YMouseDownLastFrameY = null;
+      this.resetHighLight();
     };
     this._this.setEvent(EventConstant.MOUSE_UP, {
       type: EventZIndex.SIDE_BAR,
