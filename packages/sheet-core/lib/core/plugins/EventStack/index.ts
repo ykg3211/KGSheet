@@ -1,34 +1,12 @@
 import { PluginTypeEnum } from '..';
+import { Cell, createDefaultCell } from '../../..';
+import { BASE_HEIGHT, BASE_WIDTH } from '../../../utils/defaultData';
+import { SpanCell } from '../../../interfaces';
 import Base from '../../base/base';
-import { ExcelConfig } from '../../../interfaces';
-import { CellCornerScopeType } from '../SelectAndInput/EditCellPlugin';
-import BaseEventStack, { BaseEventType } from './base';
+import BaseEventStack from './base';
 import { EventConstant } from '../base/event';
-import { judgeCellType } from '../../../utils';
-
-export interface BaseCellChangeType {
-  scope: CellCornerScopeType;
-  pre_data: ExcelConfig;
-  after_data: ExcelConfig;
-  time_stamp?: Date;
-}
-
-export interface BaseCellsChangeEventStackType extends BaseCellChangeType {
-  time_stamp?: Date;
-}
-
-export interface BaseCellsMoveType {
-  sourceData: BaseCellChangeType;
-  targetData: BaseCellChangeType;
-  time_stamp: Date;
-}
-
-export interface RowColumnResizeType {
-  isRow: boolean;
-  index: number;
-  preWidth: number;
-  afterWidth: number;
-}
+import { deepClone, judgeCellType } from '../../../utils';
+import { BaseAddRemoveRowsColumnsType, BaseCellChangeType, BaseCellsMoveType, RowColumnResizeType } from './interface';
 
 export default class ExcelBaseFunction {
   private _this: Base;
@@ -47,7 +25,7 @@ export default class ExcelBaseFunction {
     }
   }
 
-  private cells_change({ scope, pre_data, after_data }: BaseCellChangeType, isReverse = false) {
+  private _cellsChange({ scope, pre_data, after_data }: BaseCellChangeType, isReverse = false) {
     const after = isReverse ? pre_data : after_data;
     const pre = isReverse ? after_data : pre_data;
 
@@ -67,27 +45,7 @@ export default class ExcelBaseFunction {
     });
   }
 
-  // 废弃
-  public set(props: Omit<BaseCellsChangeEventStackType, 'pre_data'>[]) {
-    const time_stamp = new Date();
-    const stash: BaseEventType[] = [];
-    props.forEach(({ scope, after_data }) => {
-      const { data: pre_data } = this._this.getDataByScope(scope);
-      stash.push({
-        params: {
-          scope,
-          pre_data,
-          after_data,
-          time_stamp,
-        },
-        // @ts-ignore
-        func: this.cells_change.bind(this),
-      });
-    });
-    this.EventStackPlugin.push(stash);
-  }
-
-  public cellsChange({ scope, pre_data, after_data }: BaseCellsChangeEventStackType, immediate = true) {
+  public cellsChange({ scope, pre_data, after_data }: BaseCellChangeType, immediate = true) {
     // 判断是不是url的类型
     after_data.cells = after_data.cells.map((cells) => {
       return cells.map((cell) => {
@@ -106,32 +64,127 @@ export default class ExcelBaseFunction {
             time_stamp: new Date(),
           },
           // @ts-ignore
-          func: this.cells_change.bind(this),
+          func: this._cellsChange.bind(this),
         },
       ],
       immediate,
     );
   }
 
-  public cellsMove({ sourceData, targetData, time_stamp }: BaseCellsMoveType) {
+  public cellsMove({ pre_data, after_data, time_stamp }: BaseCellsMoveType) {
     this.EventStackPlugin.push([
       {
         params: {
-          ...sourceData,
+          ...pre_data,
           time_stamp,
         },
         // @ts-ignore
-        func: this.cells_change.bind(this),
+        func: this._cellsChange.bind(this),
       },
       {
         params: {
-          ...targetData,
+          ...after_data,
           time_stamp,
         },
         // @ts-ignore
-        func: this.cells_change.bind(this),
+        func: this._cellsChange.bind(this),
       },
     ]);
+  }
+
+  private baseHandleSpanCell(isAdd: boolean, isRow: boolean, index: number, length: number) {
+    const deleteKeys: string[] = [];
+    const newSpanCells: Record<string, SpanCell> = {};
+    Object.entries(this._this.data.spanCells).forEach(([key, _value]) => {
+      let [row, column] = key.split('_').map(Number);
+      let value = deepClone(_value);
+      deleteKeys.push(key);
+      if (isAdd) {
+        if (isRow) {
+          if (index < row) {
+            row += length;
+          }
+          if (index > row && index < row + value.span[1]) {
+            value.span[1] += length;
+          }
+        } else {
+          if (index < column) {
+            column += length;
+          }
+          if (index > column && index < column + value.span[0]) {
+            value.span[0] += length;
+          }
+        }
+      } else {
+        if (isRow) {
+          if (index < row) {
+            row -= length;
+          }
+          if (index > row && index < row + value.span[1]) {
+            value.span[1] -= length;
+          }
+        } else {
+          if (index < column) {
+            column -= length;
+          }
+          if (index > column && index < column + value.span[0]) {
+            value.span[0] -= length;
+          }
+        }
+      }
+      newSpanCells[`${row}_${column}`] = value;
+    });
+
+    deleteKeys.forEach((key) => {
+      delete this._this.data.spanCells[key];
+    });
+    this._this.data.spanCells = { ...this._this.data.spanCells, ...newSpanCells };
+  }
+
+  public _addRemoveRowsColumns({ isAdd, isRow, index, cells }: BaseAddRemoveRowsColumnsType, isReverse = false) {
+    if (isAdd && !isReverse) {
+      // 添加行列
+      if (isRow) {
+        this._this.data.cells.splice(index, 0, ...cells);
+        this._this.data.h.splice(index, 0, ...new Array(cells.length).fill(BASE_HEIGHT));
+      } else {
+        this._this.data.cells = this._this.data.cells.map((row, i) => {
+          row.splice(index, 0, ...cells[i]);
+          return row;
+        });
+        this._this.data.w.splice(index, 0, ...new Array(cells[0].length).fill(BASE_WIDTH));
+      }
+    } else {
+      // 删除行列
+      if (isRow) {
+        this._this.data.cells.splice(index, cells.length);
+        this._this.data.h.splice(index, cells.length);
+      } else {
+        this._this.data.cells = this._this.data.cells.map((row, i) => {
+          row.splice(index, cells[i].length);
+          return row;
+        });
+        this._this.data.w.splice(index, cells[0].length);
+      }
+    }
+
+    const length = isRow ? cells.length : cells[0].length;
+    this.baseHandleSpanCell((isAdd = isAdd && !isReverse), isRow, index, length);
+    this._this.render();
+  }
+
+  // 用于添加和删除整行和整列的方法
+  public addRemoveRowsColumns(props: BaseAddRemoveRowsColumnsType) {
+    this.EventStackPlugin.push(
+      [
+        {
+          params: props,
+          // @ts-ignore
+          func: this._addRemoveRowsColumns.bind(this),
+        },
+      ],
+      true,
+    );
   }
 
   private _rowColumnResize({ isRow, index, preWidth, afterWidth }: RowColumnResizeType, isReverse = false) {

@@ -145,7 +145,6 @@ export default class Render extends DrawLayer {
     const cssHeight = dom.clientHeight;
     this.width = cssWidth;
     this.height = cssHeight;
-    console.log(cssWidth);
     this.canvasDom.style.width = cssWidth + 'px';
     this.canvasDom.style.height = cssHeight + 'px';
 

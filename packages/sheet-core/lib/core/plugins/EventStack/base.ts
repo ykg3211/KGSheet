@@ -1,11 +1,11 @@
 import { PluginTypeEnum } from '..';
 import Base from '../../base/base';
-import { BaseCellsChangeEventStackType, RowColumnResizeType } from '.';
+import { BaseAddRemoveRowsColumnsType, BaseCellChangeType, RowColumnResizeType } from './interface';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { BASE_KEYS_ENUM, META } from '../KeyboardPlugin/constant';
 import { EventConstant, ToolsEventConstant } from '../base/event';
 
-type BaseEvent = RowColumnResizeType | BaseCellsChangeEventStackType;
+type BaseEvent = RowColumnResizeType | BaseCellChangeType | BaseAddRemoveRowsColumnsType;
 export interface BaseEventType {
   params: BaseEvent;
   func: (p: BaseEvent, isReverse?: boolean) => void;
@@ -88,7 +88,7 @@ export default class BaseEventStack {
     const pres = this.REVERSE_STACK.pop();
     if (pres) {
       pres.forEach((pre) => {
-        pre.func(pre.params);
+        pre.func?.(pre.params, false);
       });
       this.EVENT_STACK.push(pres);
     }

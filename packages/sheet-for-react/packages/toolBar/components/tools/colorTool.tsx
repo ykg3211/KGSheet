@@ -90,7 +90,7 @@ const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
             <div
               className='kgsheet_more_color kgsheet_base_btn'
               onClick={() => {
-                inputColor.current.click();
+                inputColor.current?.click();
               }}>
               <div className='kgsheet_more_color_label'>
                 <span style={{ color: getColor(toolBarColorType.black) }}>更多颜色</span>
@@ -100,7 +100,7 @@ const ColorTool = ({ tool, toolTipPlacement = 'bottom' }: Props) => {
                 ref={inputColor}
                 className='kgsheet_more_color_input'
                 onChange={() => {
-                  tool.changeColor(inputColor.current.value);
+                  tool.changeColor(inputColor.current?.value);
                 }}
                 type='color'
               />

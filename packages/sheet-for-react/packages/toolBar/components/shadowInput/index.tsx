@@ -14,17 +14,18 @@ function ShadowInput() {
         setValue(v);
       });
       sheet.on(EventConstant.SELECT_CELLS_CHANGE, (selectedCells) => {
-        if (
-          selectedCells &&
-          selectedCells.leftTopCell.column === selectedCells.rightBottomCell.column &&
-          selectedCells.leftTopCell.row === selectedCells.rightBottomCell.row
-        ) {
-          const { column, row } = selectedCells.leftTopCell;
-          setCellPointer(getABC(column) + '' + row);
-        } else {
-          const { column, row } = selectedCells.leftTopCell;
-          const { column: _column, row: _row } = selectedCells.rightBottomCell;
-          setCellPointer(getABC(column) + '' + row + ':' + getABC(_column) + '' + _row);
+        if (selectedCells) {
+          if (
+            selectedCells.leftTopCell.column === selectedCells.rightBottomCell.column &&
+            selectedCells.leftTopCell.row === selectedCells.rightBottomCell.row
+          ) {
+            const { column, row } = selectedCells.leftTopCell;
+            setCellPointer(getABC(column) + '' + row);
+          } else {
+            const { column, row } = selectedCells.leftTopCell;
+            const { column: _column, row: _row } = selectedCells.rightBottomCell;
+            setCellPointer(getABC(column) + '' + row + ':' + getABC(_column) + '' + _row);
+          }
         }
       });
     }

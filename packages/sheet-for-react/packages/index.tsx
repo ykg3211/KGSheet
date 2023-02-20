@@ -22,10 +22,10 @@ import './index.css';
 interface Sheet {
   flag: number;
   color: (name: toolBarColorType) => string;
-  sheet: Excel;
+  sheet: Excel | null;
   setSheet: (v: Excel) => void;
-  toolBar: ToolBar;
-  bottomBar: BottomBar;
+  toolBar: ToolBar | null;
+  bottomBar: BottomBar | null;
   setToolBar: (v: ToolBar) => void;
 }
 
@@ -81,6 +81,8 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
 
   useEffect(() => {
     if (sheet) {
+      // @ts-ignore
+      window.sheet = sheet;
       sheet.on(ToolsEventConstant.REFRESH, refresh);
       sheet.on(BusinessEventConstant.MSG_BOX, ({ type, message: msg }) => {
         if (config.message) {

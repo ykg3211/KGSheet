@@ -885,7 +885,7 @@ export default class EditCellPlugin {
     const targetCellsPreData = this._this.getDataByScope(targetCells);
 
     this.ExcelBaseFunction.cellsMove({
-      sourceData: {
+      pre_data: {
         scope: {
           leftTopCell: sourceCells.leftTopCell,
           rightBottomCell: sourceCells.rightBottomCell,
@@ -901,7 +901,7 @@ export default class EditCellPlugin {
           spanCells: {},
         },
       },
-      targetData: {
+      after_data: {
         scope: targetCells,
         pre_data: targetCellsPreData.data,
         after_data: SourceData.data,
