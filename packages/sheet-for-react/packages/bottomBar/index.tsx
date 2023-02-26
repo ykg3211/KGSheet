@@ -24,7 +24,7 @@ function BottomTools() {
       {columns.map((tools, index) => (
         <div className='kgsheet_bottom_container_panel' key={'columns_' + index}>
           {tools.map((tool) => (
-            <Tool key={tool.key} tool={tool} />
+            <Tool key={tool.key || 'columns_tool_' + index} tool={tool} />
           ))}
         </div>
       ))}

@@ -36,7 +36,7 @@ export class ZoomBar extends BaseTool {
     const that = this;
     this.sheet.on(EventConstant.SCALE_CHANGE, (v = 1) => {
       that.value = +(v * 100).toFixed();
-      that.toolBar.emit(ToolsEventConstant.REFRESH);
+      that.bottomBar.emit(ToolsEventConstant.REFRESH);
     });
   }
 
@@ -44,12 +44,12 @@ export class ZoomBar extends BaseTool {
     const newV = +(this.value / 10).toFixed() * 10 + (isUp ? 10 : -10);
     this.sheet.scale = newV / 100;
     this.value = +(this.sheet.scale * 100).toFixed();
-    this.toolBar.emit(ToolsEventConstant.REFRESH);
+    this.bottomBar.emit(ToolsEventConstant.REFRESH);
   }
 
   public selectZoom(zoom: number) {
     this.value = zoom;
     this.sheet.scale = zoom / 100;
-    this.toolBar.emit(ToolsEventConstant.REFRESH);
+    this.bottomBar.emit(ToolsEventConstant.REFRESH);
   }
 }

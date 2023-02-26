@@ -14,6 +14,8 @@ export { toolBarColorType } from './toolBar/plugins/DarkMode';
 
 export { colorType as bottomBarColorType } from './bottomBar/plugins/DarkMode';
 
+export { SelectRange } from './bottomBar/tools/SelectRange';
+
 export type { ToolsGroupType } from './toolBar/interface';
 
 export { BaseTool, ToolTypeEnum } from './toolBar/tools/base';

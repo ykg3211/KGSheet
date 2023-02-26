@@ -11,7 +11,7 @@ export class CellBorder extends ButtonBase {
 
   private initEvent() {
     const refresh = () => {
-      this.toolBar.emit(ToolsEventConstant.REFRESH);
+      this.bottomBar.emit(ToolsEventConstant.REFRESH);
     };
     this.sheet.on(ToolsEventConstant.TOGGLE_CELL_BORDER, refresh);
   }

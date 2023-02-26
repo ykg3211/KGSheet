@@ -52,7 +52,7 @@ export default class Base extends BaseEvent {
       }
       this.ToolsMap[type] = new Tool({
         sheet: this.sheet,
-        toolBar: this,
+        bottomBar: this,
         key: 'sid_' + type + '_' + this._tag++,
       });
     }
