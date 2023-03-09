@@ -52,7 +52,7 @@ export interface RenderCellProps {
     row: number;
     column: number;
   };
-  point: [number, number];
+  point: [number, number]; // x, y
   cell: SpanCell;
   w: number;
   h: number;

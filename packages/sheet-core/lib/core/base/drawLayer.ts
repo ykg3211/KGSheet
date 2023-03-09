@@ -52,9 +52,7 @@ export default class DrawLayer extends BaseEvent {
   public devMode: boolean; // 是不是调试模式
   public darkMode: boolean;
   public _drawCellBorder: boolean;
-  protected components: Partial<
-    Record<CellTypeEnum, (_: this, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>
-  >;
+  protected components: Partial<Record<CellTypeEnum, (_: this, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>>;
   constructor(config: BaseSheetSetting) {
     super();
     this.config = config;

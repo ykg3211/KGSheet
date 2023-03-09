@@ -9,11 +9,7 @@ import { CellCornerScopeType } from './EditCellPlugin';
 import { SpanCell } from '../../../interfaces';
 import { createDefaultStyle } from '../../../utils/defaultData';
 
-type ArrowType =
-  | OPERATE_KEYS_ENUM.ArrowDown
-  | OPERATE_KEYS_ENUM.ArrowRight
-  | OPERATE_KEYS_ENUM.ArrowLeft
-  | OPERATE_KEYS_ENUM.ArrowUp;
+type ArrowType = OPERATE_KEYS_ENUM.ArrowDown | OPERATE_KEYS_ENUM.ArrowRight | OPERATE_KEYS_ENUM.ArrowLeft | OPERATE_KEYS_ENUM.ArrowUp;
 
 export interface borderType {
   anchor: [number, number];
@@ -83,10 +79,7 @@ export default class SelectPowerPlugin {
 
   // 获取选中的格子
   public getSelectCellsScope(): CellCornerScopeType | null {
-    if (this.selectedCells) {
-      return this.selectedCells;
-    }
-    return null;
+    return this.selectedCells || null;
   }
 
   public setSelectCellsScope({ leftTopCell, rightBottomCell }: CellCornerScopeType) {
@@ -399,14 +392,7 @@ export default class SelectPowerPlugin {
         }
 
         // 右键如果点击在选中框内部，则不能执行后续操作
-        if (
-          e.button === 2 &&
-          this._borderPosition &&
-          judgeInner(
-            [...point, 1, 1],
-            [...this._borderPosition?.anchor, this._borderPosition?.w, this._borderPosition?.h],
-          )
-        ) {
+        if (e.button === 2 && this._borderPosition && judgeInner([...point, 1, 1], [...this._borderPosition?.anchor, this._borderPosition?.w, this._borderPosition?.h])) {
           return false;
         }
 
@@ -417,10 +403,7 @@ export default class SelectPowerPlugin {
 
     const mouseMoveCB = (e: any, point: [number, number]) => {
       // 超过左边框还能识别的兼容
-      const { cell } = this._this.getCellByPoint([
-        Math.max(this._this.paddingLeft + 1, point[0]),
-        Math.max(this._this.paddingTop + 1, point[1]),
-      ]);
+      const { cell } = this._this.getCellByPoint([Math.max(this._this.paddingLeft + 1, point[0]), Math.max(this._this.paddingTop + 1, point[1])]);
       if (!cell) {
         return;
       }
@@ -546,16 +529,8 @@ export default class SelectPowerPlugin {
     const crossSpanCells: SelectedCellType[] = [startCell, endCell];
 
     renderSpanCellsArr.forEach((cell) => {
-      if (
-        judgeCross(
-          [cell.point[0], cell.point[1], cell.w, cell.h],
-          [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h],
-        )
-      ) {
-        const temp = combineRect(
-          [cell.point[0], cell.point[1], cell.w, cell.h],
-          [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h],
-        );
+      if (judgeCross([cell.point[0], cell.point[1], cell.w, cell.h], [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h])) {
+        const temp = combineRect([cell.point[0], cell.point[1], cell.w, cell.h], [cellPosition.anchor[0], cellPosition.anchor[1], cellPosition.w, cellPosition.h]);
 
         crossSpanCells.push({
           row: cell.location.row,
@@ -627,18 +602,8 @@ export default class SelectPowerPlugin {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 1;
     ctx.fillStyle = '#4a89fe';
-    ctx.fillRect(
-      anchor[0] + w - this.fillRectWidth / 2,
-      anchor[1] + h - this.fillRectWidth / 2,
-      this.fillRectWidth,
-      this.fillRectWidth,
-    );
-    ctx.strokeRect(
-      anchor[0] + w - this.strokeRectWidth / 2,
-      anchor[1] + h - this.strokeRectWidth / 2,
-      this.strokeRectWidth,
-      this.strokeRectWidth,
-    );
+    ctx.fillRect(anchor[0] + w - this.fillRectWidth / 2, anchor[1] + h - this.fillRectWidth / 2, this.fillRectWidth, this.fillRectWidth);
+    ctx.strokeRect(anchor[0] + w - this.strokeRectWidth / 2, anchor[1] + h - this.strokeRectWidth / 2, this.strokeRectWidth, this.strokeRectWidth);
     ctx.restore();
   }
 

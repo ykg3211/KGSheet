@@ -3,7 +3,7 @@ import { Cell, createDefaultCell } from '../../..';
 import { BASE_HEIGHT, BASE_WIDTH } from '../../../utils/defaultData';
 import { SpanCell } from '../../../interfaces';
 import Base from '../../base/base';
-import BaseEventStack from './base';
+import BaseEventStack, { BaseEventType } from './base';
 import { EventConstant } from '../base/event';
 import { deepClone, judgeCellType } from '../../../utils';
 import { BaseAddRemoveRowsColumnsType, BaseCellChangeType, BaseCellsMoveType, RowColumnResizeType } from './interface';
@@ -142,7 +142,8 @@ export default class ExcelBaseFunction {
   }
 
   public _addRemoveRowsColumns({ isAdd, isRow, index, cells }: BaseAddRemoveRowsColumnsType, isReverse = false) {
-    if (isAdd && !isReverse) {
+    const add = isReverse ? !isAdd : isAdd;
+    if (add) {
       // 添加行列
       if (isRow) {
         this._this.data.cells.splice(index, 0, ...cells);
@@ -169,22 +170,29 @@ export default class ExcelBaseFunction {
     }
 
     const length = isRow ? cells.length : cells[0].length;
-    this.baseHandleSpanCell((isAdd = isAdd && !isReverse), isRow, index, length);
+    this.baseHandleSpanCell(add, isRow, index, length);
     this._this.render();
   }
 
+  // public test() {
+  //   this.addRemoveRowsColumns([
+  //     {
+  //       isRow: true,
+  //       isAdd: false,
+  //       index: 2,
+  //       cells: this._this.data.cells.slice(2, 3),
+  //     },
+  //   ]);
+  // }
+
   // 用于添加和删除整行和整列的方法
-  public addRemoveRowsColumns(props: BaseAddRemoveRowsColumnsType) {
-    this.EventStackPlugin.push(
-      [
-        {
-          params: props,
-          // @ts-ignore
-          func: this._addRemoveRowsColumns.bind(this),
-        },
-      ],
-      true,
-    );
+  public addRemoveRowsColumns(props: BaseAddRemoveRowsColumnsType[]) {
+    const events = props.map((prop) => ({
+      params: prop,
+      // @ts-ignore
+      func: this._addRemoveRowsColumns.bind(this),
+    }));
+    this.EventStackPlugin.push(events as BaseEventType[], true);
   }
 
   private _rowColumnResize({ isRow, index, preWidth, afterWidth }: RowColumnResizeType, isReverse = false) {

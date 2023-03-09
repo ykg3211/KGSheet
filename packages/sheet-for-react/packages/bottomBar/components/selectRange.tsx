@@ -12,11 +12,11 @@ interface Props {
   needLabel?: boolean;
 }
 
-const SelectRange = ({ tool, style, needLabel = false, toolTipPlacement = 'top' }: Props) => {
+const SelectRange = ({ tool }: Props) => {
   const { color } = useContext(SheetContext);
-  console.log(tool);
+
   const fontColor = tool.active ? 'rgb(76, 136, 255)' : color(toolBarColorType.black);
 
-  return <div>{`行：${tool.rows}，列：${tool.columns}`}</div>;
+  return <div style={{ color: fontColor }}>{`行：${tool.rows}，列：${tool.columns}`}</div>;
 };
 export default SelectRange;

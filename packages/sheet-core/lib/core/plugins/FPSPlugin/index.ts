@@ -1,6 +1,7 @@
 import Base from '../../base/base';
 import { throttle } from '../../../utils';
 import { PluginTypeEnum } from '..';
+import { RenderZIndex } from 'lib/core/base/constant';
 
 export default class FPSPlugin {
   private _this: Base;
