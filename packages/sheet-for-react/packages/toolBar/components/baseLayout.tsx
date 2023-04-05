@@ -1,4 +1,4 @@
-import { ToolsGroupType, colorType } from 'kgsheet';
+import { ToolsGroupType, toolBarColorType } from 'kgsheet';
 import React, { useContext, useMemo } from 'react';
 import { SheetContext } from '../..';
 import Group from './group';
@@ -18,7 +18,7 @@ export default function BaseLayout({ toolBars }: Props) {
         result.push(
           <span
             className='kgsheet_toolBar_line'
-            style={{ borderLeft: `1px solid ${toolBar.getColor(colorType.black)}` }}
+            style={{ borderLeft: `1px solid ${toolBar.getColor(toolBarColorType.black)}` }}
             key={'line_' + tool.key}></span>,
         );
     });

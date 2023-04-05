@@ -7,7 +7,7 @@ import { EventConstant } from '../base/event';
 import { throttleByRequestAnimationFrame, isNN } from '../../../utils';
 import { judgeOver } from '../../../utils';
 import { PluginTypeEnum } from '..';
-import { RectType } from '../../base/drawLayer';
+import { ColorType, RectType } from '../../base/drawLayer';
 export default class ScrollPlugin {
   private _this: Base;
   public name: string;
@@ -211,15 +211,15 @@ export default class ScrollPlugin {
     if (this._this.width < contentWidth) {
       this.scrollBarXW = Math.max(10, (this._this.width * this._this.width) / contentWidth);
       const percentX = this._this.scrollLeft / maxWidth;
-      ctx.fillStyle = this._this.color('white');
+      ctx.fillStyle = this._this.getColor(ColorType.white);
       ctx.lineWidth = 1;
-      ctx.strokeStyle = this._this.color('line');
+      ctx.strokeStyle = this._this.getColor(ColorType.line);
       ctx.beginPath();
       ctx.moveTo(0, YTop);
       ctx.lineTo(this._this.width, YTop);
       ctx.stroke();
       ctx.fillRect(0, YTop, this._this.width, this._this.scrollBarWidth);
-      ctx.fillStyle = this._this.color('scrollBar');
+      ctx.fillStyle = this._this.getColor(ColorType.scrollBar);
 
       this.Xxywh = [
         (this._this.width -
@@ -238,15 +238,15 @@ export default class ScrollPlugin {
     if (this._this.height < contentHeight) {
       this.scrollBarYW = Math.max(10, (this._this.height * this._this.height) / contentHeight);
       const percentY = this._this.scrollTop / maxHeight;
-      ctx.fillStyle = this._this.color('white');
+      ctx.fillStyle = this._this.getColor(ColorType.white);
       ctx.lineWidth = 1;
-      ctx.strokeStyle = this._this.color('line');
+      ctx.strokeStyle = this._this.getColor(ColorType.line);
       ctx.beginPath();
       ctx.moveTo(XLeft, 0);
       ctx.lineTo(XLeft, YTop + this._this.scrollBarWidth);
       ctx.stroke();
       ctx.fillRect(XLeft, 0, this._this.scrollBarWidth, this._this.height);
-      ctx.fillStyle = this._this.color('scrollBar');
+      ctx.fillStyle = this._this.getColor(ColorType.scrollBar);
 
       this.Yxywh = [
         XLeft,

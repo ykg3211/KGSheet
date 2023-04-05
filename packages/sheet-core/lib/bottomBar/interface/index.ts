@@ -11,7 +11,7 @@ export interface config {
 
 export interface ToolsProps {
   sheet: Excel;
-  toolBar: Base;
+  bottomBar: Base;
   key: string;
 }
 

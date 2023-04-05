@@ -3,7 +3,7 @@ import Render from './render';
 import Plugins, { PluginType, PluginTypeEnum } from '../plugins';
 import { dispatchEventType, setEventType, clearEventType } from '../plugins/base/EventDispatch';
 import { deepClone, judgeCross, judgeOver } from '../../utils';
-import { RectType } from './drawLayer';
+import { ColorType, RectType } from './drawLayer';
 import { CellCornerScopeType } from '../plugins/SelectAndInput/EditCellPlugin';
 import { ExcelConfig, BaseSheetSetting, SpanCell, RenderCellProps } from '../../interfaces';
 import ToolBar from '../../toolBar';
@@ -79,11 +79,11 @@ class Base extends Render {
 
   private initDarkMode() {
     if (this.canvasDom) {
-      this.canvasDom.style.backgroundColor = this.color('white');
+      this.canvasDom.style.backgroundColor = this.getColor(ColorType.white);
     }
     this.on(EventConstant.DARK_MODE_CHANGE, () => {
       if (this.canvasDom) {
-        this.canvasDom.style.backgroundColor = this.color('white');
+        this.canvasDom.style.backgroundColor = this.getColor(ColorType.white);
       }
     });
   }

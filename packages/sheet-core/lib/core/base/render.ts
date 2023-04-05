@@ -2,7 +2,7 @@
 import { BaseSheetSetting, CellStyle, CellTypeEnum, ExcelConfig, RenderCellProps, SpanCell } from '../../interfaces';
 import { RenderZIndex } from './constant';
 import createBaseConfig from '../../utils/defaultData';
-import DrawLayer from './drawLayer';
+import DrawLayer, { ColorType } from './drawLayer';
 import { getABC, throttleByRequestAnimationFrame } from '../../utils';
 import { EventConstant } from '../plugins/base/event';
 
@@ -145,7 +145,6 @@ export default class Render extends DrawLayer {
     const cssHeight = dom.clientHeight;
     this.width = cssWidth;
     this.height = cssHeight;
-    console.log(cssWidth);
     this.canvasDom.style.width = cssWidth + 'px';
     this.canvasDom.style.height = cssHeight + 'px';
 
@@ -235,7 +234,7 @@ export default class Render extends DrawLayer {
                 row: rIndex,
                 column: cIndex,
               },
-              point: point.slice(),
+              point: point.slice() as [number, number],
               cell: column as SpanCell,
               w: this.data.w[cIndex],
               h: this.data.h[rIndex],
@@ -337,7 +336,7 @@ export default class Render extends DrawLayer {
           row: y,
           column: x,
         },
-        point,
+        point: point as [number, number],
         cell: cell,
         w: _w,
         h: _h,
@@ -396,8 +395,8 @@ export default class Render extends DrawLayer {
     let x = point[0];
     let y = point[1];
     const baseStyle: CellStyle = {
-      backgroundColor: this.color('sideBar'),
-      fontColor: this.color('black'),
+      backgroundColor: this.getColor(ColorType.sideBar),
+      fontColor: this.getColor(ColorType.black),
       textAlign: 'center',
     };
     if (r === startRIndex && c === startCIndex) {
@@ -475,6 +474,8 @@ export default class Render extends DrawLayer {
     };
   }
   public scrollXY(deltaX: number, deltaY: number) {
+    deltaX = deltaX / this.scale;
+    deltaY = deltaY / this.scale;
     const { width: maxWidth, height: maxHeight } = this.getMaxScrollBound();
     if (this.scrollLeft + deltaX < 0 || this.contentWidth + this.paddingLeft + this.overGapWidth - this.width < 0) {
       this.scrollLeft = 0;

@@ -7,6 +7,7 @@ export type BarSettingType = Array<ToolsGroupConfig<ToolsEnum>>;
 
 export interface config {
   barSetting?: BarSettingType;
+  shadowInput?: boolean;
 }
 
 export interface ToolsProps {

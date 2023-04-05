@@ -2,7 +2,7 @@ import Excel from '../core';
 import Base from './base';
 import { config } from './interface';
 import { ToolsPluginTypeEnum } from './plugins';
-import { colorType } from './plugins/DarkMode';
+import { toolBarColorType } from './plugins/DarkMode';
 
 interface ToolBarType {
   sheet: Excel;
@@ -19,7 +19,7 @@ class ToolBar extends Base {
     return this.Tools;
   }
 
-  public getColor(name: colorType) {
+  public getColor(name: toolBarColorType) {
     return this.getPlugin(ToolsPluginTypeEnum.DarkMode)?.color(name);
   }
 }

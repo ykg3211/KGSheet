@@ -1,37 +1,45 @@
+import { ColorType } from '../../../core/base/drawLayer';
 import { PluginTypeEnum } from '..';
 import { Cell } from '../../../interfaces';
 import { debounce, deepClone, judgeCellType, judgeCross } from '../../../utils';
 import Base, { BaseDataType, SelectedCellType } from '../../base/base';
-import { EventConstant } from '../base/event';
+import { EventConstant, ToolsEventConstant } from '../base/event';
 import ExcelBaseFunction from '../EventStack';
 import KeyboardPlugin from '../KeyboardPlugin';
 import { CONTENT_KEYS, META, OPERATE_KEYS_ENUM } from '../KeyboardPlugin/constant';
 
 export class InputDom {
-  private DOM: HTMLTextAreaElement;
+  public DOM: HTMLTextAreaElement;
   private _this: Base;
   private cell: SelectedCellType;
   private ExcelBaseFunction!: ExcelBaseFunction;
-  private KeyboardPlugin!: KeyboardPlugin;
   private minHeight!: number;
   private minWidth!: number;
   private enterEvent!: () => void;
+  private isEnableCommand: boolean;
 
-  constructor(_this: Base, data: Cell, cell: SelectedCellType) {
+  constructor(
+    _this: Base,
+    data: Cell,
+    cell: SelectedCellType,
+    config?: {
+      needFocus?: boolean;
+    },
+  ) {
     this._this = _this;
     this.DOM = document.createElement('textarea');
     this.cell = cell;
+    this.isEnableCommand = false;
     this.setCommonStyle(data);
     this.stopPropagation();
     this.initPlugin();
+    this.initPower();
     this.handleDomValue(data);
 
     (this._this.canvasDom as HTMLElement).parentElement?.appendChild(this.DOM);
 
-    this.registerKeyboardEvent();
-
     setTimeout(() => {
-      this.DOM?.focus();
+      config?.needFocus && this.DOM?.focus();
     }, 0);
   }
 
@@ -42,26 +50,6 @@ export class InputDom {
     } else {
       console.error('InputDom 依赖于 ExcelBaseFunction, 请正确注册插件!');
     }
-
-    const KeyboardPlugin = this._this.getPlugin(PluginTypeEnum.KeyboardPlugin);
-    if (KeyboardPlugin) {
-      this.KeyboardPlugin = KeyboardPlugin;
-      this.enterEvent = this._enterEvent.bind(this);
-    } else {
-      console.error('InputDom 依赖于 KeyboardPlugin, 请正确注册插件!');
-    }
-  }
-
-  private registerKeyboardEvent() {
-    this.KeyboardPlugin.register({
-      baseKeys: [META],
-      mainKeys: [OPERATE_KEYS_ENUM.Enter],
-      callbacks: [this.enterEvent],
-    });
-  }
-
-  private _enterEvent() {
-    console.log(1);
   }
 
   public inputInDom(mainKeys: any) {
@@ -71,7 +59,9 @@ export class InputDom {
   private setCommonStyle(cell: Cell) {
     const cellStyle = cell.style;
 
-    this.DOM.style.backgroundColor = cellStyle.backgroundColor ? cellStyle.backgroundColor : this._this.color('white');
+    this.DOM.style.backgroundColor = cellStyle.backgroundColor
+      ? cellStyle.backgroundColor
+      : this._this.getColor(ColorType.white);
     Object.keys(cellStyle).forEach((key) => {
       // @ts-ignore
       this.DOM.style[key] = cellStyle[key];
@@ -81,7 +71,7 @@ export class InputDom {
     this.DOM.style.fontSize = (cellStyle.fontSize || 12) * this._this.scale + 'px';
     this.DOM.style.fontWeight = cellStyle.fontWeight || 'normal';
     this.DOM.style.textAlign = cellStyle.textAlign || '';
-    this.DOM.style.color = cellStyle.fontColor || this._this.color('black');
+    this.DOM.style.color = cellStyle.fontColor || this._this.getColor(ColorType.black);
     this.DOM.style.position = 'absolute';
     this.DOM.style.top = '0px';
     this.DOM.style.left = '0px';
@@ -97,7 +87,7 @@ export class InputDom {
     this.DOM.style.textDecoration = textDecoration.join(' ');
 
     // 光标颜色
-    this.DOM.style.caretColor = this._this.color('black');
+    this.DOM.style.caretColor = this._this.getColor(ColorType.black);
   }
 
   private setSize({ width, height }: { width?: number; height?: number }) {
@@ -187,15 +177,14 @@ export class InputDom {
       if (typeof newV === 'string') {
         this.DOM.value = newV;
         originData.content = newV;
-        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       } else {
         originData.content = this.DOM.value;
-        originData.type = judgeCellType(originData.content);
         setEventStack(this.DOM.value);
       }
 
       this.calcWidthHeight();
+      this._this.ToolBar?.emit(ToolsEventConstant.SET_SHADOW_INPUT, this.DOM.value);
       this._this.emit(EventConstant.SELECT_CELL_MOVE_TO_VIEW);
     };
   }
@@ -242,11 +231,19 @@ export class InputDom {
     this.DOM.removeEventListener('keydown', this._stopPropagation_arrow);
     this.DOM.removeEventListener('keyup', this._stopPropagation_arrow);
 
-    this.KeyboardPlugin.uninstall({
-      baseKeys: [],
-      mainKeys: [OPERATE_KEYS_ENUM.Enter],
-      callbacks: [this.enterEvent],
-    });
     this.DOM.remove();
+  }
+
+  private initPower() {
+    const cb = (e: KeyboardEvent) => {
+      if (e.key === META) {
+        this.isEnableCommand = e.type === 'keydown';
+      }
+      if (this.isEnableCommand && e.key === OPERATE_KEYS_ENUM.Enter && e.type === 'keydown') {
+        this.DOM.value += '\n';
+      }
+    };
+    this.DOM.addEventListener('keydown', cb.bind(this));
+    this.DOM.addEventListener('keyup', cb.bind(this));
   }
 }

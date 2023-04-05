@@ -1,6 +1,5 @@
-import { ToolsGroupType, colorType } from 'kgsheet';
-import React, { useContext, useMemo } from 'react';
-import { SheetContext } from '../..';
+import React from 'react';
+import { ToolsGroupType } from 'kgsheet';
 import Tools from './tools';
 
 interface Props {
@@ -8,15 +7,6 @@ interface Props {
 }
 
 export default function Group({ group }: Props) {
-  const { toolBar, flag } = useContext(SheetContext);
-
-  const fontColor = useMemo<string>(() => {
-    if (toolBar) {
-      return toolBar.getColor(colorType.black);
-    }
-    return 'rgba(0,0,0,0)';
-  }, [flag, toolBar]);
-
   if (group.tools.length === 1) {
     return (
       <div className='kgsheet_toolBar_group_no_warp'>

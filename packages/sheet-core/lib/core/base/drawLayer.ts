@@ -13,31 +13,34 @@ export function clipCell(ctx: CanvasRenderingContext2D, position: RectType, rend
   ctx.restore();
 }
 
-export interface colorType {
-  white: string;
-  black: string;
-  sideBar: string;
-  scrollBar: string;
-  babfc3: string;
-  line: string;
+export enum ColorType {
+  white = 'white',
+  black = 'black',
+  sideBar = 'sideBar',
+  scrollBar = 'scrollBar',
+  babfc3 = 'babfc3',
+  line = 'line',
+  gray = 'gray',
 }
 
-export const darkColorSum: colorType = {
-  white: '#0a0c0b',
-  black: '#ffffff',
-  sideBar: '#202121',
-  scrollBar: '#4f5150',
-  babfc3: '#3a3c3b',
-  line: '#313232',
+export const DarkColorSum: Record<ColorType, string> = {
+  [ColorType.white]: '#0a0c0b',
+  [ColorType.black]: '#ffffff',
+  [ColorType.sideBar]: '#202121',
+  [ColorType.scrollBar]: '#4f5150',
+  [ColorType.babfc3]: '#3a3c3b',
+  [ColorType.line]: '#313232',
+  [ColorType.gray]: '#4f4f4f',
 };
 
-export const lightColorSum: colorType = {
-  white: '#ffffff',
-  black: '#0a0c0b',
-  sideBar: '#f4f5f6',
-  scrollBar: '#dadada',
-  babfc3: '#babfc3',
-  line: '#dee0e2',
+export const LightColorSum: Record<ColorType, string> = {
+  [ColorType.white]: '#ffffff',
+  [ColorType.black]: '#0a0c0b',
+  [ColorType.sideBar]: '#f4f5f6',
+  [ColorType.scrollBar]: '#dadada',
+  [ColorType.babfc3]: '#babfc3',
+  [ColorType.line]: '#dee0e2',
+  [ColorType.gray]: '#d3d3d3',
 };
 
 export default class DrawLayer extends BaseEvent {
@@ -98,15 +101,15 @@ export default class DrawLayer extends BaseEvent {
     }
   }
 
-  public color(name: keyof colorType, needReverse: boolean = false) {
+  public getColor(name: ColorType, needReverse: boolean = false) {
     if (this.darkMode && !needReverse) {
-      return darkColorSum[name] || '';
+      return DarkColorSum[name] || '';
     }
-    return lightColorSum[name] || '';
+    return LightColorSum[name] || '';
   }
 
   public initStrokeStyle(ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = this.color('line');
+    ctx.strokeStyle = this.getColor(ColorType.line);
     ctx.lineWidth = 1;
   }
 
@@ -153,7 +156,7 @@ export default class DrawLayer extends BaseEvent {
     }
 
     // 绘制左上角的小三角
-    this.ctx.fillStyle = this.color('babfc3');
+    this.ctx.fillStyle = this.getColor(ColorType.babfc3);
     this.ctx.beginPath();
     const initPoint = [props.point[0] + props.w - 2, props.point[1] + props.h - 2];
     this.ctx.moveTo(initPoint[0], initPoint[1]);

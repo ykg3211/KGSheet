@@ -1,6 +1,13 @@
 var fs = require('fs');
 
+// start build
 const args = process.argv[2];
+
+if (!['start', 'build'].includes(args)) {
+  console.log('Please enter start or build.');
+  return;
+}
+
 const map = {
   sheetForCore: {
     path: './packages/sheet-core/package.json',
@@ -27,7 +34,6 @@ const map = {
 };
 
 Object.values(map).forEach((package) => {
-  console.log(package.path);
   const file = fs.readFileSync(package.path, {
     encoding: 'utf-8',
   });
@@ -37,6 +43,5 @@ Object.values(map).forEach((package) => {
   Object.entries(changes).forEach(([key, value]) => {
     targetFile[key] = value;
   });
-
-  fs.writeFileSync(package.path, JSON.stringify(targetFile, '  '));
+  fs.writeFileSync(package.path, JSON.stringify(targetFile, undefined, '  '));
 });

@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from 'react';
-import { OptionBase, colorType } from 'kgsheet';
+import { OptionBase, toolBarColorType } from 'kgsheet';
 import { Tooltip } from 'antd';
 import { SheetContext } from '../../..';
 import Popover from '../../../components/popover';
@@ -30,16 +30,16 @@ const OptionsTool = ({ tool, toolTipPlacement = 'top' }: Props) => {
           onOpenChange={(v) => {
             setVisible(v);
           }}
-          color={getColor(colorType.white)}
+          color={getColor(toolBarColorType.white)}
           triggerElm={
             <div
               className={'kgsheet_base_btn kgsheet_option' + (tool.disabled ? ' kgsheet_btn_disabled' : '')}
-              style={{ color: getColor(colorType.black), width: '80px' }}>
+              style={{ color: getColor(toolBarColorType.black), width: '80px' }}>
               <span>{tool.valueLabel}</span>
-              <Icon fontSize={16} icon='sheet-iconarrow-down' color={getColor(colorType.black)}></Icon>
+              <Icon fontSize={16} icon='sheet-iconarrow-down' color={getColor(toolBarColorType.black)}></Icon>
             </div>
           }>
-          <div style={{ color: getColor(colorType.black) }}>
+          <div style={{ color: getColor(toolBarColorType.black) }}>
             {tool.options.map((v) => (
               <div
                 className={

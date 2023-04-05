@@ -4,11 +4,17 @@ import createDefaultData, { createDefaultCell } from './utils/defaultData';
 
 export default Excel;
 
+export { ColorType as colorType } from './core/base/drawLayer';
+
 export { ToolBar, createDefaultData, createDefaultCell };
 
 export * from './core/plugins/base/event';
 
-export { colorType } from './toolBar/plugins/DarkMode';
+export { toolBarColorType } from './toolBar/plugins/DarkMode';
+
+export { colorType as bottomBarColorType } from './bottomBar/plugins/DarkMode';
+
+export { SelectRange } from './bottomBar/tools/SelectRange';
 
 export type { ToolsGroupType } from './toolBar/interface';
 
@@ -27,3 +33,5 @@ export { default as ColorBase } from './toolBar/tools/base/colorBase';
 export type { SheetSetting, BaseSheetSetting, ExcelConfig, Cell } from './interfaces';
 
 export type { ShowPanelProps } from './core/plugins/RightClickPanel/interface';
+
+export { getABC } from './utils';

@@ -3,11 +3,12 @@ import { ToolsProps } from '../../interface';
 export enum ToolTypeEnum {
   BUTTON = 'button',
   ZOOM = 'zoom',
+  SELECT_RANGE = 'select_range',
 }
 
 export class BaseTool {
   protected sheet: ToolsProps['sheet'];
-  protected toolBar: ToolsProps['toolBar'];
+  protected bottomBar: ToolsProps['bottomBar'];
   public type!: ToolTypeEnum;
   public icon: string;
   public label: string;
@@ -18,9 +19,9 @@ export class BaseTool {
   public active: boolean;
   public disabled: boolean;
 
-  constructor({ sheet, toolBar, key }: ToolsProps) {
+  constructor({ sheet, bottomBar: toolBar, key }: ToolsProps) {
     this.sheet = sheet;
-    this.toolBar = toolBar;
+    this.bottomBar = toolBar;
 
     this.key = key;
     this.active = false;

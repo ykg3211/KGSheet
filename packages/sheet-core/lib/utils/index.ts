@@ -150,7 +150,7 @@ export const isSameArray: (array_1: Array<any>, array_2: Array<any>) => boolean 
 
 export function throttle(func: any, t: number) {
   let ready: boolean = true;
-  let time: null | number = null;
+  let time: any = null;
   return (...arg: any) => {
     if (time) {
       clearTimeout(time);
@@ -170,7 +170,7 @@ export function throttle(func: any, t: number) {
 }
 
 export function debounce(func: any, t: number) {
-  let time: null | number = null;
+  let time: any = null;
   return (...arg: any) => {
     if (time) {
       clearTimeout(time);
@@ -256,9 +256,24 @@ export function clickOutSide(_dom: string | HTMLElement, e: MouseEvent) {
   return true;
 }
 
-export const judgeCellType = (v: string): CellTypeEnum => {
-  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+export const judgeCellType = (cell: Cell): CellTypeEnum => {
+  const { content } = cell;
+
+  if (content !== '' && !isNaN(Number(content))) {
+    return CellTypeEnum.number;
+  } else if (judgeIsUrl(content)) {
+    if (['svg', 'png', 'jpg', 'jpeg'].includes((content.split('.').pop() || '').toLocaleLowerCase())) {
+      return CellTypeEnum.image;
+    }
     return CellTypeEnum.url;
   }
-  return CellTypeEnum.text;
+
+  return cell.type;
+};
+
+export const judgeIsUrl = (v: string): boolean => {
+  if (new RegExp(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`).test(v)) {
+    return true;
+  }
+  return false;
 };

@@ -52,7 +52,7 @@ export interface RenderCellProps {
     row: number;
     column: number;
   };
-  point: number[];
+  point: [number, number];
   cell: SpanCell;
   w: number;
   h: number;
@@ -63,6 +63,7 @@ export type RenderCellPropsNoLocation = Pick<RenderCellProps, 'point' | 'cell' |
 export interface BaseSheetSetting {
   dom: HTMLElement | string;
   devMode?: boolean;
+  fps?: boolean;
   darkMode?: boolean | 'auto';
   readOnly?: boolean;
   message?: (v: { type: 'info' | 'success' | 'error' | 'warning'; message: string }) => void;

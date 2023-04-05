@@ -1,7 +1,7 @@
 import { judgeCellType } from '.';
 import { ExcelConfig, Cell, CellStyle, CellTypeEnum } from '../interfaces';
-const BASE_WIDTH = 120;
-const BASE_HEIGHT = 40;
+export const BASE_WIDTH = 120;
+export const BASE_HEIGHT = 40;
 export const splitSymbol = '_';
 export const createDefaultStyle = () => {
   const result: CellStyle = {
@@ -15,7 +15,7 @@ export const createDefaultCell = (content = '', cellType?: CellTypeEnum) => {
   const result: Cell = {
     style: createDefaultStyle(),
     content: content || '',
-    type: cellType || judgeCellType(content),
+    type: cellType || judgeCellType({ content, type: cellType || 'text' } as any),
   };
   return result;
 };

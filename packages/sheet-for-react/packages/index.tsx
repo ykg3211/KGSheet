@@ -8,32 +8,31 @@ import Excel, {
   ToolBar,
   BusinessEventConstant,
   ToolsEventConstant,
-  colorType,
+  toolBarColorType,
   ExcelConfig,
   SheetSetting,
   BottomBar,
 } from 'kgsheet';
 import 'antd/dist/antd.css';
 import message from 'antd/lib/message';
-
-export * from 'kgsheet';
-
 import RightPanel from './rightPanel';
+
+import './index.css';
 
 interface Sheet {
   flag: number;
-  color: (name: colorType) => string;
-  sheet: Excel;
+  color: (name: toolBarColorType) => string;
+  sheet: Excel | null;
   setSheet: (v: Excel) => void;
-  toolBar: ToolBar;
-  bottomBar: BottomBar;
+  toolBar: ToolBar | null;
+  bottomBar: BottomBar | null;
   setToolBar: (v: ToolBar) => void;
 }
 
 export const SheetContext = React.createContext<Sheet>({
   flag: 0,
   sheet: null,
-  color: (name: colorType) => name,
+  color: (name: toolBarColorType) => name,
   setSheet: () => {},
   toolBar: null,
   bottomBar: null,
@@ -70,7 +69,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
   }, [setFlag]);
 
   const getColor = useCallback(
-    (v: colorType) => {
+    (v: toolBarColorType) => {
       if (!toolBar) {
         return v;
       }
@@ -82,6 +81,8 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
 
   useEffect(() => {
     if (sheet) {
+      // @ts-ignore
+      window.sheet = sheet;
       sheet.on(ToolsEventConstant.REFRESH, refresh);
       sheet.on(BusinessEventConstant.MSG_BOX, ({ type, message: msg }) => {
         if (config.message) {
@@ -102,7 +103,7 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
     if (sheet && !toolBar) {
       const instance = new ToolBar({
         sheet,
-        // config: {},
+        config,
       });
       setToolBar(instance);
 
@@ -156,3 +157,4 @@ const Main = React.forwardRef<RefType, SheetProps>(({ defaultData, config }, ref
 });
 
 export default Main;
+export * from 'kgsheet';
