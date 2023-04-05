@@ -163,15 +163,7 @@ class Base extends Render {
    * 判断cell来是不是一个spanCell内部的，并且返回spanCell
    * 默认是在当前视图内的。
    */
-  public getSpanCellByCell({
-    cell,
-    cellScope,
-    isInView = true,
-  }: {
-    cell?: SelectedCellType | null;
-    cellScope?: CellCornerScopeType;
-    isInView?: boolean;
-  }) {
+  public getSpanCellByCell({ cell, cellScope, isInView = true }: { cell?: SelectedCellType | null; cellScope?: CellCornerScopeType; isInView?: boolean }) {
     cellScope = deepClone(cellScope);
     if (!cell && !cellScope) {
       return {
@@ -212,12 +204,7 @@ class Base extends Render {
     let isSpan = false;
     let result: SelectedCellType[] = [];
     source.forEach((c) => {
-      if (
-        judgeCross(
-          [c.location.column, c.location.row, c.span[0], c.span[1]],
-          [(cell as SelectedCellType).column, (cell as SelectedCellType).row, w, h],
-        )
-      ) {
+      if (judgeCross([c.location.column, c.location.row, c.span[0], c.span[1]], [(cell as SelectedCellType).column, (cell as SelectedCellType).row, w, h])) {
         isSpan = true;
         result.push({
           row: c.location.row,
@@ -232,15 +219,7 @@ class Base extends Render {
     };
   }
 
-  public judgeCellsCrossSpanCell({
-    cellScope,
-    isInView = true,
-    except,
-  }: {
-    cellScope: CellCornerScopeType;
-    isInView?: boolean;
-    except?: string[];
-  }) {
+  public judgeCellsCrossSpanCell({ cellScope, isInView = true, except }: { cellScope: CellCornerScopeType; isInView?: boolean; except?: string[] }) {
     let source: (SpanCell & {
       location: SelectedCellType;
     })[] = [];
@@ -425,12 +404,7 @@ class Base extends Render {
       if (
         judgeCross(
           [column, row, spanCell.span[0], spanCell.span[1]],
-          [
-            leftTopCell.column,
-            leftTopCell.row,
-            rightBottomCell.column - leftTopCell.column + 1,
-            rightBottomCell.row - leftTopCell.row + 1,
-          ],
+          [leftTopCell.column, leftTopCell.row, rightBottomCell.column - leftTopCell.column + 1, rightBottomCell.row - leftTopCell.row + 1],
         )
       ) {
         spanCells[key] = this._data.spanCells[key];
@@ -453,6 +427,24 @@ class Base extends Render {
       },
       data: result,
     } as BaseDataType;
+  }
+
+  public getSpanCellsByRowColumns(isRow: boolean, index: number): Record<string, SpanCell> {
+    const result: Record<string, SpanCell> = {};
+    Object.entries(this.data.spanCells).forEach(([key, value]) => {
+      const [row, column] = key.split('_').map(Number);
+      const { span } = value;
+
+      if (isRow && row < index && row + span[1] > index) {
+        result[key] = value;
+      }
+
+      if (!isRow && column < index && column + span[0] > index) {
+        result[key] = value;
+      }
+    });
+
+    return result;
   }
 
   /**

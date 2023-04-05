@@ -752,20 +752,30 @@ export default class EditCellPlugin {
         return;
       }
 
-      const cells = this._this.getDataByScope(selectedCells)?.data.cells;
+      if (Object.keys(this._this.getSpanCellsByRowColumns(true, this.latestRowsColumns)).length > 0) {
+        this.startMoveCells = null;
+        this.latestRowsColumns = null;
+        this._this.emit(BusinessEventConstant.MSG_BOX, {
+          type: 'warning',
+          message: '无法拖拽，拖拽的目标区域有合并的单元格',
+        });
+        return;
+      }
+
+      const excel = this._this.getDataByScope(selectedCells)?.data;
 
       this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.addRemoveRowsColumns([
         {
           isAdd: false,
           isRow,
           index: originIndex,
-          cells,
+          excel,
         },
         {
           isAdd: true,
           isRow,
           index: (this.latestRowsColumns -= originIndex < this.latestRowsColumns ? 1 : 0),
-          cells,
+          excel,
         },
       ]);
 

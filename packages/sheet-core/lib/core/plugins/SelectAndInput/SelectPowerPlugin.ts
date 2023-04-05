@@ -618,6 +618,7 @@ export default class SelectPowerPlugin {
     if (!this._endCell) {
       return;
     }
+    return;
     const that = this._this;
     const [x, y, w, h] = this._this.getRectByCell(this._endCell);
     const width = that.width - that.paddingLeft - that.scrollBarWidth;
