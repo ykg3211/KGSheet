@@ -1,5 +1,6 @@
-// @ts-n ocheck
-// 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
+/**
+ * 类型值和方法是protected，插件能用到但是会报错，所以插件都不提示
+ */
 
 import Base from '../../base/base';
 import { EventZIndex, RenderZIndex } from '../../base/constant';
@@ -13,8 +14,15 @@ export default class ScrollPlugin {
   public name: string;
   private scrollBarXW: number;
   private scrollBarYW: number;
-  private Xxywh: RectType; // X轴滚动块的坐标
-  private Yxywh: RectType; // Y轴滚动块的坐标
+
+  /**
+   * X轴滚动块的坐标
+   */
+  private Xxywh: RectType;
+  /**
+   * Y轴滚动块的坐标
+   */
+  private Yxywh: RectType;
 
   constructor(_this: Base) {
     this._this = _this;
@@ -79,7 +87,9 @@ export default class ScrollPlugin {
     });
   }
 
-  // 初始化拖拽滚动条的逻辑；
+  /**
+   * 初始化拖拽滚动条的逻辑
+   */
   private initDragScroll() {
     let XMouseDownOriginX: number | null = null;
     let YMouseDownOriginY: number | null = null;

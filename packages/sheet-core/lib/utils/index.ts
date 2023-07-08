@@ -181,6 +181,9 @@ export function debounce(func: any, t: number) {
   };
 }
 
+/**
+ * 用于计算ABCD-XYZ --->  AA AB
+ */
 export function getABC(num: number): string {
   const result: number[] = [];
   if (num === 0) {
