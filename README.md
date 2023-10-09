@@ -149,5 +149,10 @@ npm install -g @microsoft/rush@5.83.1
 
 rush update
 
+// Mac 下直接跑
+npm run start
+
+// Win 下
+cd .\packages\react-demo\
 npm run start
 ```
