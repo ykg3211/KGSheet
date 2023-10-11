@@ -497,4 +497,37 @@ export default class Render extends DrawLayer {
     }
     this.render();
   }
+
+  public drawRowColumnBorder({ ctx, isRow, index }: { ctx: CanvasRenderingContext2D; isRow: boolean; index: number }) {
+    ctx.save();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#3370FF';
+    if (isRow) {
+      const startRow = this.renderCellsArr[0][0].location.row;
+      if (!this.renderCellsArr[index - startRow + 1]) {
+        return;
+      }
+      const point = this.renderCellsArr[index - startRow + 1][0].point;
+      const width = this.renderCellsArr[index - startRow + 1].map((cell) => cell.w).reduce((a, b) => a + b, 0);
+
+      ctx.beginPath();
+      ctx.moveTo(...point);
+      ctx.lineTo(point[0] + width, point[1]);
+      ctx.stroke();
+    } else {
+      const startColumn = this.renderCellsArr[0][0].location.column;
+      if (!this.renderCellsArr[0][index - startColumn + 1]) {
+        return;
+      }
+      const point = this.renderCellsArr[0][index - startColumn + 1].point;
+      const height = this.renderCellsArr.map((cells) => cells[0].h).reduce((a, b) => a + b, 0);
+
+      ctx.beginPath();
+      ctx.moveTo(...point);
+      ctx.lineTo(point[0], point[1] + height);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
 }

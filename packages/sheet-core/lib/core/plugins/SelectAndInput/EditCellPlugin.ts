@@ -13,9 +13,16 @@ import { BASE_KEYS_ENUM, CONTENT_KEYS, FN_KEY, OPERATE_KEYS_ENUM } from '../Keyb
 import SelectPowerPlugin, { selectTypeEnum } from './SelectPowerPlugin';
 import { InputDom } from './InputDom';
 import { handleRegularData, regularArrowEnum } from './regularFunc';
+
 export interface CellCornerScopeType {
   leftTopCell: SelectedCellType;
   rightBottomCell: SelectedCellType;
+}
+
+export interface MoveCellsType {
+  isRow: boolean;
+  index: number;
+  length: number;
 }
 
 export default class EditCellPlugin {
@@ -34,6 +41,9 @@ export default class EditCellPlugin {
   private endRegularCell!: null | CellCornerScopeType; // 这个是用户拖拽单元格右下角结束的标志， 用处就是有规则的扩展单元格
   private currentCell!: null | SelectedCellType; // 拖拽的时候鼠标的落点，用于计算的
   private regularArrow!: regularArrowEnum; // 拖拽的时候鼠标的落点，用于计算的
+
+  private startMoveCells!: null | MoveCellsType; // 这个是批量拖动cells的标志。
+  private latestRowsColumns!: null | number; // 最新的行列
 
   private resetParams: any;
   constructor(_this: Base) {
@@ -101,10 +111,7 @@ export default class EditCellPlugin {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
           const mirror = deepClone(this.SelectPlugin.selectCell);
-          const nextCell = this.SelectPlugin.getNextCellByMove(
-            mirror,
-            isLeft ? OPERATE_KEYS_ENUM.ArrowLeft : OPERATE_KEYS_ENUM.ArrowRight,
-          );
+          const nextCell = this.SelectPlugin.getNextCellByMove(mirror, isLeft ? OPERATE_KEYS_ENUM.ArrowLeft : OPERATE_KEYS_ENUM.ArrowRight);
 
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
@@ -139,10 +146,7 @@ export default class EditCellPlugin {
         this.removeDom();
         if (this.SelectPlugin.selectCell) {
           const mirror = deepClone(this.SelectPlugin.selectCell);
-          const nextCell = this.SelectPlugin.getNextCellByMove(
-            mirror,
-            isUp ? OPERATE_KEYS_ENUM.ArrowUp : OPERATE_KEYS_ENUM.ArrowDown,
-          );
+          const nextCell = this.SelectPlugin.getNextCellByMove(mirror, isUp ? OPERATE_KEYS_ENUM.ArrowUp : OPERATE_KEYS_ENUM.ArrowDown);
 
           this.SelectPlugin._startCell = deepClone(nextCell);
           this.SelectPlugin._endCell = deepClone(nextCell);
@@ -271,22 +275,14 @@ export default class EditCellPlugin {
             column: (startCell.column + endCell.column) / 2,
             row: (startCell.row + endCell.row) / 2,
           };
-          const columnGap = Math.max(
-            Math.abs(currentCell.column - centerTag.column) - Math.abs(startCell.column + endCell.column) / 2,
-            0,
-          );
-          const rowGap = Math.max(
-            Math.abs(currentCell.row - centerTag.row) - Math.abs(startCell.row - endCell.row) / 2,
-            0,
-          );
+          const columnGap = Math.max(Math.abs(currentCell.column - centerTag.column) - Math.abs(startCell.column + endCell.column) / 2, 0);
+          const rowGap = Math.max(Math.abs(currentCell.row - centerTag.row) - Math.abs(startCell.row - endCell.row) / 2, 0);
 
           if (columnGap >= rowGap) {
-            this.regularArrow =
-              currentCell.column > centerTag.column ? regularArrowEnum.LEFT2RIGHT : regularArrowEnum.RIGHT2LEFT;
+            this.regularArrow = currentCell.column > centerTag.column ? regularArrowEnum.LEFT2RIGHT : regularArrowEnum.RIGHT2LEFT;
             currentCell.row = endCell.row;
           } else {
-            this.regularArrow =
-              currentCell.row > centerTag.row ? regularArrowEnum.TOP2BOTTOM : regularArrowEnum.BOTTOM2TOP;
+            this.regularArrow = currentCell.row > centerTag.row ? regularArrowEnum.TOP2BOTTOM : regularArrowEnum.BOTTOM2TOP;
             currentCell.column = endCell.column;
           }
 
@@ -306,6 +302,20 @@ export default class EditCellPlugin {
             this.drawDashBorder(ctx, this._this.calBorder(leftTopCell, rightBottomCell));
           }
         }
+      },
+    ]);
+
+    this._this.addRenderFunction(RenderZIndex.BORDER_HIGH_LIGHT, [
+      (ctx) => {
+        if (!this.startMoveCells || !this.latestRowsColumns) {
+          return;
+        }
+
+        this._this.drawRowColumnBorder({
+          ctx,
+          isRow: this.startMoveCells.isRow,
+          index: this.latestRowsColumns - 1,
+        });
       },
     ]);
   }
@@ -344,48 +354,16 @@ export default class EditCellPlugin {
     const { anchor, w, h } = this.SelectPlugin._borderPosition;
     const strokeRectWidth = 4;
 
-    // 判断选择一行或者一列的情况
-    if (this.SelectPlugin.selectType === selectTypeEnum.column) {
-      if (judgeOver(point, [anchor[0], 0, w, this._this.paddingTop])) {
-        return ['cell', point];
-      }
-    } else if (this.SelectPlugin.selectType === selectTypeEnum.row) {
-      if (judgeOver(point, [0, anchor[1], this._this.paddingLeft, h])) {
-        return ['cell', point];
-      }
-    }
-
     // 判断是不是单元格内部
-    if (
-      judgeOver(point, [
-        anchor[0] + strokeRectWidth / 2,
-        anchor[1] + strokeRectWidth / 2,
-        w - strokeRectWidth,
-        h - strokeRectWidth,
-      ])
-    ) {
+    if (judgeOver(point, [anchor[0] + strokeRectWidth / 2, anchor[1] + strokeRectWidth / 2, w - strokeRectWidth, h - strokeRectWidth])) {
       return false;
     }
     // 判断是不是单元格外部
-    if (
-      !judgeOver(point, [
-        anchor[0] - strokeRectWidth / 2,
-        anchor[1] - strokeRectWidth / 2,
-        w + strokeRectWidth,
-        h + strokeRectWidth,
-      ])
-    ) {
+    if (!judgeOver(point, [anchor[0] - strokeRectWidth / 2, anchor[1] - strokeRectWidth / 2, w + strokeRectWidth, h + strokeRectWidth])) {
       return false;
     }
     // 判断是不是右下角的小框
-    if (
-      judgeOver(point, [
-        anchor[0] + w - strokeRectWidth / 2,
-        anchor[1] + h - strokeRectWidth / 2,
-        strokeRectWidth,
-        strokeRectWidth,
-      ])
-    ) {
+    if (judgeOver(point, [anchor[0] + w - strokeRectWidth / 2, anchor[1] + h - strokeRectWidth / 2, strokeRectWidth, strokeRectWidth])) {
       return ['grab', point];
     }
 
@@ -410,6 +388,7 @@ export default class EditCellPlugin {
 
     this.handleMouseDown();
     this.handleDBClick();
+    this.handleMoveRowsColumns();
     this.handleMouseMove();
     this.handleMouseUp();
   }
@@ -432,7 +411,7 @@ export default class EditCellPlugin {
 
     const originData = this._this.getRealCell(cell);
 
-    if (originData.type === CellTypeEnum.image) {
+    if (!originData || originData.type === CellTypeEnum.image) {
       return;
     }
 
@@ -558,11 +537,6 @@ export default class EditCellPlugin {
         return this.commonJudgeFunc(e);
       },
       innerFunc: handleMouseDownCursor.bind(this),
-      outerFunc: () => {
-        // if (this._this.canvasDom) {
-        //   this._this.canvasDom.style.cursor = 'default';
-        // }
-      },
     });
   }
   private handleMouseMove() {
@@ -592,6 +566,7 @@ export default class EditCellPlugin {
       },
     });
 
+    // 下面的是用来拖拽到边框自动移动的
     const handleMouseMoveCB = (e: MouseEvent) => {
       const point = this._this.transformXYInContainer(e, true);
       if (!point) {
@@ -645,6 +620,177 @@ export default class EditCellPlugin {
         return true;
       },
       innerFunc: handleMouseUp.bind(this),
+    });
+  }
+
+  // 移动行和列
+  private handleMoveRowsColumns() {
+    const commonJudgeFunc = (e: MouseEvent) => {
+      const point = this._this.transformXYInContainer(e);
+      if (!point || !this.SelectPlugin._borderPosition) {
+        return false;
+      }
+      const { anchor, w, h } = this.SelectPlugin._borderPosition;
+      if (this.SelectPlugin.selectType === selectTypeEnum.column) {
+        if (judgeOver(point, [anchor[0], 0, w, this._this.paddingTop])) {
+          return {
+            isRow: false,
+            point,
+          };
+        }
+      } else if (this.SelectPlugin.selectType === selectTypeEnum.row) {
+        if (judgeOver(point, [0, anchor[1], this._this.paddingLeft, h])) {
+          return {
+            isRow: true,
+            point,
+          };
+        }
+      }
+      return false;
+    };
+    const handleOverCursor = (
+      e: MouseEvent,
+      prop: {
+        isRow: boolean;
+        point: [number, number];
+      },
+    ) => {
+      if (this._this.canvasDom) {
+        this._this.canvasDom.style.cursor = 'grab';
+      }
+    };
+
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        return commonJudgeFunc(e);
+      },
+      innerFunc: handleOverCursor,
+      outerFunc: () => {
+        if (this._this.canvasDom) {
+          this._this.canvasDom.style.cursor = 'default';
+        }
+      },
+    });
+
+    const handleMouseDownCB = (e: MouseEvent, { isRow }: { isRow: boolean }) => {
+      if (!this.SelectPlugin.selectedCells) {
+        return;
+      }
+
+      const { leftTopCell, rightBottomCell } = this.SelectPlugin.selectedCells;
+      if (isRow) {
+        this.startMoveCells = {
+          isRow,
+          index: leftTopCell.row,
+          length: rightBottomCell.row - leftTopCell.row + 1,
+        };
+      } else {
+        this.startMoveCells = {
+          isRow,
+          index: leftTopCell.column,
+          length: rightBottomCell.column - leftTopCell.column + 1,
+        };
+      }
+    };
+    this._this.setEvent(EventConstant.MOUSE_DOWN, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        return commonJudgeFunc(e);
+      },
+      innerFunc: handleMouseDownCB,
+    });
+
+    const handleMouseMoveCB = (e: MouseEvent) => {
+      const point = this._this.transformXYInContainer(e);
+      if (!point) {
+        return;
+      }
+      let latestIndex = 0;
+      let min = Infinity;
+      if (this.startMoveCells?.isRow) {
+        this._this.renderCellsArr.forEach((cells) => {
+          const cell = cells[0];
+          const temp = Math.abs(cell.point[1] - point[1]);
+          if (temp < min) {
+            latestIndex = cell.location.row;
+            min = temp;
+          }
+        });
+      } else {
+        this._this.renderCellsArr[0].forEach((cell) => {
+          const temp = Math.abs(cell.point[0] - point[0]);
+          if (temp < min) {
+            latestIndex = cell.location.column;
+            min = temp;
+          }
+        });
+      }
+
+      this.latestRowsColumns = latestIndex;
+      this._this.getPlugin(PluginTypeEnum.CornerAutoMove)?.start();
+      this._this.render();
+    };
+    this._this.setEvent(EventConstant.MOUSE_MOVE, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        if (this.startMoveCells) {
+          return true;
+        }
+        return false;
+      },
+      innerFunc: handleMouseMoveCB,
+    });
+
+    const handleMouseUpCB = () => {
+      if (!this.startMoveCells) {
+        return;
+      }
+      const { isRow, index: originIndex, length } = this.startMoveCells;
+      const selectedCells = this._this.getPlugin(PluginTypeEnum.SelectPowerPlugin)?.getSelectCellsScope();
+      if (!selectedCells || !this.latestRowsColumns) {
+        return;
+      }
+
+      if (Object.keys(this._this.getSpanCellsByRowColumns(true, this.latestRowsColumns)).length > 0) {
+        this.startMoveCells = null;
+        this.latestRowsColumns = null;
+        this._this.emit(BusinessEventConstant.MSG_BOX, {
+          type: 'warning',
+          message: '无法拖拽，拖拽的目标区域有合并的单元格',
+        });
+        return;
+      }
+
+      const excel = this._this.getDataByScope(selectedCells)?.data;
+
+      this._this.getPlugin(PluginTypeEnum.ExcelBaseFunction)?.addRemoveRowsColumns([
+        {
+          isAdd: false,
+          isRow,
+          index: originIndex,
+          excel,
+        },
+        {
+          isAdd: true,
+          isRow,
+          index: (this.latestRowsColumns -= originIndex < this.latestRowsColumns ? 1 : 0),
+          excel,
+        },
+      ]);
+
+      this.startMoveCells = null;
+      this.latestRowsColumns = null;
+    };
+    this._this.setEvent(EventConstant.MOUSE_UP, {
+      type: EventZIndex.SELECT_TABLE_CELL,
+      judgeFunc: (e) => {
+        if (this.startMoveCells) {
+          return true;
+        }
+        return false;
+      },
+      innerFunc: handleMouseUpCB,
     });
   }
 
@@ -740,10 +886,7 @@ export default class EditCellPlugin {
       this._this.devMode && console.log('合并单元格：需要先选中单元格');
       return;
     }
-    if (
-      selectCells.rightBottomCell.column - selectCells.leftTopCell.column === 0 &&
-      selectCells.rightBottomCell.row - selectCells.leftTopCell.row === 0
-    ) {
+    if (selectCells.rightBottomCell.column - selectCells.leftTopCell.column === 0 && selectCells.rightBottomCell.row - selectCells.leftTopCell.row === 0) {
       // 只选中了一个单元格，
       this._this.devMode && console.log('合并单元格：不能只选中一个单元格');
       return;
@@ -758,9 +901,7 @@ export default class EditCellPlugin {
       originSpanCell.span[1] === selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1
     ) {
       // 取消合并
-      const originSpanCell = deepClone(
-        this._this.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column],
-      );
+      const originSpanCell = deepClone(this._this.data.spanCells[selectCells.leftTopCell.row + '_' + selectCells.leftTopCell.column]);
       // @ts-ignore
       delete originSpanCell.span;
 
@@ -796,10 +937,7 @@ export default class EditCellPlugin {
 
     // 可以合并
     const newSpanCell: SpanCell = Object.assign(deepClone(sourceData.data.cells[0][0]), {
-      span: [
-        selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1,
-        selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1,
-      ],
+      span: [selectCells.rightBottomCell.column - selectCells.leftTopCell.column + 1, selectCells.rightBottomCell.row - selectCells.leftTopCell.row + 1],
     } as {
       span: [number, number];
     });

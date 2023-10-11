@@ -20,7 +20,7 @@ export interface BaseAddRemoveRowsColumnsType extends BaseStepType {
   isAdd: boolean;
   isRow: boolean;
   index: number;
-  cells: Cell[][];
+  excel: ExcelConfig;
 }
 
 export interface RowColumnResizeType extends BaseStepType {

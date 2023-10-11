@@ -1,9 +1,9 @@
 import { PluginTypeEnum } from '..';
 import { Cell, createDefaultCell } from '../../..';
 import { BASE_HEIGHT, BASE_WIDTH } from '../../../utils/defaultData';
-import { SpanCell } from '../../../interfaces';
+import { ExcelConfig, SpanCell } from '../../../interfaces';
 import Base from '../../base/base';
-import BaseEventStack from './base';
+import BaseEventStack, { BaseEventType } from './base';
 import { EventConstant } from '../base/event';
 import { deepClone, judgeCellType } from '../../../utils';
 import { BaseAddRemoveRowsColumnsType, BaseCellChangeType, BaseCellsMoveType, RowColumnResizeType } from './interface';
@@ -92,7 +92,8 @@ export default class ExcelBaseFunction {
     ]);
   }
 
-  private baseHandleSpanCell(isAdd: boolean, isRow: boolean, index: number, length: number) {
+  private baseHandleSpanCell(prop: { isAdd: boolean; isRow: boolean; index: number; length: number }) {
+    const { isAdd, isRow, index, length } = prop;
     const deleteKeys: string[] = [];
     const newSpanCells: Record<string, SpanCell> = {};
     Object.entries(this._this.data.spanCells).forEach(([key, _value]) => {
@@ -101,14 +102,14 @@ export default class ExcelBaseFunction {
       deleteKeys.push(key);
       if (isAdd) {
         if (isRow) {
-          if (index < row) {
+          if (index <= row) {
             row += length;
           }
           if (index > row && index < row + value.span[1]) {
             value.span[1] += length;
           }
         } else {
-          if (index < column) {
+          if (index <= column) {
             column += length;
           }
           if (index > column && index < column + value.span[0]) {
@@ -141,8 +142,10 @@ export default class ExcelBaseFunction {
     this._this.data.spanCells = { ...this._this.data.spanCells, ...newSpanCells };
   }
 
-  public _addRemoveRowsColumns({ isAdd, isRow, index, cells }: BaseAddRemoveRowsColumnsType, isReverse = false) {
-    if (isAdd && !isReverse) {
+  public _addRemoveRowsColumns({ isAdd, isRow, index, excel }: BaseAddRemoveRowsColumnsType, isReverse = false) {
+    const add = isReverse ? !isAdd : isAdd;
+    const { cells } = excel;
+    if (add) {
       // 添加行列
       if (isRow) {
         this._this.data.cells.splice(index, 0, ...cells);
@@ -169,22 +172,18 @@ export default class ExcelBaseFunction {
     }
 
     const length = isRow ? cells.length : cells[0].length;
-    this.baseHandleSpanCell((isAdd = isAdd && !isReverse), isRow, index, length);
+    this.baseHandleSpanCell({ isAdd: add, isRow, index, length });
     this._this.render();
   }
 
   // 用于添加和删除整行和整列的方法
-  public addRemoveRowsColumns(props: BaseAddRemoveRowsColumnsType) {
-    this.EventStackPlugin.push(
-      [
-        {
-          params: props,
-          // @ts-ignore
-          func: this._addRemoveRowsColumns.bind(this),
-        },
-      ],
-      true,
-    );
+  public addRemoveRowsColumns(props: BaseAddRemoveRowsColumnsType[]) {
+    const events = props.map((prop) => ({
+      params: prop,
+      // @ts-ignore
+      func: this._addRemoveRowsColumns.bind(this),
+    }));
+    this.EventStackPlugin.push(events as BaseEventType[], true);
   }
 
   private _rowColumnResize({ isRow, index, preWidth, afterWidth }: RowColumnResizeType, isReverse = false) {

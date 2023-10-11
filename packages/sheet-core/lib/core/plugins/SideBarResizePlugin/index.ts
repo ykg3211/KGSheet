@@ -12,14 +12,21 @@ export default class SideBarResizePlugin {
   private gap: number;
   public name: string;
   private ExcelBaseFunction!: ExcelBaseFunction;
+  private selectedRowColumn: {
+    isRow: boolean;
+    index: number;
+  } | null;
 
   constructor(_this: Base) {
     this.name = PluginTypeEnum.SideBarResizePlugin;
     this._this = _this;
     this.gap = 5;
+    this.selectedRowColumn = null;
+
     this.handleMouseHover();
     this.handleMouseDrag();
     this.initPlugin();
+    this.initRender();
   }
 
   private initPlugin() {
@@ -38,47 +45,28 @@ export default class SideBarResizePlugin {
     this._this.clearEvent(EventConstant.MOUSE_UP, EventZIndex.SIDE_BAR);
   }
 
-  private registerHighLight({ isLeft, index }: { isLeft: boolean; index: number }) {
-    console.log(isLeft, index);
+  private initRender() {
     this._this.addRenderFunction(RenderZIndex.BORDER_HIGH_LIGHT, [
       (ctx) => {
-        ctx.save();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#3370FF';
-        if (isLeft) {
-          const startRow = this._this.renderCellsArr[0][0].location.row;
-          if (!this._this.renderCellsArr[index - startRow + 1]) {
-            return;
-          }
-          const point = this._this.renderCellsArr[index - startRow + 1][0].point;
-          const width = this._this.renderCellsArr[index - startRow + 1]
-            .map((cell) => cell.w)
-            .reduce((a, b) => a + b, 0);
-
-          ctx.beginPath();
-          ctx.moveTo(...point);
-          ctx.lineTo(point[0] + width, point[1]);
-          ctx.stroke();
-        } else {
-          const startColumn = this._this.renderCellsArr[0][0].location.column;
-          if (!this._this.renderCellsArr[0][index - startColumn + 1]) {
-            return;
-          }
-          const point = this._this.renderCellsArr[0][index - startColumn + 1].point;
-          const height = this._this.renderCellsArr.map((cells) => cells[0].h).reduce((a, b) => a + b, 0);
-
-          ctx.beginPath();
-          ctx.moveTo(...point);
-          ctx.lineTo(point[0], point[1] + height);
-          ctx.stroke();
+        if (this.selectedRowColumn) {
+          this._this.drawRowColumnBorder({
+            ctx,
+            isRow: this.selectedRowColumn.isRow,
+            index: this.selectedRowColumn.index,
+          });
         }
-
-        ctx.restore();
       },
     ]);
   }
+
+  private registerHighLight({ isRow, index }: { isRow: boolean; index: number }) {
+    this.selectedRowColumn = {
+      isRow,
+      index,
+    };
+  }
   private resetHighLight() {
-    this._this.resetRenderFunction(RenderZIndex.BORDER_HIGH_LIGHT);
+    this.selectedRowColumn = null;
   }
 
   private handleMouseDrag() {
@@ -86,21 +74,21 @@ export default class SideBarResizePlugin {
     let initWidth: null | number = null;
     let XMouseDownLastFrameX: number | null = null;
     let YMouseDownLastFrameY: number | null = null;
-    let isLeft = false;
+    let isRow = false;
     let origin: number | undefined | null = null;
     const scrollMouseDownCB = (e: MouseEvent, preData: any) => {
-      const { isLeft: _isLeft, index } = preData;
+      const { isRow: _isRow, index } = preData;
       isStart = true;
       XMouseDownLastFrameX = e.pageX;
       YMouseDownLastFrameY = e.pageY;
-      isLeft = Boolean(_isLeft);
+      isRow = Boolean(_isRow);
       origin = index;
       this.registerHighLight({
-        isLeft,
+        isRow,
         index,
       });
       if (typeof origin === 'number') {
-        initWidth = isLeft ? this._this._data.h[origin] : this._this._data.w[origin];
+        initWidth = isRow ? this._this._data.h[origin] : this._this._data.w[origin];
       }
       this._this.render();
     };
@@ -112,17 +100,17 @@ export default class SideBarResizePlugin {
         if (!point) {
           return false;
         }
-        const { isHoverBar, isLeft: _isLeft, index } = this.getSideBarByPoint(point as [number, number]);
+        const { isHoverBar, isRow: _isRow, index } = this.getSideBarByPoint(point as [number, number]);
         if (!isHoverBar) {
           return false;
         }
-        return { isHoverBar, isLeft: _isLeft, index };
+        return { isHoverBar, isRow: _isRow, index };
       },
       innerFunc: scrollMouseDownCB.bind(this),
     });
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isLeft) {
+      if (isRow) {
         if (typeof YMouseDownLastFrameY === 'number' && typeof origin === 'number') {
           this._this._data.h[origin] += (e.pageY - YMouseDownLastFrameY) / this._this.scale;
           this._this._data.h[origin] = Math.max(10, this._this._data.h[origin]);
@@ -150,9 +138,9 @@ export default class SideBarResizePlugin {
     const scrollMouseUpCB = () => {
       if (isStart && typeof origin === 'number' && typeof initWidth === 'number') {
         if (typeof origin === 'number') {
-          const currentWidth = isLeft ? this._this._data.h[origin] : this._this._data.w[origin];
+          const currentWidth = isRow ? this._this._data.h[origin] : this._this._data.w[origin];
           this.ExcelBaseFunction.rowColumnResize({
-            isRow: isLeft,
+            isRow: isRow,
             index: origin,
             preWidth: initWidth,
             afterWidth: currentWidth,
@@ -180,10 +168,10 @@ export default class SideBarResizePlugin {
         _mouseY: number;
         _mouseX: number;
       },
-      { isLeft }: { isLeft: boolean },
+      { isRow }: { isRow: boolean },
     ) => {
       if (this._this.canvasDom) {
-        this._this.canvasDom.style.cursor = isLeft ? 'ns-resize' : 'ew-resize';
+        this._this.canvasDom.style.cursor = isRow ? 'ns-resize' : 'ew-resize';
       }
     };
 
@@ -191,9 +179,9 @@ export default class SideBarResizePlugin {
       type: EventZIndex.SIDE_BAR,
       judgeFunc: (e: any) => {
         if (!isNN(e._mouseY) && !isNN(e._mouseX)) {
-          const { isHoverBar, isLeft } = this.getSideBarByPoint([e._mouseX, e._mouseY]);
+          const { isHoverBar, isRow } = this.getSideBarByPoint([e._mouseX, e._mouseY]);
           if (isHoverBar) {
-            return { isLeft };
+            return { isRow };
           }
         }
         return false;
@@ -218,26 +206,26 @@ export default class SideBarResizePlugin {
       };
     }
 
-    const isLeft = point[0] > 0 && point[0] < paddingLeft ? true : !(point[1] > 0 && point[1] < paddingTop);
+    const isRow = point[0] > 0 && point[0] < paddingLeft ? true : !(point[1] > 0 && point[1] < paddingTop);
 
-    const source = isLeft ? _data.h : _data.w;
+    const source = isRow ? _data.h : _data.w;
 
     let start = 0;
-    if (isLeft) {
+    if (isRow) {
       start = source.slice(0, renderDataScope[0][0]).reduce((a, b) => a + b, 0) + paddingTop - _scrollTop;
     } else {
       start = source.slice(0, renderDataScope[0][1]).reduce((a, b) => a + b, 0) + paddingLeft - _scrollLeft;
     }
     const anchorArr: number[] = [];
-    source.slice(renderDataScope[0][isLeft ? 0 : 1], renderDataScope[1][isLeft ? 0 : 1] + 1).forEach((item) => {
+    source.slice(renderDataScope[0][isRow ? 0 : 1], renderDataScope[1][isRow ? 0 : 1] + 1).forEach((item) => {
       start += item;
       anchorArr.push(start);
     });
     let isHoverBar = false;
 
-    let startIndex = renderDataScope[0][isLeft ? 0 : 1];
+    let startIndex = renderDataScope[0][isRow ? 0 : 1];
     anchorArr.some((y, arrI) => {
-      if (y - this.gap < point[isLeft ? 1 : 0] && y + this.gap > point[isLeft ? 1 : 0]) {
+      if (y - this.gap < point[isRow ? 1 : 0] && y + this.gap > point[isRow ? 1 : 0]) {
         startIndex += arrI;
         isHoverBar = true;
         return true;
@@ -246,7 +234,7 @@ export default class SideBarResizePlugin {
     });
     return {
       isHoverBar,
-      isLeft,
+      isRow,
       index: startIndex,
     };
   }

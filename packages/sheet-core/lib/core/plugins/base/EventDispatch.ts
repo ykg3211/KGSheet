@@ -105,7 +105,7 @@ export default class EventDispatch {
           if (preData !== false) {
             isFirst = false;
             innerFuncArr.push((e: MouseEvent) => {
-              eventStack.innerFunc(e, preData);
+              eventStack.innerFunc?.(e, preData);
             });
           } else {
             if (eventStack.outerFunc) {
