@@ -618,25 +618,25 @@ export default class SelectPowerPlugin {
     if (!this._endCell) {
       return;
     }
-    return;
-    const that = this._this;
-    const [x, y, w, h] = this._this.getRectByCell(this._endCell);
-    const width = that.width - that.paddingLeft - that.scrollBarWidth;
-    const height = that.height - that.paddingTop - that.scrollBarWidth;
-    const isInner = judgeInner([x, y, w, h], [that.paddingLeft, that.paddingTop, width, height]);
-    if (!isInner) {
-      if (x < that.paddingLeft) {
-        that.scrollXY(x - that.paddingLeft - 20, 0);
-      }
-      if (y < that.paddingTop) {
-        that.scrollXY(0, y - that.paddingTop - 20);
-      }
-      if (x + w > width) {
-        that.scrollXY(x + w - width - 20, 0);
-      }
-      if (y + h > height) {
-        that.scrollXY(0, y + h - height - 10);
-      }
-    }
+    // return;
+    // const that = this._this;
+    // const [x, y, w, h] = this._this.getRectByCell(this._endCell);
+    // const width = that.width - that.paddingLeft - that.scrollBarWidth;
+    // const height = that.height - that.paddingTop - that.scrollBarWidth;
+    // const isInner = judgeInner([x, y, w, h], [that.paddingLeft, that.paddingTop, width, height]);
+    // if (!isInner) {
+    //   if (x < that.paddingLeft) {
+    //     that.scrollXY(x - that.paddingLeft - 20, 0);
+    //   }
+    //   if (y < that.paddingTop) {
+    //     that.scrollXY(0, y - that.paddingTop - 20);
+    //   }
+    //   if (x + w > width) {
+    //     that.scrollXY(x + w - width - 20, 0);
+    //   }
+    //   if (y + h > height) {
+    //     that.scrollXY(0, y + h - height - 10);
+    //   }
+    // }
   }
 }
