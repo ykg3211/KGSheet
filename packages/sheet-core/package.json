@@ -5,8 +5,8 @@
   "author": "Yukaige",
   "homepage": "https://github.com/ykg3211/KGSheet.git",
   "license": "MIT",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "types": "lib/index.ts",
+  "main": "lib/index.ts",
   "files": [
     "dist"
   ],
