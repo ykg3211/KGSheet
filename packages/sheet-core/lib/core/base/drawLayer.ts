@@ -1,6 +1,7 @@
-import { CellTypeEnum, RenderCellPropsNoLocation, BaseSheetSetting } from '../../interfaces';
+import { RenderCellPropsNoLocation, BaseSheetSetting } from '../../interfaces';
 import BaseEvent, { EventConstant, ToolsEventConstant } from '../plugins/base/event';
-import components from './cellComponents';
+import components from '../cellComponents';
+import { ComponentsMeta } from '../cellComponents/type';
 
 export type RectType = [number, number, number, number];
 
@@ -52,7 +53,7 @@ export default class DrawLayer extends BaseEvent {
   public devMode: boolean; // 是不是调试模式
   public darkMode: boolean;
   public _drawCellBorder: boolean;
-  protected components: Partial<Record<CellTypeEnum, (_: this, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) => void>>;
+  protected componentsMeta: ComponentsMeta;
   constructor(config: BaseSheetSetting) {
     super();
     this.config = config;
@@ -68,7 +69,7 @@ export default class DrawLayer extends BaseEvent {
 
     this._drawCellBorder = true;
     this.devMode = Boolean(config.devMode);
-    this.components = components as any;
+    this.componentsMeta = components as any;
     this.initMediaDarkMode();
   }
 
@@ -134,8 +135,9 @@ export default class DrawLayer extends BaseEvent {
     if (!this.ctx) {
       return;
     }
-    const renderFunc = this.components[props.cell.type];
+    const renderFunc = this.componentsMeta[props.cell.type]?.render;
     if (renderFunc) {
+      //@ts-ignore
       renderFunc(this, this.ctx, props);
     }
     if (needBorder) {
@@ -147,9 +149,9 @@ export default class DrawLayer extends BaseEvent {
     if (!this.ctx) {
       return;
     }
-    //@ts-ignore
-    const renderFunc = this.components[props.cell.type];
+    const renderFunc = this.componentsMeta[props.cell.type]?.render;
     if (renderFunc) {
+      //@ts-ignore
       renderFunc(this, this.ctx, props);
     }
 

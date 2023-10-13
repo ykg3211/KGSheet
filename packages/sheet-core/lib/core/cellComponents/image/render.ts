@@ -1,9 +1,9 @@
 import { RenderCellPropsNoLocation } from '../../../interfaces';
 import { PluginTypeEnum } from '../../plugins';
-import Base from '../base';
-import { clipCell, ColorType } from '../drawLayer';
+import Base from '../../base/base';
+import { clipCell, ColorType } from '../../base/drawLayer';
 
-export default function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
+export const render = function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
   const { point, cell, w, h } = data;
   _.initStrokeStyle(ctx);
   ctx.fillStyle = cell.style.backgroundColor || _.getColor(ColorType.white);
@@ -33,4 +33,4 @@ export default function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCel
     }
     ctx.drawImage(img as CanvasImageSource, _x, _y, _w, _h);
   });
-}
+};

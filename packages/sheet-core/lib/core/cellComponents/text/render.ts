@@ -1,7 +1,8 @@
 import { RenderCellPropsNoLocation } from '../../../interfaces';
-import DrawLayer, { clipCell, ColorType } from '../drawLayer';
+import Base from '../../base/base';
+import { clipCell, ColorType } from '../../base/drawLayer';
 
-export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
+export const render = function (_: Base, ctx: CanvasRenderingContext2D, data: RenderCellPropsNoLocation) {
   const { point, cell, w, h } = data;
   _.initStrokeStyle(ctx);
   ctx.fillStyle = cell.style.backgroundColor || _.getColor(ColorType.white);
@@ -13,9 +14,7 @@ export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: Rend
 
   clipCell(ctx, [point[0], point[1], w, h], () => {
     const size = cell.style.fontSize || 12;
-    ctx.font = `${cell.style.fontWeight || 'normal'} ${cell.style.italic ? 'italic' : ''} ${size}px ${
-      cell.style.font || 'Arial'
-    }`;
+    ctx.font = `${cell.style.fontWeight || 'normal'} ${cell.style.italic ? 'italic' : ''} ${size}px ${cell.style.font || 'Arial'}`;
     ctx.fillStyle = cell.style.fontColor || _.getColor(ColorType.black);
     ctx.textAlign = 'left';
     let left = point[0];
@@ -65,4 +64,4 @@ export default function (_: DrawLayer, ctx: CanvasRenderingContext2D, data: Rend
 
     ctx.fillText(cell.content, left, point[1] + h / 2 + size / 2 - 2);
   });
-}
+};
