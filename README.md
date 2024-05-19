@@ -3,7 +3,7 @@
 ## 介绍
 
 一个开源的 Canvas 绘制的高性能 Sheet 组件。
-[在线 demo](http://ykgykg.fun/)
+[在线 demo](https://ykg3211.github.io/kgsheet.github.io/)
 
 #### 支持框架：
 
