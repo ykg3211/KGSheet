@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style></style>
+	</head>
+
+	<body>
+		<textarea name="input" id="input" cols="80" rows="40" disabled></textarea>
+	</body>
+	<script>
+		class JsonParser {
+			text = '';
+			stepResult = {};
+			index = 0;
+			maxLength = 0;
+			promiseWaiting;
+			cbs = [];
+			_position = 0;
+
+			async getResult() {
+				const result = await this.parseValue([]);
+				return result;
+			}
+
+			deleteTargetItem(path) {
+				if (path.length) {
+					let targetObj = this.stepResult;
+					const lastKey = path.pop();
+					path.forEach(key => {
+						targetObj = targetObj[key];
+					});
+					if (targetObj && typeof targetObj === 'object') {
+						delete targetObj[lastKey];
+					}
+				}
+			}
+
+			setResult(path, value) {
+				if (path.length === 0) {
+					this.stepResult = value;
+					return;
+				}
+				if (typeof this.stepResult !== 'object') {
+					this.stepResult = {};
+				}
+
+				let targetObj = this.stepResult;
+				const lastKey = path.pop();
+				path.forEach(key => {
+					if (typeof targetObj[key] !== 'object' || targetObj[key] === null) {
+						targetObj[key] = {};
+					}
+					targetObj = targetObj[key];
+				});
+				targetObj[lastKey] = value;
+			}
+
+			onStepObj(cb) {
+				this.cbs.push(cb);
+				return this;
+			}
+
+			async awaitNextText(n) {
+				if (this.isOverLength()) {
+					this._position = n;
+
+					return new Promise(resolve => {
+						this.promiseWaiting = {
+							targetIndex: this.index,
+							resolve,
+						};
+					});
+				} else {
+					return null;
+				}
+			}
+
+			isOverLength() {
+				const isOver = this.index >= this.maxLength;
+				if (isOver) {
+					this.cbs.forEach(cb => cb(this.stepResult));
+				}
+				return isOver;
+			}
+
+			stepInput(input) {
+				this.text += input;
+				this.maxLength = this.text.length;
+
+				if (this.promiseWaiting && this.promiseWaiting.targetIndex < this.maxLength && this.promiseWaiting.resolve) {
+					this.promiseWaiting.resolve();
+				}
+			}
+
+			finish() {
+				if (this.promiseWaiting && this.promiseWaiting.resolve) {
+					this.promiseWaiting.resolve();
+				}
+			}
+
+			async parseValue(path) {
+				await this.awaitNextText(-1);
+
+				await this.skipWhitespace();
+				const char = this.text[this.index];
+
+				if (char === '{') {
+					return await this.parseObject(path);
+				} else if (char === '[') {
+					return await this.parseArray(path);
+				} else if (char === '"') {
+					return await this.parseString(path);
+				} else if (char === 't' || char === 'f') {
+					return await this.parseBoolean(path);
+				} else if (char === 'n') {
+					return await this.parseNull(path);
+				} else {
+					return await this.parseNumber(path);
+				}
+			}
+
+			async parseObject(path) {
+				const obj = {};
+				this.index++; // skip '{'
+				await this.awaitNextText(0);
+
+				await this.skipWhitespace();
+
+				while (this.text[this.index] !== '}') {
+					const key = await this.parseString(path, true);
+					this.setResult([...path, key], null);
+					await this.skipWhitespace();
+					this.index++; // skip ':'
+					await this.awaitNextText(1);
+
+					await this.skipWhitespace();
+					const value = await this.parseValue([...path, key]);
+					this.setResult([...path, key], value);
+					obj[key] = value;
+					await this.skipWhitespace();
+					if (this.text[this.index] === ',') {
+						this.index++; // skip ','
+						await this.awaitNextText(2);
+
+						await this.skipWhitespace();
+					}
+				}
+				this.index++; // skip '}'
+				await this.awaitNextText(3);
+
+				return obj;
+			}
+
+			async parseArray(path) {
+				this.setResult([...path], []);
+
+				const array = [];
+				this.index++; // skip '['
+				await this.awaitNextText(4);
+
+				await this.skipWhitespace();
+
+				while (this.text[this.index] !== ']') {
+					const value = await this.parseValue([...path, array.length]);
+					array.push(value);
+					await this.skipWhitespace();
+					if (this.text[this.index] === ',') {
+						this.index++; // skip ','
+						await this.awaitNextText(5);
+
+						await this.skipWhitespace();
+					}
+				}
+				this.index++; // skip ']'
+				await this.awaitNextText(6);
+
+				return array;
+			}
+
+			async parseString(path, isInKey = false) {
+				let result = '';
+
+				const appendResult = v => {
+					const preResult = result;
+					result += v;
+
+					if (isInKey) {
+						this.deleteTargetItem([...path, preResult]);
+						this.setResult([...path, result], null);
+					} else {
+						this.setResult([...path], result);
+					}
+				};
+
+				this.index++; // skip the opening quote
+				await this.awaitNextText(7);
+
+				while (this.text[this.index] !== '"') {
+					if (this.text[this.index] === '\\') {
+						this.index++; // skip the escape character
+						await this.awaitNextText(8);
+
+						const escapedChar = this.text[this.index];
+						switch (escapedChar) {
+							case '"':
+								appendResult('"');
+								break;
+							case '\\':
+								appendResult('\\');
+								break;
+							case '/':
+								appendResult('/');
+								break;
+							case 'b':
+								appendResult('\b');
+								break;
+							case 'f':
+								appendResult('\f');
+								break;
+							case 'n':
+								appendResult('\n');
+								break;
+							case 'r':
+								appendResult('\r');
+								break;
+							case 't':
+								appendResult('\t');
+								break;
+							default:
+								appendResult(escapedChar);
+						}
+					} else {
+						appendResult(this.text[this.index]);
+					}
+					this.index++;
+					await this.awaitNextText(9);
+				}
+				this.index++; // skip the closing quote
+				await this.awaitNextText(10);
+
+				return result;
+			}
+
+			async parseNumber(path) {
+				let numStr = '';
+				const appendNum = v => {
+					numStr += v;
+					this.setResult([...path], Number(numStr));
+				};
+
+				while (/[0-9eE\.\+\-]/.test(this.text[this.index])) {
+					appendNum(this.text[this.index]);
+					this.index++;
+					await this.awaitNextText(11);
+				}
+				return Number(numStr);
+			}
+
+			async parseBoolean(path) {
+				if (this.text.startsWith('true', this.index)) {
+					this.index += 4;
+					await this.awaitNextText(12);
+
+					this.setResult([...path], true);
+					return true;
+				} else {
+					this.index += 5;
+					await this.awaitNextText(13);
+
+					this.setResult([...path], false);
+					return false;
+				}
+			}
+
+			async parseNull(path) {
+				this.index += 4;
+				await this.awaitNextText(14);
+
+				this.setResult([...path], null);
+				return null;
+			}
+
+			async skipWhitespace() {
+				while (/\s/.test(this.text[this.index])) {
+					this.index++;
+					await this.awaitNextText(15);
+				}
+			}
+		}
+
+		(async () => {
+			const jsonString =
+				'{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas","obj":{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas"},"array":[1,-2,"asd",false,null,null,"test",212.123,{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas", "arrobj": [1,-2,"asd",false,null,null,"test",212.123,{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas"}]}';
+			// const jsonString = `{"test": -1, "aaa": {"bvv": [123123, "123"], "bcc": "123123"}, "xxxx": {"bvv": 123123, "bcc": "123123"}}`;
+			// const jsonString = `{"test": false, "aaa": 1}`;
+
+			const jsonParser = new JsonParser().onStepObj(v => {
+				document.getElementById('input').value = JSON.stringify(v, undefined, 2);
+			});
+			jsonParser.getResult().then(vvv => {
+				console.log('🚀 yukaige ~ jsonParser.getResult ~ vvv:', vvv);
+				document.getElementById('input').value = JSON.stringify(vvv, undefined, 2);
+			});
+			let i = 0;
+			while (jsonString[i]) {
+				jsonParser.stepInput(jsonString[i]);
+
+				await new Promise((resolve, reject) => {
+					setTimeout(() => {
+						resolve();
+					}, 30);
+				});
+				i += 1;
+			}
+			setTimeout(() => {
+				jsonParser.finish();
+			}, 30);
+		})();
+
+		// const errorString =
+		// 	'{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas","obj":{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas"},';
+		// console.log(parseJsonFromStr(errorString));
+
+		// const a = parseJsonFromStr(errorString);
+	</script>
+	<script>
+		// 半拉 json 解析逻辑
+		// class JsonParser {
+		// 	text = '';
+		// 	result;
+		// 	index = 0;
+		// 	maxLength;
+
+		// 	constructor(input) {
+		// 		this.text = input;
+		// 		this.maxLength = input.length;
+		// 	}
+
+		// 	getResult() {
+		// 		return this.parseValue();
+		// 	}
+
+		// 	stepInput() {}
+
+		// 	parseValue() {
+		// 		if (this.index >= this.maxLength) {
+		// 			return null;
+		// 		}
+		// 		this.skipWhitespace();
+		// 		const char = this.text[this.index];
+
+		// 		if (char === '{') {
+		// 			return this.parseObject();
+		// 		} else if (char === '[') {
+		// 			return this.parseArray();
+		// 		} else if (char === '"') {
+		// 			return this.parseString();
+		// 		} else if (char === 't' || char === 'f') {
+		// 			return this.parseBoolean();
+		// 		} else if (char === 'n') {
+		// 			return this.parseNull();
+		// 		} else {
+		// 			return this.parseNumber();
+		// 		}
+		// 	}
+
+		// 	parseObject() {
+		// 		const obj = {};
+		// 		this.index++; // skip '{'
+		// 		this.skipWhitespace();
+
+		// 		while (this.text[this.index] !== '}') {
+		// 			if (this.index >= this.maxLength) {
+		// 				return obj;
+		// 				break;
+		// 			}
+
+		// 			const key = this.parseString();
+		// 			this.skipWhitespace();
+		// 			this.index++; // skip ':'
+		// 			this.skipWhitespace();
+		// 			const value = this.parseValue();
+		// 			obj[key] = value;
+		// 			this.skipWhitespace();
+		// 			if (this.text[this.index] === ',') {
+		// 				this.index++; // skip ','
+		// 				this.skipWhitespace();
+		// 			}
+		// 		}
+		// 		this.index++; // skip '}'
+		// 		return obj;
+		// 	}
+
+		// 	parseArray() {
+		// 		const array = [];
+		// 		this.index++; // skip '['
+		// 		this.skipWhitespace();
+
+		// 		while (this.text[this.index] !== ']') {
+		// 			if (this.index >= this.maxLength) {
+		// 				break;
+		// 			}
+
+		// 			const value = this.parseValue();
+		// 			array.push(value);
+		// 			this.skipWhitespace();
+		// 			if (this.text[this.index] === ',') {
+		// 				this.index++; // skip ','
+		// 				this.skipWhitespace();
+		// 			}
+		// 		}
+		// 		this.index++; // skip ']'
+		// 		return array;
+		// 	}
+
+		// 	parseString() {
+		// 		let result = '';
+		// 		this.index++; // skip the opening quote
+		// 		while (this.text[this.index] !== '"') {
+		// 			if (this.index >= this.maxLength) {
+		// 				return result;
+		// 				break;
+		// 			}
+
+		// 			if (this.text[this.index] === '\\') {
+		// 				this.index++; // skip the escape character
+		// 				const escapedChar = this.text[this.index];
+		// 				switch (escapedChar) {
+		// 					case '"':
+		// 						result += '"';
+		// 						break;
+		// 					case '\\':
+		// 						result += '\\';
+		// 						break;
+		// 					case '/':
+		// 						result += '/';
+		// 						break;
+		// 					case 'b':
+		// 						result += '\b';
+		// 						break;
+		// 					case 'f':
+		// 						result += '\f';
+		// 						break;
+		// 					case 'n':
+		// 						result += '\n';
+		// 						break;
+		// 					case 'r':
+		// 						result += '\r';
+		// 						break;
+		// 					case 't':
+		// 						result += '\t';
+		// 						break;
+		// 					default:
+		// 						result += escapedChar; // simple fallback
+		// 				}
+		// 			} else {
+		// 				result += this.text[this.index];
+		// 			}
+		// 			this.index++;
+		// 		}
+		// 		this.index++; // skip the closing quote
+		// 		return result;
+		// 	}
+
+		// 	parseNumber() {
+		// 		let numStr = '';
+		// 		while (/[0-9eE\.\+\-]/.test(this.text[this.index])) {
+		// 			if (this.index >= this.maxLength) {
+		// 				return Number(numStr);
+		// 				break;
+		// 			}
+
+		// 			numStr += this.text[this.index];
+		// 			this.index++;
+		// 		}
+		// 		return Number(numStr);
+		// 	}
+
+		// 	parseBoolean() {
+		// 		if (this.text.startsWith('true', this.index)) {
+		// 			this.index += 4;
+		// 			return true;
+		// 		} else {
+		// 			this.index += 5;
+		// 			return false;
+		// 		}
+		// 	}
+
+		// 	parseNull() {
+		// 		this.index += 4;
+		// 		return null;
+		// 	}
+
+		// 	skipWhitespace() {
+		// 		while (/\s/.test(this.text[this.index])) {
+		// 			if (this.index >= this.maxLength) {
+		// 				break;
+		// 			}
+		// 			this.index++;
+		// 		}
+		// 	}
+		// }
+
+		// const jsonString =
+		// 	'{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \\\\\n \n asdasdasdasdas","obj":{"boo":false,"number":-111,"float":12.12,"null';
+		// const jsonParser = new JsonParser(jsonString);
+		// const result = jsonParser.getResult();
+		// console.log('🚀 yukaige ~ jsonParser.getResult():', result);
+
+		// // const errorString =
+		// // 	'{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas","obj":{"boo":false,"number":-111,"float":12.12,"nulll":null,"str":"asdadasdasd \n \n asdasdasdasdas"},';
+		// // console.log(parseJsonFromStr(errorString));
+
+		// // const a = parseJsonFromStr(errorString);
+
+		// document.getElementById('input').value = JSON.stringify(result, undefined, 2);
+	</script>
+</html>
+
+<script>
+	// const parseJsonFromStr = this.text => {
+	// 	const arr = this.text.split('');
+	// 	let i = null;
+	// 	let isLeft = false;
+	// 	let startCollect = false;
+	// 	let tempKey = [];
+	// 	let path = [];
+	// 	let isSkipNext = false;
+	// 	const result = {};
+	// 	while (arr.length > 0) {
+	// 		i = arr.shift();
+	// 		if (i === '\\') {
+	// 			isSkipNext = true;
+	// 			continue;
+	// 		}
+	// 		if (isSkipNext) {
+	// 			continue;
+	// 		}
+	// 		if (['{', '}', ','].includes(i) && !isSkipNext) {
+	// 			isLeft = true;
+	// 		}
+	// 		if (i === ':' && !isSkipNext) {
+	// 			isLeft = false;
+	// 		}
+	// 		if (i === '"' && !isSkipNext) {
+	// 			if (startCollect) {
+	// 				if (isLeft) {
+	// 					path.push(tempKey.join(''));
+	// 				}
+	// 				startCollect = false;
+	// 			} else {
+	// 				tempKey = [];
+	// 				startCollect = true;
+	// 			}
+	// 			continue;
+	// 		}
+	// 		if (startCollect) {
+	// 			tempKey.push(i);
+	// 			continue;
+	// 		}
+	// 		console.log('i: ', i, 'tempKey: ', tempKey, 'path: ', path);
+	// 	}
+	// 	return null;
+	// };
+
+	// const a = parseJsonFromStr(`{"a": {"b": 1}}`);
+	// console.log(
+	// 	JSON.parse(
+	// 		'{\n    "type": "object",\n    "properties": {\n        "Asd": {\n            "type": "integer"\n        },\n        "aAsd": {\n            "type": "string"\n        },\n        "asd": {\n            "type": "object",\n            "properties": {\n                "asd": {\n                    "type": "null"\n                }\n            }\n        }\n    }\n}'
+	// 	)
+	// );
+</script>
